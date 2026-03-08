@@ -110,7 +110,8 @@ export default function SystemLogsPage() {
                     </div>
                 ) : (
                     <>
-                        <div className="overflow-x-auto">
+                        {/* Desktop View */}
+                        <div className="hidden md:block overflow-x-auto">
                             <table className="w-full text-left border-collapse">
                                 <thead>
                                     <tr className="bg-slate-800/50 border-b border-slate-800">
@@ -176,6 +177,58 @@ export default function SystemLogsPage() {
                             </table>
                         </div>
 
+                        {/* Mobile View */}
+                        <div className="md:hidden flex flex-col divide-y divide-slate-800/50">
+                            {filteredLogs.length === 0 ? (
+                                <div className="px-6 py-12 text-center text-slate-400">
+                                    <span className="material-symbols-outlined text-4xl mb-3 opacity-50 block">search_off</span>
+                                    No logs found matching your criteria.
+                                </div>
+                            ) : (
+                                filteredLogs.map((log) => {
+                                    const date = new Date(log.timestamp);
+                                    return (
+                                        <div key={log.id} className="p-3 hover:bg-slate-800/30 transition-colors flex gap-3">
+                                            {/* Status Icon */}
+                                            <div className={`size-8 rounded flex items-center justify-center flex-shrink-0 border ${getStatusStyle(log.status)}`}>
+                                                <span className="material-symbols-outlined text-[18px]">
+                                                    {log.status === 'success' ? 'check' : log.status === 'error' ? 'close' : log.status === 'warning' ? 'priority_high' : 'info'}
+                                                </span>
+                                            </div>
+
+                                            {/* Content */}
+                                            <div className="flex-1 min-w-0 flex flex-col pt-0.5">
+                                                <div className="flex items-start justify-between gap-2 mb-1">
+                                                    <p className="text-xs font-bold text-slate-200 leading-tight">{log.description}</p>
+                                                    <span className="text-[10px] text-slate-500 font-mono flex-shrink-0 whitespace-nowrap">
+                                                        {date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                                                    </span>
+                                                </div>
+
+                                                <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                                                    {/* Event Type Badge */}
+                                                    <span className="inline-flex items-center gap-1 bg-slate-800 border border-slate-700 px-1.5 py-0.5 rounded text-[9px] font-bold text-slate-300 uppercase tracking-widest">
+                                                        <span className="material-symbols-outlined text-[12px] opacity-70">{getEventIcon(log.event_type)}</span>
+                                                        {log.event_type.replace('_', ' ')}
+                                                    </span>
+                                                </div>
+
+                                                {/* User Info */}
+                                                {(log.user || log.ip) && (
+                                                    <div className="flex items-center gap-1.5 text-[10px] text-slate-500">
+                                                        {log.user && <span className="text-slate-400 font-medium truncate max-w-[120px]">{log.user}</span>}
+                                                        {log.user && log.ip && <span>•</span>}
+                                                        {log.ip && <span className="font-mono">{log.ip !== 'System' ? log.ip : ''}</span>}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    );
+                                })
+                            )}
+                        </div>
+
+                        {/* Pagination footer */}
                         <div className="p-4 border-t border-slate-800 bg-slate-800/30 flex justify-between items-center text-sm text-slate-400">
                             <span>Showing {filteredLogs.length} entries</span>
                             <div className="flex gap-2">
