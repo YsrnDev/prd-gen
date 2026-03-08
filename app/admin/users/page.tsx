@@ -101,12 +101,12 @@ export default function AdminUsersPage() {
 
     return (
         <div className="w-full max-w-7xl mx-auto">
-            <div className="flex items-center justify-between mb-8">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
                 <div>
                     <h1 className="text-2xl font-bold text-[var(--color-fg)]">User Management</h1>
                     <p className="text-[var(--color-muted-fg)] mt-1">{users.length} registered users</p>
                 </div>
-                <button onClick={fetchUsers} className="p-2 rounded-lg border border-[var(--color-border)] text-[var(--color-muted-fg)] hover:text-[var(--color-fg)] hover:bg-[var(--color-accent)] transition-colors">
+                <button onClick={fetchUsers} className="p-2 rounded-lg border border-[var(--color-border)] text-[var(--color-muted-fg)] hover:text-[var(--color-fg)] hover:bg-[var(--color-accent)] transition-colors self-start sm:self-auto">
                     <RefreshCw className="w-4 h-4" />
                 </button>
             </div>
@@ -129,79 +129,81 @@ export default function AdminUsersPage() {
                 </div>
             ) : (
                 <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl overflow-hidden">
-                    <table className="w-full">
-                        <thead>
-                            <tr className="border-b border-[var(--color-border)] bg-[#131b33]">
-                                <th className="text-left px-6 py-3 text-xs font-semibold text-[var(--color-muted-fg)] uppercase tracking-wider">User</th>
-                                <th className="text-left px-6 py-3 text-xs font-semibold text-[var(--color-muted-fg)] uppercase tracking-wider">Role</th>
-                                <th className="text-left px-6 py-3 text-xs font-semibold text-[var(--color-muted-fg)] uppercase tracking-wider">Joined</th>
-                                <th className="text-right px-6 py-3 text-xs font-semibold text-[var(--color-muted-fg)] uppercase tracking-wider">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-[var(--color-border)]">
-                            {filtered.map((u) => (
-                                <tr key={u.id} className="hover:bg-[#1a2038] transition-colors">
-                                    <td className="px-6 py-3">
-                                        <div className="flex items-center gap-3">
-                                            <div className={cn(
-                                                'w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0 overflow-hidden relative',
-                                                u.role === 'admin' ? 'bg-red-500' : 'primary-gradient'
-                                            )}>
-                                                {u.image ? (
-                                                    <Image src={u.image} alt={u.name || 'User'} fill className="object-cover" />
-                                                ) : (
-                                                    u.name?.charAt(0)?.toUpperCase() || 'U'
-                                                )}
-                                            </div>
-                                            <div>
-                                                <p className="text-sm font-medium text-[var(--color-fg)]">{u.name}</p>
-                                                <p className="text-xs text-[var(--color-muted-fg)]">{u.email}</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-3">
-                                        <span className={cn(
-                                            'inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium',
-                                            u.role === 'admin' ? 'bg-red-500/10 text-red-500' : 'bg-blue-500/10 text-blue-500'
-                                        )}>
-                                            {u.role === 'admin' ? <Crown className="w-3 h-3" /> : <User className="w-3 h-3" />}
-                                            {u.role}
-                                        </span>
-                                    </td>
-                                    <td className="px-6 py-3 text-sm text-[var(--color-muted-fg)]">
-                                        {new Date(u.createdAt).toLocaleDateString()}
-                                    </td>
-                                    <td className="px-6 py-3">
-                                        <div className="flex items-center justify-end gap-2">
-
-                                            <button
-                                                onClick={() => setResetUser({ id: u.id, name: u.name })}
-                                                disabled={actionLoading === u.id}
-                                                className="p-1.5 rounded-md text-[var(--color-muted-fg)] hover:text-amber-500 hover:bg-amber-500/10 transition-colors disabled:opacity-50"
-                                                title="Reset Password"
-                                            >
-                                                <Key className="w-4 h-4" />
-                                            </button>
-                                            <button
-                                                onClick={() => deleteUser(u.id, u.name)}
-                                                disabled={actionLoading === u.id}
-                                                className="p-1.5 rounded-md text-[var(--color-muted-fg)] hover:text-red-500 hover:bg-red-500/10 transition-colors disabled:opacity-50"
-                                                title="Delete user"
-                                            >
-                                                <Trash2 className="w-4 h-4" />
-                                            </button>
-                                        </div>
-                                    </td>
+                    <div className="overflow-x-auto">
+                        <table className="w-full">
+                            <thead>
+                                <tr className="border-b border-[var(--color-border)] bg-[#131b33]">
+                                    <th className="text-left px-6 py-3 text-xs font-semibold text-[var(--color-muted-fg)] uppercase tracking-wider">User</th>
+                                    <th className="text-left px-6 py-3 text-xs font-semibold text-[var(--color-muted-fg)] uppercase tracking-wider">Role</th>
+                                    <th className="text-left px-6 py-3 text-xs font-semibold text-[var(--color-muted-fg)] uppercase tracking-wider">Joined</th>
+                                    <th className="text-right px-6 py-3 text-xs font-semibold text-[var(--color-muted-fg)] uppercase tracking-wider">Actions</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                    {filtered.length === 0 && (
-                        <div className="text-center py-12 text-[var(--color-muted-fg)]">
-                            <Users className="w-8 h-8 mx-auto mb-2 opacity-30" />
-                            <p className="text-sm">No users found</p>
-                        </div>
-                    )}
+                            </thead>
+                            <tbody className="divide-y divide-[var(--color-border)]">
+                                {filtered.map((u) => (
+                                    <tr key={u.id} className="hover:bg-[#1a2038] transition-colors">
+                                        <td className="px-6 py-3">
+                                            <div className="flex items-center gap-3">
+                                                <div className={cn(
+                                                    'w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0 overflow-hidden relative',
+                                                    u.role === 'admin' ? 'bg-red-500' : 'primary-gradient'
+                                                )}>
+                                                    {u.image ? (
+                                                        <Image src={u.image} alt={u.name || 'User'} fill className="object-cover" />
+                                                    ) : (
+                                                        u.name?.charAt(0)?.toUpperCase() || 'U'
+                                                    )}
+                                                </div>
+                                                <div>
+                                                    <p className="text-sm font-medium text-[var(--color-fg)]">{u.name}</p>
+                                                    <p className="text-xs text-[var(--color-muted-fg)]">{u.email}</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-3">
+                                            <span className={cn(
+                                                'inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium',
+                                                u.role === 'admin' ? 'bg-red-500/10 text-red-500' : 'bg-blue-500/10 text-blue-500'
+                                            )}>
+                                                {u.role === 'admin' ? <Crown className="w-3 h-3" /> : <User className="w-3 h-3" />}
+                                                {u.role}
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-3 text-sm text-[var(--color-muted-fg)]">
+                                            {new Date(u.createdAt).toLocaleDateString()}
+                                        </td>
+                                        <td className="px-6 py-3">
+                                            <div className="flex items-center justify-end gap-2">
+
+                                                <button
+                                                    onClick={() => setResetUser({ id: u.id, name: u.name })}
+                                                    disabled={actionLoading === u.id}
+                                                    className="p-1.5 rounded-md text-[var(--color-muted-fg)] hover:text-amber-500 hover:bg-amber-500/10 transition-colors disabled:opacity-50"
+                                                    title="Reset Password"
+                                                >
+                                                    <Key className="w-4 h-4" />
+                                                </button>
+                                                <button
+                                                    onClick={() => deleteUser(u.id, u.name)}
+                                                    disabled={actionLoading === u.id}
+                                                    className="p-1.5 rounded-md text-[var(--color-muted-fg)] hover:text-red-500 hover:bg-red-500/10 transition-colors disabled:opacity-50"
+                                                    title="Delete user"
+                                                >
+                                                    <Trash2 className="w-4 h-4" />
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                        {filtered.length === 0 && (
+                            <div className="text-center py-12 text-[var(--color-muted-fg)]">
+                                <Users className="w-8 h-8 mx-auto mb-2 opacity-30" />
+                                <p className="text-sm">No users found</p>
+                            </div>
+                        )}
+                    </div>
                 </div>
             )}
 

@@ -23,10 +23,10 @@ export default async function PRDsPage() {
 
     return (
         <div className="max-w-6xl mx-auto">
-            <div className="flex items-center justify-between mb-8">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
                 <div>
-                    <h1 className="text-3xl font-black tracking-tight text-white mb-2">My PRDs</h1>
-                    <p className="text-slate-400">{prds.length} document{prds.length !== 1 ? 's' : ''}</p>
+                    <h1 className="text-2xl md:text-3xl font-black tracking-tight text-white mb-1">My PRDs</h1>
+                    <p className="text-sm text-slate-400">{prds.length} document{prds.length !== 1 ? 's' : ''}</p>
                 </div>
                 <Link
                     href="/wizard/new"
@@ -48,43 +48,45 @@ export default async function PRDsPage() {
                 </div>
             ) : (
                 <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-sm">
-                    <table className="w-full text-left border-collapse">
-                        <thead>
-                            <tr className="bg-slate-800/50">
-                                <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Title</th>
-                                <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Created</th>
-                                <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Updated</th>
-                                <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider text-right">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-800">
-                            {prds.map((prd) => (
-                                <tr key={prd.id} className="hover:bg-slate-800/30 transition-colors">
-                                    <td className="px-6 py-5">
-                                        <div className="flex items-center gap-3">
-                                            <div className="size-8 rounded bg-[#135bec]/10 flex items-center justify-center text-[#135bec]">
-                                                <span className="material-symbols-outlined text-[20px]">description</span>
-                                            </div>
-                                            <span className="font-medium text-white text-sm">{prd.title}</span>
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-5 text-sm text-slate-400">{formatDate(prd.createdAt)}</td>
-                                    <td className="px-6 py-5 text-sm text-slate-400">{formatDate(prd.updatedAt)}</td>
-                                    <td className="px-6 py-5">
-                                        <div className="flex items-center justify-end gap-2">
-                                            <Link href={`/prd/${prd.id}`} className="text-slate-400 hover:text-[#135bec] transition-colors" title="View">
-                                                <span className="material-symbols-outlined">visibility</span>
-                                            </Link>
-                                            <Link href={`/prd/${prd.id}/edit`} className="text-slate-400 hover:text-[#135bec] transition-colors" title="Edit">
-                                                <span className="material-symbols-outlined">edit</span>
-                                            </Link>
-                                            <DeletePrdButton prdId={prd.id} prdTitle={prd.title} />
-                                        </div>
-                                    </td>
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-left border-collapse">
+                            <thead>
+                                <tr className="bg-slate-800/50">
+                                    <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Title</th>
+                                    <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Created</th>
+                                    <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Updated</th>
+                                    <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider text-right">Actions</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody className="divide-y divide-slate-800">
+                                {prds.map((prd) => (
+                                    <tr key={prd.id} className="hover:bg-slate-800/30 transition-colors">
+                                        <td className="px-6 py-5">
+                                            <div className="flex items-center gap-3">
+                                                <div className="size-8 rounded bg-[#135bec]/10 flex items-center justify-center text-[#135bec]">
+                                                    <span className="material-symbols-outlined text-[20px]">description</span>
+                                                </div>
+                                                <span className="font-medium text-white text-sm">{prd.title}</span>
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-5 text-sm text-slate-400">{formatDate(prd.createdAt)}</td>
+                                        <td className="px-6 py-5 text-sm text-slate-400">{formatDate(prd.updatedAt)}</td>
+                                        <td className="px-6 py-5">
+                                            <div className="flex items-center justify-end gap-2">
+                                                <Link href={`/prd/${prd.id}`} className="text-slate-400 hover:text-[#135bec] transition-colors" title="View">
+                                                    <span className="material-symbols-outlined">visibility</span>
+                                                </Link>
+                                                <Link href={`/prd/${prd.id}/edit`} className="text-slate-400 hover:text-[#135bec] transition-colors" title="Edit">
+                                                    <span className="material-symbols-outlined">edit</span>
+                                                </Link>
+                                                <DeletePrdButton prdId={prd.id} prdTitle={prd.title} />
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             )}
         </div>

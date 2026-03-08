@@ -73,19 +73,19 @@ export default async function AdminDashboardPage() {
     return (
         <div className="w-full max-w-7xl mx-auto animate-fade-in">
             {/* Header */}
-            <div className="flex items-center justify-between mb-8">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
                 <div>
-                    <h1 className="text-2xl font-bold text-[var(--color-fg)]">Platform Overview</h1>
-                    <p className="text-sm text-[var(--color-muted-fg)] mt-1">Real-time performance and system status monitoring.</p>
+                    <h1 className="text-xl sm:text-2xl font-bold text-[var(--color-fg)]">Platform Overview</h1>
+                    <p className="text-xs sm:text-sm text-[var(--color-muted-fg)] mt-1">Real-time performance and system status monitoring.</p>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 sm:gap-3">
                     <LiveDataButton />
                     <ExportReportButton />
                 </div>
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-3 gap-4 mb-6">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
                 {stats.map((stat) => (
                     <div key={stat.label} className="glass-card p-5">
                         <div className="flex items-center justify-between mb-4">
@@ -107,7 +107,7 @@ export default async function AdminDashboardPage() {
             </div>
 
             {/* Usage Trends + Recent Activity */}
-            <div className="grid grid-cols-[1fr_320px] gap-4 mb-6">
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-4 mb-6">
                 {/* Usage Trends Chart - Real Data */}
                 <div className="glass-card p-6">
                     <div className="flex items-center justify-between mb-6">
@@ -183,7 +183,7 @@ export default async function AdminDashboardPage() {
             </div>
 
             {/* Bottom status bar */}
-            <div className="glass-card px-5 py-3 flex items-center justify-between">
+            <div className="glass-card px-4 sm:px-5 py-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
                 <div className="flex items-center gap-3">
                     <span className="text-xs font-semibold text-[var(--color-muted-fg)]">
                         Supabase Database Connection

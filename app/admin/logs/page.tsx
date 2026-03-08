@@ -67,8 +67,8 @@ export default function SystemLogsPage() {
         <div className="w-full max-w-7xl mx-auto space-y-8 animate-fade-in">
             {/* Header */}
             <div>
-                <h2 className="text-3xl font-black tracking-tight mb-2">System Logs</h2>
-                <p className="text-slate-400">
+                <h2 className="text-2xl md:text-3xl font-black tracking-tight mb-2">System Logs</h2>
+                <p className="text-sm md:text-base text-slate-400">
                     Monitor application activity, authentications, and system events.
                 </p>
             </div>

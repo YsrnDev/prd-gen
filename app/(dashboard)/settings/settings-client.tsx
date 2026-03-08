@@ -20,8 +20,8 @@ export default function SettingsClient() {
     return (
         <div className="max-w-3xl mx-auto">
             <div className="mb-8">
-                <h1 className="text-3xl font-black tracking-tight text-white mb-2">Settings</h1>
-                <p className="text-slate-400">Manage your account preferences</p>
+                <h1 className="text-2xl md:text-3xl font-black tracking-tight text-white mb-2">Settings</h1>
+                <p className="text-sm md:text-base text-slate-400">Manage your account preferences</p>
             </div>
 
             {/* Profile section */}

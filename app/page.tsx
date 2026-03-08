@@ -100,7 +100,7 @@ export default function LandingPage() {
           <section id="features" className="py-24 max-w-[1200px] mx-auto px-6">
             <div className="flex flex-col gap-16">
               <div data-anim="features-title" className="max-w-2xl">
-                <h2 className="text-slate-100 text-4xl font-black mb-6">Powerful Features for Modern Teams</h2>
+                <h2 className="text-slate-100 text-3xl md:text-4xl font-black mb-6">Powerful Features for Modern Teams</h2>
                 <p className="text-slate-400 text-lg">
                   Designed for speed, built for security. PRDGen AI provides the tools you need to scale your product discovery process globally.
                 </p>
@@ -218,7 +218,7 @@ export default function LandingPage() {
                   <span className="text-[#135bec] font-bold tracking-widest text-xs uppercase bg-[#135bec]/10 w-fit px-3 py-1 rounded-full border border-[#135bec]/20">
                     About Us
                   </span>
-                  <h2 className="text-slate-100 text-4xl font-black leading-tight">Built by Product People,<br />for Product People</h2>
+                  <h2 className="text-slate-100 text-3xl md:text-4xl font-black leading-tight">Built by Product People,<br />for Product People</h2>
                   <p className="text-slate-400 text-lg leading-relaxed">
                     PRDGen AI was born from the frustration of spending weeks crafting PRDs that should take hours. Our team of ex-PMs from Google, Meta, and Stripe built an AI engine that understands product thinking — not just text generation.
                   </p>
@@ -229,19 +229,19 @@ export default function LandingPage() {
                 <div data-anim="about-stats" className="flex-1 w-full">
                   <div className="grid grid-cols-2 gap-6">
                     <div className="flex flex-col gap-2 p-6 rounded-2xl bg-slate-800/40 border border-slate-700/50 text-center">
-                      <span className="text-[#135bec] text-4xl font-black">50K+</span>
+                      <span className="text-[#135bec] text-3xl md:text-4xl font-black">50K+</span>
                       <span className="text-slate-400 text-sm">Product Managers</span>
                     </div>
                     <div className="flex flex-col gap-2 p-6 rounded-2xl bg-slate-800/40 border border-slate-700/50 text-center">
-                      <span className="text-[#135bec] text-4xl font-black">1M+</span>
+                      <span className="text-[#135bec] text-3xl md:text-4xl font-black">1M+</span>
                       <span className="text-slate-400 text-sm">PRDs Generated</span>
                     </div>
                     <div className="flex flex-col gap-2 p-6 rounded-2xl bg-slate-800/40 border border-slate-700/50 text-center">
-                      <span className="text-[#135bec] text-4xl font-black">85%</span>
+                      <span className="text-[#135bec] text-3xl md:text-4xl font-black">85%</span>
                       <span className="text-slate-400 text-sm">Time Saved</span>
                     </div>
                     <div className="flex flex-col gap-2 p-6 rounded-2xl bg-slate-800/40 border border-slate-700/50 text-center">
-                      <span className="text-[#135bec] text-4xl font-black">4.9★</span>
+                      <span className="text-[#135bec] text-3xl md:text-4xl font-black">4.9★</span>
                       <span className="text-slate-400 text-sm">User Rating</span>
                     </div>
                   </div>

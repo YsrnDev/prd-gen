@@ -106,9 +106,9 @@ export default function DashboardPage() {
     return (
         <div className="max-w-6xl mx-auto">
             {/* Header */}
-            <header className="mb-10">
-                <h2 className="text-3xl font-black tracking-tight mb-2">Dashboard</h2>
-                <p className="text-slate-400">
+            <header className="mb-6 md:mb-10">
+                <h2 className="text-2xl md:text-3xl font-black tracking-tight mb-2">Dashboard</h2>
+                <p className="text-sm md:text-base text-slate-400">
                     Welcome back, {session?.user?.name || 'User'}. Here&apos;s your PRD overview.
                 </p>
             </header>

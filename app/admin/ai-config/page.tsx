@@ -145,7 +145,7 @@ export default function AIConfigPage() {
                     <Sparkles className="w-4 h-4 text-blue-400" />
                     <h2 className="text-sm font-bold text-[var(--color-fg)]">Active Provider</h2>
                 </div>
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     {PROVIDERS.map((p) => {
                         const Icon = p.icon;
                         return (
@@ -190,7 +190,7 @@ export default function AIConfigPage() {
                     )}
                 </div>
 
-                <div className="grid grid-cols-[1fr_280px] gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-[1fr_280px] gap-4">
                     <div>
                         <label className="block text-xs font-semibold text-[var(--color-muted-fg)] mb-1.5">
                             {provider === 'custom' ? 'API Key' : 'OpenAI API Key'}
@@ -272,7 +272,7 @@ export default function AIConfigPage() {
             </div>
 
             {/* Model Parameters + Rate Limiting */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Model Parameters */}
                 <div className="glass-card p-6">
                     <div className="flex items-center gap-2 mb-4">
