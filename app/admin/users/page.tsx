@@ -129,7 +129,8 @@ export default function AdminUsersPage() {
                 </div>
             ) : (
                 <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl overflow-hidden">
-                    <div className="overflow-x-auto">
+                    {/* Desktop View */}
+                    <div className="hidden md:block overflow-x-auto">
                         <table className="w-full">
                             <thead>
                                 <tr className="border-b border-[var(--color-border)] bg-[#131b33]">
@@ -197,13 +198,73 @@ export default function AdminUsersPage() {
                                 ))}
                             </tbody>
                         </table>
-                        {filtered.length === 0 && (
-                            <div className="text-center py-12 text-[var(--color-muted-fg)]">
-                                <Users className="w-8 h-8 mx-auto mb-2 opacity-30" />
-                                <p className="text-sm">No users found</p>
-                            </div>
-                        )}
                     </div>
+
+                    {/* Mobile View */}
+                    <div className="md:hidden flex flex-col divide-y divide-[var(--color-border)]">
+                        {filtered.map((u) => (
+                            <div key={u.id} className="p-4 hover:bg-[#1a2038] transition-colors flex flex-col gap-4">
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-3 w-full">
+                                        <div className={cn(
+                                            'w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0 overflow-hidden relative',
+                                            u.role === 'admin' ? 'bg-red-500' : 'primary-gradient'
+                                        )}>
+                                            {u.image ? (
+                                                <Image src={u.image} alt={u.name || 'User'} fill className="object-cover" />
+                                            ) : (
+                                                u.name?.charAt(0)?.toUpperCase() || 'U'
+                                            )}
+                                        </div>
+                                        <div className="flex-1 min-w-0 flex flex-col">
+                                            <p className="text-sm font-bold text-[var(--color-fg)] truncate w-[85%]">{u.name}</p>
+                                            <p className="text-xs text-[var(--color-muted-fg)] truncate w-[85%]">{u.email}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="flex items-center justify-between bg-black/20 p-3 rounded-lg border border-[var(--color-border)]">
+                                    <div className="flex flex-col gap-1">
+                                        <span className="text-[10px] uppercase font-bold tracking-wider text-[var(--color-muted-fg)]">Role</span>
+                                        <span className={cn(
+                                            'inline-flex items-center gap-1 w-fit px-2 py-0.5 rounded-md text-[10px] font-bold',
+                                            u.role === 'admin' ? 'bg-red-500/10 text-red-500' : 'bg-blue-500/10 text-blue-500'
+                                        )}>
+                                            {u.role === 'admin' ? <Crown className="w-3 h-3" /> : <User className="w-3 h-3" />}
+                                            {u.role}
+                                        </span>
+                                    </div>
+                                    <div className="flex flex-col gap-1 items-end">
+                                        <span className="text-[10px] uppercase font-bold tracking-wider text-[var(--color-muted-fg)]">Joined</span>
+                                        <span className="text-xs font-medium text-[var(--color-fg)]">{new Date(u.createdAt).toLocaleDateString()}</span>
+                                    </div>
+                                </div>
+                                <div className="flex items-center justify-end gap-2 pt-1 border-t border-[var(--color-border)]/50 mt-1">
+                                    <button
+                                        onClick={() => setResetUser({ id: u.id, name: u.name })}
+                                        disabled={actionLoading === u.id}
+                                        className="flex-1 py-2 flex justify-center items-center gap-2 rounded-lg text-xs font-semibold text-[var(--color-muted-fg)] hover:text-amber-500 hover:bg-amber-500/10 bg-[var(--color-accent)] border border-[var(--color-border)] transition-colors disabled:opacity-50"
+                                    >
+                                        <Key className="w-4 h-4" /> Reset Password
+                                    </button>
+                                    <button
+                                        onClick={() => deleteUser(u.id, u.name)}
+                                        disabled={actionLoading === u.id}
+                                        className="py-2 px-3 flex justify-center items-center gap-2 rounded-lg text-xs font-semibold text-red-400 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 transition-colors disabled:opacity-50"
+                                        title="Delete user"
+                                    >
+                                        <Trash2 className="w-4 h-4" />
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {filtered.length === 0 && (
+                        <div className="text-center py-12 text-[var(--color-muted-fg)]">
+                            <Users className="w-8 h-8 mx-auto mb-2 opacity-30" />
+                            <p className="text-sm">No users found</p>
+                        </div>
+                    )}
                 </div>
             )}
 

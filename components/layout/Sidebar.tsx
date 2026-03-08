@@ -200,7 +200,7 @@ function SidebarShell({
                         <h1 className="text-sm font-bold text-slate-100">PRDGen AI</h1>
                     </div>
                     <div className="flex items-center gap-3">
-                        <div className={`size-8 rounded-full border border-slate-700 ${avatarBg} overflow-hidden flex items-center justify-center text-white text-xs font-bold`}>
+                        <div className={`relative size-8 rounded-full border border-slate-700 ${avatarBg} overflow-hidden flex items-center justify-center text-white text-xs font-bold`}>
                             {session?.user?.image ? (
                                 <Image src={session.user.image} alt={session.user.name || 'User'} fill className="object-cover" />
                             ) : (
