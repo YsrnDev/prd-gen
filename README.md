@@ -55,9 +55,16 @@ DATABASE_URL="postgresql://user:password@hostname:5432/dbname"
 BETTER_AUTH_SECRET="your-super-secret-key-min-32-chars"
 BETTER_AUTH_URL="http://localhost:3000"
 
-# (Optional) Seed Admin Credentials
-ADMIN_EMAIL="admin@prdgen.com"
-ADMIN_PASSWORD="SecretPassword123!"
+# OAuth Google (Optional - For Google Login)
+GOOGLE_CLIENT_ID="your-google-client-id"
+GOOGLE_CLIENT_SECRET="your-google-client-secret"
+
+# Data Encryption Key (For storing AI API Keys securely, min 32 chars)
+ENCRYPTION_KEY="your-super-secret-encryption-key-min-32-chars"
+
+# App Public Information
+NEXT_PUBLIC_APP_URL="http://localhost:3000"
+NEXT_PUBLIC_APP_NAME="PRDGen AI"
 ```
 
 ### 3. Database Migration & Push
