@@ -85,8 +85,7 @@ npm run dev
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the application.
 
 ## 📁 Project Structure
-
-\`\`\`
+```text
 ├── app/                  # Next.js App Router (Pages, API routes, Layouts)
 │   ├── (auth)/           # Login & Registration pages
 │   ├── admin/            # Admin Dashboard (Stats, Config, Users, Logs)
@@ -100,7 +99,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 │   └── ai/               # AI SDK configurations and utility wrappers
 ├── components/           # Reusable React components (UI elements)
 └── drizzle/              # Drizzle migrations and metadata
-\`\`\`
+```
 
 ## 🛡️ Authentication & Roles
 The platform utilizes two distinct roles:
