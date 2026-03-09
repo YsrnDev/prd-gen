@@ -52,12 +52,14 @@ function SidebarShell({
     brandSubtext,
     avatarBg,
     fallbackInitial,
+    hideMobileLogout,
 }: {
     navItems: { href: string; icon: string; label: string }[];
     brandIcon: string;
     brandSubtext: string;
     avatarBg: string;
     fallbackInitial: string;
+    hideMobileLogout?: boolean;
 }) {
     const pathname = usePathname();
     const { data: session } = useSession();
@@ -233,14 +235,16 @@ function SidebarShell({
                             </Link>
                         );
                     })}
-                    <button
-                        onClick={() => signOut({ fetchOptions: { onSuccess: () => { window.location.href = '/login'; } } })}
-                        className="flex flex-col items-center justify-center p-2 rounded-xl flex-1 min-w-0 transition-colors text-slate-400 hover:text-red-400"
-                        title="Sign out"
-                    >
-                        <span className="material-symbols-outlined text-[24px]">logout</span>
-                        <span className="text-[10px] font-medium mt-1 truncate w-full text-center">Logout</span>
-                    </button>
+                    {!hideMobileLogout && (
+                        <button
+                            onClick={() => signOut({ fetchOptions: { onSuccess: () => { window.location.href = '/login'; } } })}
+                            className="flex flex-col items-center justify-center p-2 rounded-xl flex-1 min-w-0 transition-colors text-slate-400 hover:text-red-400"
+                            title="Sign out"
+                        >
+                            <span className="material-symbols-outlined text-[24px]">logout</span>
+                            <span className="text-[10px] font-medium mt-1 truncate w-full text-center">Logout</span>
+                        </button>
+                    )}
                 </div>
             )}
 
@@ -287,6 +291,7 @@ export function AdminSidebar() {
             brandSubtext="Admin Panel"
             avatarBg="bg-emerald-500"
             fallbackInitial="A"
+            hideMobileLogout={true}
         />
     );
 }
