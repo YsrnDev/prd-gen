@@ -89,7 +89,7 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ id: 
             </div>
 
             {/* Profile Card */}
-            <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl p-6 flex items-start gap-6">
+            <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl p-6 flex flex-col sm:flex-row items-center sm:items-start gap-6 text-center sm:text-left">
                 <div className={cn(
                     'w-24 h-24 rounded-full flex flex-shrink-0 items-center justify-center text-white text-3xl font-bold overflow-hidden relative',
                     user.role === 'admin' ? 'bg-red-500' : 'primary-gradient'
@@ -100,9 +100,9 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ id: 
                         user.name?.charAt(0)?.toUpperCase() || 'U'
                     )}
                 </div>
-                <div className="space-y-3">
+                <div className="space-y-3 w-full min-w-0">
                     <div>
-                        <h2 className="text-2xl font-bold text-[var(--color-fg)] flex items-center gap-2">
+                        <h2 className="text-2xl font-bold text-[var(--color-fg)] flex flex-wrap justify-center sm:justify-start items-center gap-2">
                             {user.name}
                             <span className={cn(
                                 'inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold ml-2',
@@ -112,12 +112,12 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ id: 
                                 {user.role}
                             </span>
                         </h2>
-                        <p className="text-[var(--color-muted-fg)]">{user.email}</p>
+                        <p className="text-[var(--color-muted-fg)] truncate max-w-full">{user.email}</p>
                     </div>
-                    <div className="flex items-center gap-6 text-sm text-[var(--color-muted-fg)]">
-                        <div className="flex items-center gap-2">
-                            <Hash className="w-4 h-4" />
-                            ID: <span className="font-mono text-xs">{user.id}</span>
+                    <div className="flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-2 sm:gap-6 text-sm text-[var(--color-muted-fg)] w-full">
+                        <div className="flex items-center gap-2 max-w-full">
+                            <Hash className="w-4 h-4 flex-shrink-0" />
+                            ID: <span className="font-mono text-xs truncate">{user.id}</span>
                         </div>
                         <div className="flex items-center gap-2">
                             <Calendar className="w-4 h-4" />
@@ -150,15 +150,15 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ id: 
                             <ul className="divide-y divide-[var(--color-border)]">
                                 {prds.map((prd: PRDData) => (
                                     <li key={prd.id} className="p-4 hover:bg-[var(--color-accent)] transition-colors">
-                                        <div className="flex justify-between items-start mb-1">
-                                            <h4 className="font-medium text-[var(--color-fg)] line-clamp-1" title={prd.title}>
+                                        <div className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-center mb-1 gap-1 sm:gap-0">
+                                            <h4 className="font-medium text-[var(--color-fg)] line-clamp-1 break-all" title={prd.title}>
                                                 {prd.title}
                                             </h4>
-                                            <span className="text-xs font-mono bg-[var(--color-bg)] py-0.5 px-1.5 rounded text-[var(--color-muted-fg)] whitespace-nowrap">
+                                            <span className="text-xs font-mono bg-[var(--color-bg)] py-0.5 px-1.5 rounded text-[var(--color-muted-fg)] whitespace-nowrap align-self-start sm:align-self-auto">
                                                 {(prd.size / 1024).toFixed(1)} KB
                                             </span>
                                         </div>
-                                        <div className="flex items-center gap-4 text-xs text-[var(--color-muted-fg)]">
+                                        <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs text-[var(--color-muted-fg)]">
                                             <div className="flex items-center gap-1">
                                                 <Calendar className="w-3 h-3" />
                                                 {new Date(prd.createdAt).toLocaleDateString()}
@@ -197,10 +197,10 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ id: 
                                 {sessions.map((session: SessionData) => (
                                     <li key={session.id} className="p-4 hover:bg-[var(--color-accent)] transition-colors">
                                         <div className="flex justify-between items-start mb-2">
-                                            <div className="flex items-center gap-2">
-                                                <span className="font-medium text-[var(--color-fg)]">Session #{session.id}</span>
+                                            <div className="flex flex-wrap items-center gap-2">
+                                                <span className="font-medium text-[var(--color-fg)] break-all">Session #{session.id}</span>
                                                 <span className={cn(
-                                                    'text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border',
+                                                    'text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border whitespace-nowrap',
                                                     session.status === 'completed'
                                                         ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20'
                                                         : 'bg-amber-500/10 text-amber-500 border-amber-500/20'
@@ -209,7 +209,7 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ id: 
                                                 </span>
                                             </div>
                                         </div>
-                                        <div className="flex items-center gap-4 text-xs text-[var(--color-muted-fg)]">
+                                        <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs text-[var(--color-muted-fg)]">
                                             <div className="flex items-center gap-1" title="Last Activity">
                                                 <Clock className="w-3 h-3" />
                                                 {new Date(session.updatedAt).toLocaleDateString()} {new Date(session.updatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
@@ -227,11 +227,11 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ id: 
                 </div>
             </div>
 
-            <div className="mt-8 text-center">
-                <p className="text-xs text-[var(--color-muted-fg)] flex items-center justify-center gap-2">
-                    <span className="inline-block w-2 h-2 rounded-full bg-blue-500"></span>
-                    <strong>Privacy Notice:</strong> Access restricted to document metadata only. Content viewing is disabled for user privacy.
-                </p>
+            <div className="mt-8 text-center px-4">
+                <div className="text-xs text-[var(--color-muted-fg)] flex items-start sm:items-center justify-center gap-2 text-left sm:text-center max-w-2xl mx-auto">
+                    <span className="inline-block w-2 h-2 rounded-full bg-blue-500 flex-shrink-0 mt-1 sm:mt-0"></span>
+                    <p><strong>Privacy Notice:</strong> Access restricted to document metadata only. Content viewing is disabled for user privacy.</p>
+                </div>
             </div>
         </div>
     );
