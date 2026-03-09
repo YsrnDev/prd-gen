@@ -114,7 +114,7 @@ export default function DashboardPage() {
             </header>
 
             {/* Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                 {stats.map((stat, i) => (
                     <div key={i} className="bg-slate-900 border border-slate-800 p-6 rounded-xl flex flex-col gap-1 shadow-sm">
                         <div className="flex justify-between items-center mb-2">
