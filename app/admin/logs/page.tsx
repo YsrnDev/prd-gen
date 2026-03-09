@@ -18,6 +18,8 @@ export default function SystemLogsPage() {
     const [searchQuery, setSearchQuery] = useState('');
     const [logs, setLogs] = useState<SystemLog[]>([]);
     const [loading, setLoading] = useState(true);
+    const [currentPage, setCurrentPage] = useState(1);
+    const ITEMS_PER_PAGE = 5;
 
     const fetchLogs = async () => {
         setLoading(true);
@@ -38,12 +40,20 @@ export default function SystemLogsPage() {
         fetchLogs();
     }, []);
 
+    // Reset page to 1 on filter or search changes
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [filter, searchQuery]);
+
     const filteredLogs = logs.filter(log => {
         const matchesFilter = filter === 'ALL' || log.event_type === filter || log.status === filter;
         const searchTarget = `${log.description} ${log.user || ''}`.toLowerCase();
         const matchesSearch = searchTarget.includes(searchQuery.toLowerCase());
         return matchesFilter && matchesSearch;
     });
+
+    const totalPages = Math.ceil(filteredLogs.length / ITEMS_PER_PAGE);
+    const currentLogs = filteredLogs.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
     function getEventIcon(type: string) {
         switch (type) {
@@ -153,7 +163,7 @@ export default function SystemLogsPage() {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-[var(--color-border)]">
-                                {filteredLogs.length === 0 ? (
+                                {currentLogs.length === 0 ? (
                                     <tr>
                                         <td colSpan={5} className="px-6 py-12 text-center text-[var(--color-muted-fg)]">
                                             <Search className="w-10 h-10 mx-auto mb-3 opacity-50 block" />
@@ -161,7 +171,7 @@ export default function SystemLogsPage() {
                                         </td>
                                     </tr>
                                 ) : (
-                                    filteredLogs.map((log) => {
+                                    currentLogs.map((log) => {
                                         const date = new Date(log.timestamp);
                                         return (
                                             <tr key={log.id} className="hover:bg-[#1a2038] transition-colors group">
@@ -207,13 +217,13 @@ export default function SystemLogsPage() {
 
                     {/* Mobile View — mirrors User Management pattern exactly */}
                     <div className="md:hidden flex flex-col divide-y divide-[var(--color-border)]">
-                        {filteredLogs.length === 0 ? (
+                        {currentLogs.length === 0 ? (
                             <div className="text-center py-12 text-[var(--color-muted-fg)]">
                                 <Search className="w-8 h-8 mx-auto mb-2 opacity-30" />
                                 <p className="text-sm">No logs found</p>
                             </div>
                         ) : (
-                            filteredLogs.map((log) => {
+                            currentLogs.map((log) => {
                                 const date = new Date(log.timestamp);
                                 return (
                                     <div key={log.id} className="p-3 hover:bg-[#1a2038] transition-colors flex items-center gap-3">
@@ -239,13 +249,29 @@ export default function SystemLogsPage() {
                     </div>
 
                     {/* Pagination footer */}
-                    <div className="p-3 sm:p-4 border-t border-[var(--color-border)] bg-[#131b33] flex flex-col sm:flex-row gap-3 justify-between items-center text-sm text-[var(--color-muted-fg)]">
-                        <span className="font-medium text-xs sm:text-sm">Showing {filteredLogs.length} entries</span>
-                        <div className="flex gap-2">
-                            <button disabled className="px-3 py-1.5 rounded-lg border border-[var(--color-border)] bg-[var(--color-card)] opacity-50 cursor-not-allowed font-medium transition-colors text-xs sm:text-sm">Previous</button>
-                            <button disabled className="px-3 py-1.5 rounded-lg border border-[var(--color-border)] bg-[var(--color-card)] opacity-50 cursor-not-allowed font-medium transition-colors text-xs sm:text-sm">Next</button>
+                    {totalPages > 1 && (
+                        <div className="p-3 sm:p-4 border-t border-[var(--color-border)] bg-[#131b33] flex flex-col sm:flex-row gap-3 justify-between items-center text-sm text-[var(--color-muted-fg)]">
+                            <span className="font-medium text-xs sm:text-sm">
+                                Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1} to {Math.min(currentPage * ITEMS_PER_PAGE, filteredLogs.length)} of {filteredLogs.length} entries
+                            </span>
+                            <div className="flex gap-2">
+                                <button
+                                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                                    disabled={currentPage === 1}
+                                    className="px-3 py-1.5 rounded-lg border border-[var(--color-border)] bg-[var(--color-card)] hover:bg-[var(--color-accent)] disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-colors text-xs sm:text-sm"
+                                >
+                                    Previous
+                                </button>
+                                <button
+                                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                                    disabled={currentPage === totalPages}
+                                    className="px-3 py-1.5 rounded-lg border border-[var(--color-border)] bg-[var(--color-card)] hover:bg-[var(--color-accent)] disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-colors text-xs sm:text-sm"
+                                >
+                                    Next
+                                </button>
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </div>
             )}
         </div>
