@@ -5,6 +5,7 @@ import { Users, Trash2, Crown, User, Loader2, RefreshCw, Search, Key, X, EyeOff,
 import { cn } from '@/lib/utils';
 
 import Image from 'next/image';
+import Link from 'next/link';
 
 interface UserData {
     id: string;
@@ -155,9 +156,11 @@ export default function AdminUsersPage() {
                                                         u.name?.charAt(0)?.toUpperCase() || 'U'
                                                     )}
                                                 </div>
-                                                <div>
-                                                    <p className="text-sm font-medium text-[var(--color-fg)]">{u.name}</p>
-                                                    <p className="text-xs text-[var(--color-muted-fg)]">{u.email}</p>
+                                                <div className="flex-1 min-w-0 flex flex-col justify-center">
+                                                    <Link href={`/admin/users/${u.id}`} className="text-sm font-medium text-[var(--color-fg)] hover:text-blue-500 hover:underline transition-colors truncate">
+                                                        {u.name}
+                                                    </Link>
+                                                    <p className="text-xs text-[var(--color-muted-fg)] truncate">{u.email}</p>
                                                 </div>
                                             </div>
                                         </td>
@@ -219,7 +222,9 @@ export default function AdminUsersPage() {
                                 {/* Info */}
                                 <div className="flex-1 min-w-0 flex flex-col">
                                     <div className="flex items-center gap-2 mb-0.5">
-                                        <p className="text-sm font-bold text-[var(--color-fg)] truncate min-w-0">{u.name}</p>
+                                        <Link href={`/admin/users/${u.id}`} className="text-sm font-bold text-[var(--color-fg)] truncate min-w-0 hover:text-blue-500 hover:underline transition-colors">
+                                            {u.name}
+                                        </Link>
                                         <span className={cn(
                                             'inline-flex flex-shrink-0 items-center gap-0.5 px-1.5 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider',
                                             u.role === 'admin' ? 'bg-red-500/10 text-red-500 border border-red-500/20' : 'bg-blue-500/10 text-blue-500 border border-blue-500/20'

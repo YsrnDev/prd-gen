@@ -1,13 +1,68 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
-import { user } from '@/lib/db/schema';
-import { eq } from 'drizzle-orm';
+import { user, prdDocument, wizardSession } from '@/lib/db/schema';
+import { eq, desc } from 'drizzle-orm';
 
 type Params = { params: Promise<{ id: string }> };
 
 function isAdmin(session: Awaited<ReturnType<typeof auth.api.getSession>>) {
     return session && (session.user as { role?: string }).role === 'admin';
+}
+
+// GET /api/admin/users/[id] - Get user details, prds, and sessions
+export async function GET(request: NextRequest, { params }: Params) {
+    try {
+        const session = await auth.api.getSession({ headers: request.headers });
+        if (!isAdmin(session)) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+
+        const { id } = await params;
+
+        // Fetch User
+        const [userData] = await db.select().from(user).where(eq(user.id, id));
+        if (!userData) return NextResponse.json({ error: 'User not found' }, { status: 404 });
+
+        // Fetch Completed PRDs
+        const prds = await db
+            .select({
+                id: prdDocument.id,
+                title: prdDocument.title,
+                content: prdDocument.content, // To calculate size, but we won't return full content to client
+                createdAt: prdDocument.createdAt,
+            })
+            .from(prdDocument)
+            .where(eq(prdDocument.userId, id))
+            .orderBy(desc(prdDocument.createdAt));
+
+        // Fetch Wizard Sessions (Drafts)
+        const sessions = await db
+            .select({
+                id: wizardSession.id,
+                status: wizardSession.status,
+                createdAt: wizardSession.createdAt,
+                updatedAt: wizardSession.updatedAt,
+            })
+            .from(wizardSession)
+            .where(eq(wizardSession.userId, id))
+            .orderBy(desc(wizardSession.updatedAt));
+
+        // Safely strip PRD content size down to metadata
+        const safePrds = prds.map((prd) => ({
+            id: prd.id,
+            title: prd.title || 'Untitled PRD',
+            createdAt: prd.createdAt,
+            size: prd.content?.length || 0,
+        }));
+
+        return NextResponse.json({
+            user: { id: userData.id, name: userData.name, email: userData.email, role: userData.role, createdAt: userData.createdAt, image: userData.image },
+            prds: safePrds,
+            sessions,
+        });
+    } catch (error) {
+        console.error('Error fetching user details:', error);
+        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    }
 }
 
 // PATCH /api/admin/users/[id] - Update role
