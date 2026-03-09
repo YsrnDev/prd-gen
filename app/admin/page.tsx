@@ -1,13 +1,28 @@
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { user as userSchema, prdDocument, wizardSession } from '@/lib/db/schema';
-import { sql, count, desc, gte } from 'drizzle-orm';
+import { sql, count, desc, gte, eq } from 'drizzle-orm';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { ExportReportButton, MaintenanceToggleButton } from './components/DashboardButtons';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = { title: 'Admin Dashboard' };
+
+function formatTimeAgo(date: Date) {
+    const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
+    let interval = seconds / 31536000;
+    if (interval > 1) return Math.floor(interval) + 'yr ago';
+    interval = seconds / 2592000;
+    if (interval > 1) return Math.floor(interval) + 'mo ago';
+    interval = seconds / 86400;
+    if (interval > 1) return Math.floor(interval) + 'd ago';
+    interval = seconds / 3600;
+    if (interval > 1) return Math.floor(interval) + 'h ago';
+    interval = seconds / 60;
+    if (interval > 1) return Math.floor(interval) + 'm ago';
+    return 'Just now';
+}
 
 export default async function AdminDashboardPage() {
     const session = await auth.api.getSession({ headers: await headers() });
@@ -43,11 +58,46 @@ export default async function AdminDashboardPage() {
             .orderBy(sql`to_char(${wizardSession.createdAt}, 'YYYY-MM-DD')`),
     ]);
 
-    // Fetch latest users for real recent activity
-    const recentUsers = await db.select()
-        .from(userSchema)
-        .orderBy(desc(userSchema.createdAt))
-        .limit(4);
+    // Fetch latest activities from 3 sources
+    const [recentUsersRaw, recentPRDsRaw, recentSessionsRaw] = await Promise.all([
+        db.select().from(userSchema).orderBy(desc(userSchema.createdAt)).limit(5),
+        db.select({ id: prdDocument.id, title: prdDocument.title, createdAt: prdDocument.createdAt, userName: userSchema.name })
+            .from(prdDocument)
+            .leftJoin(userSchema, eq(prdDocument.userId, userSchema.id))
+            .orderBy(desc(prdDocument.createdAt)).limit(5),
+        db.select({ id: wizardSession.id, status: wizardSession.status, createdAt: wizardSession.createdAt, userName: userSchema.name })
+            .from(wizardSession)
+            .leftJoin(userSchema, eq(wizardSession.userId, userSchema.id))
+            .orderBy(desc(wizardSession.createdAt)).limit(5),
+    ]);
+
+    // Combine and sort activities
+    const combinedActivities = [
+        ...recentUsersRaw.map(u => ({
+            id: `user-${u.id}`,
+            title: `New user: ${u.name || 'Anonymous User'}`,
+            subtitle: `${u.email} • Role: ${u.role}`,
+            timestamp: new Date(u.createdAt),
+            icon: 'person_add',
+            bgColor: 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.3)]'
+        })),
+        ...recentPRDsRaw.map(p => ({
+            id: `prd-${p.id}`,
+            title: `Generated PRD: ${p.title || 'Untitled'}`,
+            subtitle: `By ${p.userName || 'Anonymous'}`,
+            timestamp: new Date(p.createdAt),
+            icon: 'description',
+            bgColor: 'bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.3)]'
+        })),
+        ...recentSessionsRaw.map(s => ({
+            id: `session-${s.id}`,
+            title: 'Started AI Session',
+            subtitle: `By ${s.userName || 'Anonymous'} • ${s.status === 'completed' ? 'Done' : 'Draft'}`,
+            timestamp: new Date(s.createdAt),
+            icon: 'memory',
+            bgColor: 'bg-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.3)]'
+        }))
+    ].sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime()).slice(0, 5);
 
     // Build 7-day chart data
     const dayLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -176,18 +226,22 @@ export default async function AdminDashboardPage() {
                 <div className="glass-card p-5">
                     <h3 className="text-sm font-bold text-[var(--color-fg)] mb-4">Recent Activity</h3>
                     <div className="space-y-4">
-                        {recentUsers.length === 0 ? (
-                            <p className="text-xs text-[var(--color-muted-fg)]">No users registered yet.</p>
+                        {combinedActivities.length === 0 ? (
+                            <p className="text-xs text-[var(--color-muted-fg)]">No activities yet.</p>
                         ) : (
-                            recentUsers.map((u, i) => (
-                                <div key={u.id} className="flex gap-3">
-                                    <div className={`w-2.5 h-2.5 rounded-full ${i === 0 ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]' : 'bg-blue-500'} mt-1.5 flex-shrink-0`} />
+                            combinedActivities.map((act) => (
+                                <div key={act.id} className="flex gap-3">
+                                    <div className={`w-7 h-7 rounded-lg ${act.bgColor} flex items-center justify-center flex-shrink-0 mt-0.5`}>
+                                        <span className="material-symbols-outlined text-[16px] text-white/90">{act.icon}</span>
+                                    </div>
                                     <div className="min-w-0">
-                                        <p className="text-sm font-semibold text-[var(--color-fg)]">{u.name || 'Anonymous User'}</p>
-                                        <p className="text-xs text-[var(--color-muted-fg)] mt-0.5 truncate">{u.email}</p>
-                                        <p className="text-[10px] text-[var(--color-muted-fg)] uppercase tracking-wider mt-1 font-semibold">
-                                            Role: {u.role || 'user'}
-                                        </p>
+                                        <p className="text-sm font-semibold text-[var(--color-fg)] truncate">{act.title}</p>
+                                        <div className="flex items-center gap-2 mt-0.5">
+                                            <p className="text-xs text-[var(--color-muted-fg)] truncate">{act.subtitle}</p>
+                                            <span className="text-[10px] text-slate-500 font-medium shrink-0">
+                                                {formatTimeAgo(act.timestamp)}
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             ))
