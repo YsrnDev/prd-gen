@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
-import { prdDocument, wizardSession, prdChatLog } from '@/lib/db/schema';
+import { prdDocument, wizardSession, prdChatLog, user } from '@/lib/db/schema';
 import { getAIConfig, createAIProvider } from '@/lib/ai/config';
 import { getPRDPrompt } from '@/lib/ai/prompts';
 import { streamText } from 'ai';
@@ -18,6 +18,11 @@ export async function POST(request: NextRequest, { params }: Params) {
     try {
         const session = await auth.api.getSession({ headers: request.headers });
         if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+        const userData = await db.select().from(user).where(eq(user.id, session.user.id)).limit(1);
+        if (userData.length > 0 && (!userData[0].tier || userData[0].tier === 'FREE')) {
+            return NextResponse.json({ error: 'Upgrade to PLUS for AI Chat Revisions' }, { status: 403 });
+        }
 
         const { id } = await params;
         const body = await request.json();

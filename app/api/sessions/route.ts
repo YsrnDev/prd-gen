@@ -1,13 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
-import { wizardSession } from '@/lib/db/schema';
+import { wizardSession, prdDocument, user } from '@/lib/db/schema';
+import { eq } from 'drizzle-orm';
 
 // POST /api/sessions - Create new wizard session
 export async function POST(request: NextRequest) {
     try {
         const session = await auth.api.getSession({ headers: request.headers });
         if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+        // PRD Quota Validation for FREE Tier
+        const userData = await db.select().from(user).where(eq(user.id, session.user.id)).limit(1);
+        if (userData.length > 0) {
+            const currentTier = userData[0].tier || 'FREE';
+            if (currentTier === 'FREE') {
+                const prdCount = await db.select().from(prdDocument).where(eq(prdDocument.userId, session.user.id));
+                if (prdCount.length >= 1) {
+                    return NextResponse.json({
+                        error: 'QUOTA_EXCEEDED',
+                        message: 'Free tier is limited to 1 PRD. Please upgrade to PLUS or PRO to create more.'
+                    }, { status: 403 });
+                }
+            }
+        }
 
         const [newSession] = await db
             .insert(wizardSession)

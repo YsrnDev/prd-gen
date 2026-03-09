@@ -25,6 +25,8 @@ export default function WizardPage() {
     const progress = ((currentStep + 1) / WIZARD_STEPS.length) * 100;
     const step = WIZARD_STEPS[currentStep];
 
+    const isFreeTier = (session?.user as any)?.tier === 'FREE' || !(session?.user as any)?.tier;
+
     useEffect(() => {
         const initSession = async () => {
             const id = parseInt(sessionId);
@@ -198,12 +200,25 @@ export default function WizardPage() {
                                         {"aiRecommendable" in question && question.aiRecommendable && (
                                             <button
                                                 type="button"
-                                                onClick={() => handleRecommend(question.id)}
+                                                onClick={() => {
+                                                    if (isFreeTier) {
+                                                        router.push('/dashboard/pricing');
+                                                    } else {
+                                                        handleRecommend(question.id);
+                                                    }
+                                                }}
                                                 disabled={recommendingFor === question.id}
-                                                className="flex items-center gap-2 mt-2 px-4 py-2 rounded-lg bg-gradient-to-r from-[#135bec]/20 to-purple-500/20 border border-[#135bec]/30 text-sm font-semibold text-[#6ea8fe] hover:from-[#135bec]/30 hover:to-purple-500/30 hover:text-white transition-all disabled:opacity-60 disabled:cursor-wait"
+                                                className={cn(
+                                                    "flex items-center gap-2 mt-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all",
+                                                    isFreeTier
+                                                        ? "bg-slate-800/50 border border-slate-700/50 text-slate-500 hover:text-slate-300 hover:bg-slate-800"
+                                                        : "bg-gradient-to-r from-[#135bec]/20 to-purple-500/20 border border-[#135bec]/30 text-[#6ea8fe] hover:from-[#135bec]/30 hover:to-purple-500/30 hover:text-white disabled:opacity-60 disabled:cursor-wait"
+                                                )}
                                             >
                                                 {recommendingFor === question.id ? (
                                                     <><Loader2 className="w-4 h-4 animate-spin" /> Generating recommendation...</>
+                                                ) : isFreeTier ? (
+                                                    <><AlertCircle className="w-4 h-4" /> Upgrade to PLUS for AI Recommendations</>
                                                 ) : (
                                                     <><Sparkles className="w-4 h-4" /> Recommend with AI</>
                                                 )}

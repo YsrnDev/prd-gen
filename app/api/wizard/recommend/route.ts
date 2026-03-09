@@ -1,3 +1,6 @@
+import { db } from '@/lib/db';
+import { user } from '@/lib/db/schema';
+import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { getAIConfig, createAIProvider } from '@/lib/ai/config';
@@ -11,6 +14,11 @@ export async function POST(request: NextRequest) {
     try {
         const session = await auth.api.getSession({ headers: request.headers });
         if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+        const userData = await db.select().from(user).where(eq(user.id, session.user.id)).limit(1);
+        if (userData.length > 0 && (!userData[0].tier || userData[0].tier === 'FREE')) {
+            return NextResponse.json({ error: 'Upgrade to PLUS for AI Recommendations' }, { status: 403 });
+        }
 
         const { answers, questionId } = await request.json();
 

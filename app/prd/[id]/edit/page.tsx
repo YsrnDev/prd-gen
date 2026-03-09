@@ -11,6 +11,7 @@ import { cn } from '@/lib/utils';
 import { MarkdownRenderer } from '@/components/MarkdownRenderer';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { useSession } from '@/lib/auth-client';
 
 function wordCount(text: string): number {
     if (!text) return 0;
@@ -21,6 +22,7 @@ export default function PRDEditPage() {
     const params = useParams();
     const router = useRouter();
     const id = params.id as string;
+    const { data: session } = useSession();
 
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
@@ -376,6 +378,30 @@ export default function PRDEditPage() {
                                 setIsDragging(true);
                             }}
                         />
+
+                        {/* Paywall Overlay */}
+                        {(session?.user as any)?.tier === 'FREE' && (
+                            <div className="absolute inset-0 z-20 flex flex-col items-center justify-center p-6 bg-slate-900/60 backdrop-blur-sm rounded-l-2xl">
+                                <div className="bg-slate-900 p-6 rounded-2xl border border-slate-700 shadow-xl text-center space-y-4 max-w-[90%]">
+                                    <div className="w-12 h-12 bg-amber-500/10 rounded-full flex items-center justify-center mx-auto">
+                                        <Sparkles className="w-6 h-6 text-amber-500" />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-white font-bold text-lg mb-1">AI Chat Locked</h3>
+                                        <p className="text-sm text-slate-400">Upgrade to PLUS or PRO to unlock AI PRD revisions and interactive chat.</p>
+                                    </div>
+                                    <Link
+                                        href="/dashboard/pricing"
+                                        className="w-full block py-2.5 px-4 rounded-xl bg-amber-500 text-slate-900 font-semibold text-sm hover:bg-amber-400 transition-colors"
+                                    >
+                                        View Plans
+                                    </Link>
+                                    <button onClick={() => setChatOpen(false)} className="text-xs text-slate-500 hover:text-white transition-colors">
+                                        Close Chat
+                                    </button>
+                                </div>
+                            </div>
+                        )}
 
                         <div className="px-4 py-2 border-b border-slate-800 flex items-center justify-between">
                             <div className="flex items-center gap-2">
