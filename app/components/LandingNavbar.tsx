@@ -16,7 +16,7 @@ export default function LandingNavbar() {
         <header data-anim="navbar" className="flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-800/50 px-6 md:px-20 py-4 bg-[#0f172a]/80 backdrop-blur-md fixed top-0 left-0 right-0 z-50">
             {/* Logo */}
             <div className="flex items-center gap-3 shrink-0">
-                <Image src="/logo.webp" alt="PRDGen AI Logo" width={36} height={36} className="object-contain" />
+                <Image src="/logo.webp" alt="PRDGen AI Logo" width={36} height={36} className="object-contain rounded-xl" />
                 <h2 className="text-slate-100 text-xl font-extrabold leading-tight tracking-tight">PRDGen AI</h2>
             </div>
 

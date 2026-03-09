@@ -90,7 +90,7 @@ function SidebarShell({
             <div className={`flex items-center mb-6 ${collapsed && !isMobile ? 'justify-center' : 'gap-3'}`}>
                 <div className="group/logo relative flex-shrink-0">
                     <div className="flex items-center justify-center size-10 rounded-lg overflow-hidden bg-white/5">
-                        <Image src="/logo.webp" alt="PRDGen AI" width={36} height={36} className="object-contain" />
+                        <Image src="/logo.webp" alt="PRDGen AI" width={36} height={36} className="object-contain rounded-xl" />
                     </div>
                     {collapsed && !isMobile && (
                         <button
