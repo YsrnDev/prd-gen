@@ -77,8 +77,14 @@ export default function SettingsClient() {
                     className="flex items-center gap-3 px-4 py-3 rounded-lg border border-red-500/30 text-red-500 hover:bg-red-500/10 transition-colors text-sm font-bold w-full justify-center"
                 >
                     <span className="material-symbols-outlined text-[20px]">logout</span>
-                    Sign out of PRDGen AI
+                    Sign out
                 </button>
+            </div>
+
+            {/* Footer */}
+            <div className="mt-12 text-center text-xs text-slate-500">
+                <p>&copy; {new Date().getFullYear()} PRDGen AI. All rights reserved.</p>
+                <p className="mt-1">Version 0.1.0</p>
             </div>
         </div>
     );
