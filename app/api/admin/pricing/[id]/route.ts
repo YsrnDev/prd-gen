@@ -11,7 +11,7 @@ async function isAdmin(req: NextRequest) {
 }
 
 // PATCH update a specific plan
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     if (!(await isAdmin(req))) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
@@ -28,9 +28,11 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
         if (isActive !== undefined) updateData.isActive = isActive;
         updateData.updatedAt = new Date();
 
+        const { id } = await params;
+
         const updated = await db.update(schema.subscriptionPlan)
             .set(updateData)
-            .where(eq(schema.subscriptionPlan.id, parseInt(params.id)))
+            .where(eq(schema.subscriptionPlan.id, parseInt(id)))
             .returning();
 
         if (updated.length === 0) {
@@ -45,21 +47,23 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
 }
 
 // DELETE a specific plan
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     if (!(await isAdmin(req))) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
     try {
+        const { id } = await params;
+
         const deleted = await db.delete(schema.subscriptionPlan)
-            .where(eq(schema.subscriptionPlan.id, parseInt(params.id)))
+            .where(eq(schema.subscriptionPlan.id, parseInt(id)))
             .returning();
 
         if (deleted.length === 0) {
             return NextResponse.json({ error: 'Plan not found' }, { status: 404 });
         }
 
-        return NextResponse.json({ success: true, id: params.id });
+        return NextResponse.json({ success: true, id });
     } catch (error) {
         console.error('Failed to delete pricing plan:', error);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
