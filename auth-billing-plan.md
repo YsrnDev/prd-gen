@@ -29,15 +29,15 @@ Kita perlu memperbarui `lib/db/schema.ts` untuk merekam data verifikasi dan stat
 3.  **UI Dashboard / Banner:** Menambahkan *alert banner* statis di atas menu `/dashboard` (warna kuning/merah) yang menyuruh pengguna mengecek email.
 4.  **API Guard:** Menyuntikkan validasi baru di fungsi `verifyUserVerification()` sebelum proses insert tabel ke `prdDocument`.
 
-## 📦 Fase 3: Batasan Akses (Roles & Limits)
-1.  **Validasi Kuota PRD:** Saat *user* klik "Buat PRD Baru", cek jumlah PRD mereka di database. Jika `tier === 'FREE'` dan `PRD count >= 1`, luncurkan *modal/popup upgrade*.
-2.  **Pemblokiran AI Builder/Rekomendasi:** Menyembunyikan/menonaktifkan tombol AI pada komponen "Generate With AI".
-3.  **Pemblokiran Fitur Chat (Revisi PRD):** Mengunci antarmuka sidebar chat jika paket yang diakses tipe "Free". Menampilkan UI *Paywall* transparan di atas komponen obrolan.
+## 📦 Fase 3: Batasan Akses (Roles & Limits) ✅
+1.  ✅ **Validasi Kuota PRD:** Saat *user* klik "Buat PRD Baru", cek jumlah PRD mereka di database. Jika `tier === 'FREE'` dan `PRD count >= 1`, luncurkan *modal/popup upgrade*.
+2.  ✅ **Pemblokiran AI Builder/Rekomendasi:** Menyembunyikan/menonaktifkan tombol AI pada komponen "Generate With AI".
+3.  ✅ **Pemblokiran Fitur Chat (Revisi PRD):** Mengunci antarmuka sidebar chat jika paket yang diakses tipe "Free". Menampilkan UI *Paywall* transparan di atas komponen obrolan.
 
-## 💳 Fase 4: Integrasi Midtrans
-1.  **Checkout API (`/api/checkout`):** Membuat *endpoint* yang menggunakan Node SDK Midtrans (`midtrans-client`) untuk menghasilkan *Snap Token*.
-2.  **Midtrans Snap UI:** Memasang script UI Midtrans *Pop-up* di Next.js saat *user* menekan tombol langganan `PLUS` atau `PRO`.
-3.  **Webhook Handler (`/api/webhooks/midtrans`):** Membuat endpoint publik yang menerima sinyal dari server Midtrans (Contoh: `settlement`, `pending`, `expired`) untuk memperbarui status langganan di database secara *real-time*.
+## 💳 Fase 4: Integrasi Midtrans ✅
+1.  ✅ **Checkout API (`/api/checkout`):** Membuat *endpoint* yang menggunakan Node SDK Midtrans (`midtrans-client`) untuk menghasilkan *Snap Token*.
+2.  ✅ **Midtrans Snap UI:** Halaman `/dashboard/pricing` dengan Snap Pop-up saat *user* menekan tombol langganan `PLUS` atau `PRO`.
+3.  ✅ **Webhook Handler (`/api/webhooks/midtrans`):** Membuat endpoint publik yang menerima sinyal dari server Midtrans (Contoh: `settlement`, `pending`, `expired`) untuk memperbarui status langganan di database secara *real-time*.
 
 ## 🧪 Fase 5: Testing (Sandbox)
 1.  Pengujian pembuatan akun murni hingga penerimaan email verifikasi via Brevo/Resend.
