@@ -3,19 +3,48 @@
 import { useSession, signOut } from '@/lib/auth-client';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-
 import Image from 'next/image';
+import { useState, useEffect } from 'react';
+import { AlertTriangle, Loader2, X } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 export default function SettingsClient() {
     const { data: session } = useSession();
     const router = useRouter();
+    const [maintenanceMode, setMaintenanceMode] = useState(false);
+    const [loadingMaintenance, setLoadingMaintenance] = useState(false);
+    const [fetchingMaintenance, setFetchingMaintenance] = useState(true);
+
+    const userRole = (session?.user as { role?: string })?.role;
+    const isAdmin = userRole === 'admin';
+
+    useEffect(() => {
+        if (!isAdmin) { setFetchingMaintenance(false); return; }
+        fetch('/api/admin/maintenance')
+            .then((r) => r.json())
+            .then((d) => setMaintenanceMode(d.maintenanceMode ?? false))
+            .finally(() => setFetchingMaintenance(false));
+    }, [isAdmin]);
 
     const handleSignOut = async () => {
         await signOut();
         router.push('/');
     };
 
-    const userRole = (session?.user as { role?: string })?.role;
+    const handleToggleMaintenance = async () => {
+        setLoadingMaintenance(true);
+        const next = !maintenanceMode;
+        try {
+            const res = await fetch('/api/admin/maintenance', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ maintenanceMode: next }),
+            });
+            if (res.ok) setMaintenanceMode(next);
+        } finally {
+            setLoadingMaintenance(false);
+        }
+    };
 
     return (
         <div className="max-w-3xl mx-auto">
@@ -69,6 +98,64 @@ export default function SettingsClient() {
                 </div>
             </div>
 
+
+            {/* Maintenance Mode — admin only */}
+            {isAdmin && !fetchingMaintenance && (
+                <div className={cn(
+                    'mb-6 rounded-xl border p-5 transition-all',
+                    maintenanceMode
+                        ? 'bg-amber-500/10 border-amber-500/30'
+                        : 'bg-slate-900 border-slate-800'
+                )}>
+                    <div className="flex items-center justify-between gap-4">
+                        <div className="flex items-start gap-3">
+                            <div className={cn(
+                                'w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0',
+                                maintenanceMode ? 'bg-amber-500/15 text-amber-400' : 'bg-slate-800 text-slate-400'
+                            )}>
+                                <AlertTriangle className="w-5 h-5" />
+                            </div>
+                            <div>
+                                <div className="flex items-center gap-2">
+                                    <p className="text-sm font-bold text-white">Maintenance Mode</p>
+                                    <span className={cn(
+                                        'text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider border',
+                                        maintenanceMode
+                                            ? 'bg-amber-500/20 text-amber-400 border-amber-500/30'
+                                            : 'bg-slate-800 text-slate-500 border-slate-700'
+                                    )}>
+                                        {maintenanceMode ? 'Active' : 'Inactive'}
+                                    </span>
+                                </div>
+                                <p className="text-xs text-slate-500 mt-0.5">
+                                    {maintenanceMode
+                                        ? 'Users are redirected to maintenance page.'
+                                        : 'When enabled, users see a maintenance notice.'}
+                                </p>
+                            </div>
+                        </div>
+                        <button
+                            onClick={handleToggleMaintenance}
+                            disabled={loadingMaintenance}
+                            className={cn(
+                                'flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold transition-all flex-shrink-0 disabled:opacity-60',
+                                maintenanceMode
+                                    ? 'bg-amber-500 hover:bg-amber-400 text-black'
+                                    : 'bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200'
+                            )}
+                        >
+                            {loadingMaintenance ? (
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : maintenanceMode ? (
+                                <X className="w-4 h-4" />
+                            ) : (
+                                <AlertTriangle className="w-4 h-4" />
+                            )}
+                            {loadingMaintenance ? 'Updating...' : maintenanceMode ? 'Disable' : 'Enable'}
+                        </button>
+                    </div>
+                </div>
+            )}
 
             {/* Sign out */}
             <div className="mt-8">
