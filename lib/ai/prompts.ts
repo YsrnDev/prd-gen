@@ -174,6 +174,7 @@ export const WIZARD_STEPS = [
                 hint: 'Be specific about demographics, behaviors, and pain points.',
                 type: 'textarea',
                 required: true,
+                aiRecommendable: true,
             },
         ],
     },
@@ -190,6 +191,7 @@ export const WIZARD_STEPS = [
                 hint: 'Focus on must-have features. Separate nice-to-haves later.',
                 type: 'textarea',
                 required: true,
+                aiRecommendable: true,
             },
         ],
     },
@@ -206,6 +208,7 @@ export const WIZARD_STEPS = [
                 hint: 'Describe your planned technology stack, or choose from our recommendations below.',
                 type: 'textarea',
                 required: false,
+                aiRecommendable: true,
                 options: [
                     "I don't know, please recommend the best tech stack based on my features to AI.",
                     "Frontend: Next.js (React), Backend: Node.js, Database: PostgreSQL, Auth: Better Auth",
@@ -230,6 +233,7 @@ export const WIZARD_STEPS = [
                 hint: 'Define specific, measurable goals. Avoid vague metrics.',
                 type: 'textarea',
                 required: false,
+                aiRecommendable: true,
             },
         ],
     },
@@ -246,7 +250,46 @@ export const WIZARD_STEPS = [
                 hint: 'Share anything else that should influence the PRD.',
                 type: 'textarea',
                 required: false,
+                aiRecommendable: true,
             },
         ],
     },
 ];
+
+// AI recommendation prompts per question
+const RECOMMENDATION_PROMPTS: Record<string, { system: string; buildUserPrompt: (answers: WizardAnswers) => string }> = {
+    targetAudience: {
+        system: `You are a senior Product Manager. Based on the project information provided, suggest a detailed target audience description. Include demographics, behaviors, pain points, and motivations. Write in plain text, 3-5 sentences. Be specific, not generic. Write in the same language as the project info provided.`,
+        buildUserPrompt: (a) =>
+            `Project Name: ${a.projectName || 'N/A'}\nProblem Statement: ${a.problemStatement || 'N/A'}\n\nSuggest the ideal target audience for this product.`,
+    },
+    keyFeatures: {
+        system: `You are a senior Product Manager. Based on the project info and target audience, suggest 5-8 core features for an MVP. List one feature per line with a brief description. Prioritize must-have features. Write in the same language as the project info provided.`,
+        buildUserPrompt: (a) =>
+            `Project Name: ${a.projectName || 'N/A'}\nProblem Statement: ${a.problemStatement || 'N/A'}\nTarget Audience: ${a.targetAudience || 'N/A'}\n\nSuggest the core MVP features for this product.`,
+    },
+    techStack: {
+        system: `You are a senior Software Architect. Based on the project requirements and features, recommend the best tech stack. Format as: Frontend, Backend, Database, Auth, Hosting — with brief rationale for each choice. Write in the same language as the project info provided.`,
+        buildUserPrompt: (a) =>
+            `Project Name: ${a.projectName || 'N/A'}\nProblem Statement: ${a.problemStatement || 'N/A'}\nTarget Audience: ${a.targetAudience || 'N/A'}\nKey Features: ${a.keyFeatures || 'N/A'}\n\nRecommend the best tech stack for this product.`,
+    },
+    successMetrics: {
+        system: `You are a senior Product Manager with growth expertise. Based on the project details, suggest 4-6 specific, measurable success metrics/KPIs. Include targets and timeframes. Format as one metric per line. Write in the same language as the project info provided.`,
+        buildUserPrompt: (a) =>
+            `Project Name: ${a.projectName || 'N/A'}\nProblem Statement: ${a.problemStatement || 'N/A'}\nTarget Audience: ${a.targetAudience || 'N/A'}\nKey Features: ${a.keyFeatures || 'N/A'}\nTech Stack: ${a.techStack || 'N/A'}\n\nSuggest realistic success metrics and KPIs.`,
+    },
+    additionalContext: {
+        system: `You are a senior Product Manager. Based on all available project details, suggest important additional context that should be included in the PRD. Cover competitive landscape, potential risks, timeline suggestions, and any regulatory considerations. Write in plain text, 3-5 sentences. Write in the same language as the project info provided.`,
+        buildUserPrompt: (a) =>
+            `Project Name: ${a.projectName || 'N/A'}\nProblem Statement: ${a.problemStatement || 'N/A'}\nTarget Audience: ${a.targetAudience || 'N/A'}\nKey Features: ${a.keyFeatures || 'N/A'}\nTech Stack: ${a.techStack || 'N/A'}\nSuccess Metrics: ${a.successMetrics || 'N/A'}\n\nSuggest important additional context for the PRD.`,
+    },
+};
+
+export function getRecommendationPrompt(questionId: string, answers: WizardAnswers) {
+    const config = RECOMMENDATION_PROMPTS[questionId];
+    if (!config) return null;
+    return {
+        systemPrompt: config.system,
+        userPrompt: config.buildUserPrompt(answers),
+    };
+}

@@ -20,6 +20,7 @@ export default function WizardPage() {
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState('');
     const [wizardSessionId, setWizardSessionId] = useState<number | null>(null);
+    const [recommendingFor, setRecommendingFor] = useState<string | null>(null);
     const autosaveRef = useRef<NodeJS.Timeout | null>(null);
     const progress = ((currentStep + 1) / WIZARD_STEPS.length) * 100;
     const step = WIZARD_STEPS[currentStep];
@@ -115,6 +116,28 @@ export default function WizardPage() {
         }
     };
 
+    const handleRecommend = async (questionId: string) => {
+        setRecommendingFor(questionId);
+        setError('');
+        try {
+            const res = await fetch('/api/wizard/recommend', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ answers, questionId }),
+            });
+            const data = await res.json();
+            if (!res.ok) {
+                setError(data.error || 'Failed to get recommendation.');
+                return;
+            }
+            updateAnswer(questionId, data.recommendation);
+        } catch {
+            setError('Failed to connect. Please try again.');
+        } finally {
+            setRecommendingFor(null);
+        }
+    };
+
 
     return (
         <div className="flex min-h-screen overflow-hidden">
@@ -171,6 +194,20 @@ export default function WizardPage() {
                                         )}
                                         {question.hint && (
                                             <p className="text-xs text-slate-400 italic">{question.hint}</p>
+                                        )}
+                                        {"aiRecommendable" in question && question.aiRecommendable && (
+                                            <button
+                                                type="button"
+                                                onClick={() => handleRecommend(question.id)}
+                                                disabled={recommendingFor === question.id}
+                                                className="flex items-center gap-2 mt-2 px-4 py-2 rounded-lg bg-gradient-to-r from-[#135bec]/20 to-purple-500/20 border border-[#135bec]/30 text-sm font-semibold text-[#6ea8fe] hover:from-[#135bec]/30 hover:to-purple-500/30 hover:text-white transition-all disabled:opacity-60 disabled:cursor-wait"
+                                            >
+                                                {recommendingFor === question.id ? (
+                                                    <><Loader2 className="w-4 h-4 animate-spin" /> Generating recommendation...</>
+                                                ) : (
+                                                    <><Sparkles className="w-4 h-4" /> Recommend with AI</>
+                                                )}
+                                            </button>
                                         )}
                                         {"options" in question && Array.isArray(question.options) && (
                                             <div className="flex flex-wrap gap-2 mt-3 pt-2">
