@@ -151,23 +151,38 @@ function SidebarShell({
             <div className="mt-auto">
                 <div className="h-px bg-slate-800 mb-3" />
                 <div className={`flex items-center ${collapsed && !isMobile ? 'justify-center' : 'gap-3'}`}>
-                    <div className="group/avatar relative flex-shrink-0">
-                        <div className={`size-10 rounded-full border-2 border-slate-700 ${avatarBg} overflow-hidden flex items-center justify-center text-white text-sm font-bold relative`}>
-                            {session?.user?.image ? (
-                                <Image src={session.user.image} alt={session.user.name || 'User'} fill className="object-cover" />
-                            ) : (
-                                session?.user?.name?.[0]?.toUpperCase() || fallbackInitial
+                    <div className={`flex flex-col items-center flex-shrink-0 ${collapsed && !isMobile ? 'gap-1.5' : ''}`}>
+                        <div className="group/avatar relative">
+                            <div className={`size-10 rounded-full border-2 border-slate-700 ${avatarBg} overflow-hidden flex items-center justify-center text-white text-sm font-bold relative`}>
+                                {session?.user?.image ? (
+                                    <Image src={session.user.image} alt={session.user.name || 'User'} fill className="object-cover" />
+                                ) : (
+                                    session?.user?.name?.[0]?.toUpperCase() || fallbackInitial
+                                )}
+                            </div>
+                            {collapsed && !isMobile && (
+                                <button
+                                    onClick={() => signOut({ fetchOptions: { onSuccess: () => { window.location.href = '/login'; } } })}
+                                    className="absolute inset-0 flex items-center justify-center size-10 rounded-full bg-red-600 text-white opacity-0 group-hover/avatar:opacity-100 transition-opacity duration-200 z-10"
+                                    title="Sign out"
+                                >
+                                    <span className="material-symbols-outlined text-[18px]">logout</span>
+                                </button>
                             )}
                         </div>
-                        {collapsed && !isMobile && (
-                            <button
-                                onClick={() => signOut({ fetchOptions: { onSuccess: () => { window.location.href = '/login'; } } })}
-                                className="absolute inset-0 flex items-center justify-center size-10 rounded-full bg-red-600 text-white opacity-0 group-hover/avatar:opacity-100 transition-opacity duration-200 z-10"
-                                title="Sign out"
-                            >
-                                <span className="material-symbols-outlined text-[18px]">logout</span>
-                            </button>
-                        )}
+                        {collapsed && !isMobile && (() => {
+                            const tier = ((session?.user as any)?.tier || 'FREE').toUpperCase();
+                            const styles: Record<string, string> = {
+                                FREE: 'bg-slate-700/60 text-slate-300 border border-slate-600/50',
+                                PLUS: 'bg-blue-500/20 text-blue-300 border border-blue-500/30',
+                                PRO: 'bg-amber-500/20 text-amber-300 border border-amber-500/30',
+                            };
+                            return (
+                                <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-semibold tracking-wide ${styles[tier] ?? styles.FREE}`}>
+                                    {tier}
+                                </span>
+                            );
+                        })()}
                     </div>
 
                     {(!collapsed || isMobile) && (
