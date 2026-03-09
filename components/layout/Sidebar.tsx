@@ -174,7 +174,19 @@ function SidebarShell({
                         <>
                             <div className="flex flex-col flex-1 min-w-0">
                                 <p className="text-sm font-bold text-slate-100 truncate">{session?.user?.name || 'User'}</p>
-                                <p className="text-xs text-slate-400 capitalize truncate">{(session?.user as any)?.role || 'User'}</p>
+                                {(() => {
+                                    const tier = ((session?.user as any)?.tier || 'FREE').toUpperCase();
+                                    const styles: Record<string, string> = {
+                                        FREE: 'bg-slate-700/60 text-slate-300 border border-slate-600/50',
+                                        PLUS: 'bg-blue-500/20 text-blue-300 border border-blue-500/30',
+                                        PRO: 'bg-amber-500/20 text-amber-300 border border-amber-500/30',
+                                    };
+                                    return (
+                                        <span className={`inline-flex w-fit items-center px-1.5 py-0.5 rounded text-[10px] font-semibold tracking-wide mt-0.5 ${styles[tier] ?? styles.FREE}`}>
+                                            {tier}
+                                        </span>
+                                    );
+                                })()}
                             </div>
                             <button
                                 onClick={() => signOut({ fetchOptions: { onSuccess: () => { window.location.href = '/login'; } } })}
