@@ -15,7 +15,7 @@ export default function TermsOfServicePage() {
                     <Link href="/" className="text-slate-100 font-bold text-lg hover:text-white transition-colors">
                         ← PRDGen AI
                     </Link>
-                    <span className="text-slate-500 text-sm">Last updated: March 2025</span>
+                    <span className="text-slate-500 text-sm">Last updated: March 2026</span>
                 </div>
             </header>
 
@@ -139,7 +139,7 @@ export default function TermsOfServicePage() {
 
                 {/* Footer nav */}
                 <div className="mt-16 pt-8 border-t border-slate-800/50 flex flex-col sm:flex-row justify-between items-center gap-4">
-                    <p className="text-slate-600 text-sm">© 2025 PRDGen AI. All rights reserved.</p>
+                    <p className="text-slate-600 text-sm">© 2026 PRDGen AI. All rights reserved.</p>
                     <div className="flex gap-6 text-sm">
                         <Link href="/privacy" className="text-slate-400 hover:text-white transition-colors">Privacy Policy</Link>
                         <Link href="/" className="text-slate-400 hover:text-white transition-colors">Back to Home</Link>

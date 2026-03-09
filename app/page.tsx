@@ -262,7 +262,7 @@ export default async function LandingPage() {
         {/* Footer */}
         <footer data-anim="footer" className="border-t border-slate-800/50 py-6 bg-[#0f172a]">
           <div className="max-w-[1200px] mx-auto px-6 flex flex-col sm:flex-row justify-between items-center gap-4">
-            <p className="text-slate-600 text-xs">© 2025 PRDGen AI. All rights reserved.</p>
+            <p className="text-slate-600 text-xs">© 2026 PRDGen AI. All rights reserved.</p>
             <div className="flex items-center gap-6">
               <Link href="/terms" className="text-slate-500 hover:text-slate-300 text-xs transition-colors">Terms of Service</Link>
               <Link href="/privacy" className="text-slate-500 hover:text-slate-300 text-xs transition-colors">Privacy Policy</Link>
