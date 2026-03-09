@@ -148,7 +148,7 @@ export default async function AdminDashboardPage() {
                     <h1 className="text-xl sm:text-2xl font-bold text-[var(--color-fg)]">Platform Overview</h1>
                     <p className="text-xs sm:text-sm text-[var(--color-muted-fg)] mt-1">Real-time performance and system status monitoring.</p>
                 </div>
-                <div className="flex items-center gap-2 sm:gap-3">
+                <div className="grid grid-cols-2 sm:flex sm:flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto mt-4 sm:mt-0">
                     <MaintenanceToggleButton />
                     <ExportReportButton />
                 </div>
