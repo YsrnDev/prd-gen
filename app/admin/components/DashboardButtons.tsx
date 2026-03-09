@@ -33,7 +33,7 @@ export function ExportReportButton() {
         <button
             onClick={handleExport}
             disabled={exporting}
-            className="flex items-center justify-center w-full gap-2 px-4 py-2 rounded-lg primary-gradient text-white text-sm font-semibold hover:opacity-90 transition-all disabled:opacity-60"
+            className="flex items-center justify-center w-full sm:w-auto whitespace-nowrap gap-2 px-4 py-2 rounded-lg primary-gradient text-white text-sm font-semibold hover:opacity-90 transition-all disabled:opacity-60"
         >
             {exporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
             {exporting ? 'Exporting...' : 'Export Report'}
@@ -76,7 +76,7 @@ export function MaintenanceToggleButton() {
             disabled={toggling}
             title={maintenanceMode ? 'Disable Maintenance Mode' : 'Enable Maintenance Mode'}
             className={cn(
-                'flex items-center justify-center w-full gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all disabled:opacity-60 disabled:cursor-not-allowed border',
+                'flex items-center justify-center w-full sm:w-auto whitespace-nowrap gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all disabled:opacity-60 disabled:cursor-not-allowed border',
                 maintenanceMode
                     ? 'bg-amber-500/15 border-amber-500/40 text-amber-400 hover:bg-amber-500/25'
                     : 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700'
