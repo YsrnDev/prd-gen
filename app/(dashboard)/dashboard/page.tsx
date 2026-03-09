@@ -6,9 +6,11 @@ import { useSession } from '@/lib/auth-client';
 import { DeletePrdButton } from '@/components/DeletePrdButton';
 
 interface PRD {
-    id: number;
+    id: number | string;
+    sessionId?: number | null;
     title: string;
     status: string;
+    type?: string;
     createdAt: string;
     updatedAt: string;
     content?: string;
@@ -196,9 +198,9 @@ export default function DashboardPage() {
                                 {recentPrds.map((prd) => (
                                     <tr key={prd.id} className="hover:bg-slate-800/30 transition-colors">
                                         <td className="px-6 py-5">
-                                            <Link href={`/prd/${prd.id}/edit`} className="flex items-center gap-3 group">
-                                                <div className="size-8 rounded bg-[#135bec]/10 flex items-center justify-center text-[#135bec]">
-                                                    <span className="material-symbols-outlined text-[20px]">description</span>
+                                            <Link href={prd.type === 'wizard' ? `/wizard/${prd.sessionId}` : `/prd/${prd.id}/edit`} className="flex items-center gap-3 group">
+                                                <div className={`size-8 rounded ${prd.type === 'wizard' ? 'bg-amber-500/10 text-amber-500' : 'bg-[#135bec]/10 text-[#135bec]'} flex items-center justify-center`}>
+                                                    <span className="material-symbols-outlined text-[20px]">{prd.type === 'wizard' ? 'edit_note' : 'description'}</span>
                                                 </div>
                                                 <span className="font-medium text-white group-hover:text-[#135bec] transition-colors">{prd.title}</span>
                                             </Link>
@@ -214,12 +216,20 @@ export default function DashboardPage() {
                                         </td>
                                         <td className="px-6 py-5 text-right">
                                             <div className="flex items-center justify-end gap-2">
-                                                <Link href={`/prd/${prd.id}`} className="text-slate-400 hover:text-[#135bec] transition-colors" title="View">
-                                                    <span className="material-symbols-outlined text-[20px]">visibility</span>
-                                                </Link>
-                                                <Link href={`/prd/${prd.id}/edit`} className="text-slate-400 hover:text-[#135bec] transition-colors" title="Edit">
-                                                    <span className="material-symbols-outlined text-[20px]">edit</span>
-                                                </Link>
+                                                {prd.type === 'wizard' ? (
+                                                    <Link href={`/wizard/${prd.sessionId}`} className="text-slate-400 hover:text-[#135bec] transition-colors" title="Resume Draft">
+                                                        <span className="material-symbols-outlined text-[20px]">edit_note</span>
+                                                    </Link>
+                                                ) : (
+                                                    <>
+                                                        <Link href={`/prd/${prd.id}`} className="text-slate-400 hover:text-[#135bec] transition-colors" title="View">
+                                                            <span className="material-symbols-outlined text-[20px]">visibility</span>
+                                                        </Link>
+                                                        <Link href={`/prd/${prd.id}/edit`} className="text-slate-400 hover:text-[#135bec] transition-colors" title="Edit">
+                                                            <span className="material-symbols-outlined text-[20px]">edit</span>
+                                                        </Link>
+                                                    </>
+                                                )}
                                                 <DeletePrdButton prdId={prd.id} prdTitle={prd.title} />
                                             </div>
                                         </td>

@@ -16,7 +16,11 @@ export function DeletePrdButton({ prdId, prdTitle }: DeletePrdButtonProps) {
     async function handleDelete() {
         setDeleting(true);
         try {
-            const res = await fetch(`/api/prd/${prdId}`, { method: 'DELETE' });
+            const isWizard = String(prdId).startsWith('wizard-');
+            const targetId = isWizard ? String(prdId).replace('wizard-', '') : prdId;
+            const endpoint = isWizard ? `/api/sessions/${targetId}` : `/api/prd/${targetId}`;
+
+            const res = await fetch(endpoint, { method: 'DELETE' });
             if (res.ok) {
                 window.dispatchEvent(new CustomEvent('prd-deleted'));
                 router.refresh();

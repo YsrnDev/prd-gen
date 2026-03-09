@@ -1,13 +1,12 @@
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
-import { prdDocument } from '@/lib/db/schema';
-import { eq, desc } from 'drizzle-orm';
+import { prdDocument, wizardSession } from '@/lib/db/schema';
+import { eq, desc, and } from 'drizzle-orm';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { formatDate } from '@/lib/utils';
 import type { Metadata } from 'next';
-import { DeletePrdButton } from '@/components/DeletePrdButton';
+import { PrdTableClient } from '@/components/PrdTableClient';
 
 export const metadata: Metadata = { title: 'My PRDs' };
 
@@ -15,11 +14,40 @@ export default async function PRDsPage() {
     const session = await auth.api.getSession({ headers: await headers() });
     if (!session) redirect('/login');
 
-    const prds = await db.query.prdDocument.findMany({
+    const docs = await db.query.prdDocument.findMany({
         where: (prd, { eq }) => eq(prd.userId, session.user.id),
-        orderBy: (prd, { desc }) => [desc(prd.updatedAt)],
         columns: { content: false },
     });
+
+    const activeSessions = await db.query.wizardSession.findMany({
+        where: (ws, { eq, and }) => and(eq(ws.userId, session.user.id), eq(ws.status, 'in_progress')),
+    });
+
+    const formattedDocs = docs.map(d => ({ ...d, type: 'prd' }));
+    const formattedDrafts = activeSessions.map(s => {
+        const answers = s.answers as Record<string, string> || {};
+        const prjName = answers['project_name'] || answers['project-name'] || answers['projectName'];
+        const title = prjName ? `${prjName} (Draft)` : 'Untitled Draft';
+        return {
+            id: `wizard-${s.id}`,
+            userId: s.userId,
+            sessionId: s.id,
+            title,
+            createdAt: s.createdAt,
+            updatedAt: s.updatedAt,
+            type: 'wizard',
+        };
+    });
+
+    const prds = [...formattedDocs, ...formattedDrafts]
+        .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
+
+
+    const serializedPrds = prds.map(p => ({
+        ...p,
+        createdAt: new Date(p.createdAt).toISOString(),
+        updatedAt: new Date(p.updatedAt).toISOString()
+    }));
 
     return (
         <div className="max-w-6xl mx-auto">
@@ -37,58 +65,7 @@ export default async function PRDsPage() {
                 </Link>
             </div>
 
-            {prds.length === 0 ? (
-                <div className="bg-slate-900 border border-slate-800 rounded-xl p-16 text-center shadow-sm">
-                    <span className="material-symbols-outlined text-slate-500 text-5xl mb-4 block opacity-40">description</span>
-                    <h3 className="text-lg font-bold text-white mb-2">No PRDs yet</h3>
-                    <p className="text-sm text-slate-400 mb-6">Start by creating your first PRD with our AI-powered wizard.</p>
-                    <Link href="/wizard/new" className="inline-flex items-center gap-2 px-5 py-3 rounded-lg bg-[#135bec] text-white text-sm font-bold hover:bg-[#135bec]/90 transition-all shadow-lg shadow-[#135bec]/20">
-                        <span className="material-symbols-outlined text-[20px]">add</span> Create First PRD
-                    </Link>
-                </div>
-            ) : (
-                <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-sm">
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-left border-collapse">
-                            <thead>
-                                <tr className="bg-slate-800/50">
-                                    <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Title</th>
-                                    <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Created</th>
-                                    <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Updated</th>
-                                    <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider text-right">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-slate-800">
-                                {prds.map((prd) => (
-                                    <tr key={prd.id} className="hover:bg-slate-800/30 transition-colors">
-                                        <td className="px-6 py-5">
-                                            <div className="flex items-center gap-3">
-                                                <div className="size-8 rounded bg-[#135bec]/10 flex items-center justify-center text-[#135bec]">
-                                                    <span className="material-symbols-outlined text-[20px]">description</span>
-                                                </div>
-                                                <span className="font-medium text-white text-sm">{prd.title}</span>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-5 text-sm text-slate-400">{formatDate(prd.createdAt)}</td>
-                                        <td className="px-6 py-5 text-sm text-slate-400">{formatDate(prd.updatedAt)}</td>
-                                        <td className="px-6 py-5">
-                                            <div className="flex items-center justify-end gap-2">
-                                                <Link href={`/prd/${prd.id}`} className="text-slate-400 hover:text-[#135bec] transition-colors" title="View">
-                                                    <span className="material-symbols-outlined">visibility</span>
-                                                </Link>
-                                                <Link href={`/prd/${prd.id}/edit`} className="text-slate-400 hover:text-[#135bec] transition-colors" title="Edit">
-                                                    <span className="material-symbols-outlined">edit</span>
-                                                </Link>
-                                                <DeletePrdButton prdId={prd.id} prdTitle={prd.title} />
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            )}
+            <PrdTableClient initialPrds={serializedPrds} />
         </div>
     );
 }
