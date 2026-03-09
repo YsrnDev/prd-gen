@@ -1,30 +1,7 @@
 'use client';
 
-import { Calendar, Download, Loader2 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { Download, Loader2 } from 'lucide-react';
 import { useState } from 'react';
-
-export function LiveDataButton() {
-    const router = useRouter();
-    const [refreshing, setRefreshing] = useState(false);
-
-    const handleRefresh = () => {
-        setRefreshing(true);
-        router.refresh();
-        setTimeout(() => setRefreshing(false), 1000);
-    };
-
-    return (
-        <button
-            onClick={handleRefresh}
-            disabled={refreshing}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg border border-[var(--color-border)] text-sm font-medium text-[var(--color-fg)] hover:bg-[var(--color-accent)] transition-colors disabled:opacity-60"
-        >
-            {refreshing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Calendar className="w-4 h-4" />}
-            {refreshing ? 'Refreshing...' : 'Live Data'}
-        </button>
-    );
-}
 
 export function ExportReportButton() {
     const [exporting, setExporting] = useState(false);

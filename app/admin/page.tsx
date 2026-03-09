@@ -4,7 +4,7 @@ import { user as userSchema, prdDocument, wizardSession } from '@/lib/db/schema'
 import { sql, count, desc, gte } from 'drizzle-orm';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { LiveDataButton, ExportReportButton } from './components/DashboardButtons';
+import { ExportReportButton } from './components/DashboardButtons';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = { title: 'Admin Dashboard' };
@@ -99,7 +99,6 @@ export default async function AdminDashboardPage() {
                     <p className="text-xs sm:text-sm text-[var(--color-muted-fg)] mt-1">Real-time performance and system status monitoring.</p>
                 </div>
                 <div className="flex items-center gap-2 sm:gap-3">
-                    <LiveDataButton />
                     <ExportReportButton />
                 </div>
             </div>
