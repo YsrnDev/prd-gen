@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { Loader2, Plus, Edit, Trash2, CheckCircle, XCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface Plan {
@@ -141,48 +140,65 @@ export default function PricingManagementPage() {
             ) : error && !isDialogOpen ? (
                 <div className="bg-red-500/10 text-red-500 p-4 rounded-lg">{error}</div>
             ) : (
-                <Card className="bg-[var(--color-card)] border-[var(--color-border)]">
-                    <Table>
-                        <TableHeader>
-                            <TableRow className="border-[var(--color-border)] hover:bg-transparent">
-                                <TableHead>Plan Name</TableHead>
-                                <TableHead>Price (IDR)</TableHead>
-                                <TableHead>Status</TableHead>
-                                <TableHead>Popular</TableHead>
-                                <TableHead className="text-right">Actions</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {plans.length === 0 ? (
-                                <TableRow>
-                                    <TableCell colSpan={5} className="text-center py-8 text-[var(--color-muted-fg)]">
-                                        No subscription plans found.
-                                    </TableCell>
-                                </TableRow>
-                            ) : plans.map((plan) => (
-                                <TableRow key={plan.id} className="border-[var(--color-border)] hover:bg-[var(--color-accent)]">
-                                    <TableCell className="font-medium text-[var(--color-fg)]">{plan.name}</TableCell>
-                                    <TableCell className="text-[var(--color-muted-fg)]">Rp {plan.price.toLocaleString('id-ID')}</TableCell>
-                                    <TableCell>
-                                        <span className={cn('inline-flex items-center gap-1 text-xs px-2 py-1 rounded-md font-medium', plan.isActive ? 'bg-emerald-500/10 text-emerald-500' : 'bg-red-500/10 text-red-500')}>
-                                            {plan.isActive ? <CheckCircle className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
-                                            {plan.isActive ? 'Active' : 'Draft'}
-                                        </span>
-                                    </TableCell>
-                                    <TableCell>
-                                        {plan.isPopular && <span className="bg-amber-500/10 text-amber-500 text-xs px-2 py-1 rounded-md font-medium">Popular</span>}
-                                    </TableCell>
-                                    <TableCell className="text-right">
-                                        <div className="flex justify-end gap-2">
-                                            <button onClick={() => handleOpenDialog(plan)} className="p-2 text-blue-500 hover:bg-blue-500/10 rounded-md transition-colors"><Edit className="w-4 h-4" /></button>
-                                            <button onClick={() => handleDelete(plan.id)} className="p-2 text-red-500 hover:bg-red-500/10 rounded-md transition-colors"><Trash2 className="w-4 h-4" /></button>
-                                        </div>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </Card>
+                <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl overflow-hidden">
+                    <div className="overflow-x-auto">
+                        <table className="w-full">
+                            <thead>
+                                <tr className="border-b border-[var(--color-border)] bg-[#131b33]">
+                                    <th className="text-left px-6 py-3 text-xs font-semibold text-[var(--color-muted-fg)] uppercase tracking-wider">Plan Name</th>
+                                    <th className="text-left px-6 py-3 text-xs font-semibold text-[var(--color-muted-fg)] uppercase tracking-wider">Price (IDR)</th>
+                                    <th className="text-left px-6 py-3 text-xs font-semibold text-[var(--color-muted-fg)] uppercase tracking-wider">Status</th>
+                                    <th className="text-left px-6 py-3 text-xs font-semibold text-[var(--color-muted-fg)] uppercase tracking-wider">Popular</th>
+                                    <th className="text-right px-6 py-3 text-xs font-semibold text-[var(--color-muted-fg)] uppercase tracking-wider">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-[var(--color-border)]">
+                                {plans.length === 0 ? (
+                                    <tr>
+                                        <td colSpan={5} className="text-center px-6 py-8 text-sm text-[var(--color-muted-fg)]">
+                                            No subscription plans found.
+                                        </td>
+                                    </tr>
+                                ) : plans.map((plan) => (
+                                    <tr key={plan.id} className="hover:bg-[#1a2038] transition-colors">
+                                        <td className="px-6 py-3 text-sm font-medium text-[var(--color-fg)]">
+                                            {plan.name}
+                                        </td>
+                                        <td className="px-6 py-3 text-sm text-[var(--color-muted-fg)]">
+                                            Rp {plan.price.toLocaleString('id-ID')}
+                                        </td>
+                                        <td className="px-6 py-3">
+                                            <span className={cn(
+                                                'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium',
+                                                plan.isActive ? 'bg-emerald-500/10 text-emerald-500' : 'bg-red-500/10 text-red-500'
+                                            )}>
+                                                {plan.isActive ? <CheckCircle className="w-3.5 h-3.5" /> : <XCircle className="w-3.5 h-3.5" />}
+                                                {plan.isActive ? 'Active' : 'Draft'}
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-3">
+                                            {plan.isPopular && (
+                                                <span className="bg-amber-500/10 text-amber-500 text-xs px-2.5 py-1 rounded-full font-medium inline-block">
+                                                    Popular
+                                                </span>
+                                            )}
+                                        </td>
+                                        <td className="px-6 py-3">
+                                            <div className="flex justify-end gap-2">
+                                                <button onClick={() => handleOpenDialog(plan)} className="p-1.5 text-[var(--color-muted-fg)] hover:text-blue-500 hover:bg-blue-500/10 rounded-md transition-colors" title="Edit Plan">
+                                                    <Edit className="w-4 h-4" />
+                                                </button>
+                                                <button onClick={() => handleDelete(plan.id)} className="p-1.5 text-[var(--color-muted-fg)] hover:text-red-500 hover:bg-red-500/10 rounded-md transition-colors" title="Delete Plan">
+                                                    <Trash2 className="w-4 h-4" />
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             )}
 
             {/* Modal Dialog for Create/Edit */}
