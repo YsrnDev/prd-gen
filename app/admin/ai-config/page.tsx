@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Settings2, Save, Zap, Loader2, Check, X, ChevronDown, Eye, EyeOff, Lock, Sparkles, Gauge, RefreshCw, AlertTriangle } from 'lucide-react';
+import { Settings2, Save, Zap, Loader2, Check, X, ChevronDown, Eye, EyeOff, Lock, Sparkles, Gauge, RefreshCw } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const PROVIDERS = [
@@ -29,17 +29,12 @@ export default function AIConfigPage() {
     const [fetchedModels, setFetchedModels] = useState<string[]>([]);
     const [fetchingModels, setFetchingModels] = useState(false);
     const [fetchModelError, setFetchModelError] = useState('');
-    const [maintenanceMode, setMaintenanceMode] = useState(false);
-    const [togglingMaintenance, setTogglingMaintenance] = useState(false);
 
     useEffect(() => {
         const load = async () => {
-            const [configRes, maintenanceRes] = await Promise.all([
-                fetch('/api/admin/ai-config'),
-                fetch('/api/admin/maintenance'),
-            ]);
-            if (configRes.ok) {
-                const data = await configRes.json();
+            const res = await fetch('/api/admin/ai-config');
+            if (res.ok) {
+                const data = await res.json();
                 if (data.config) {
                     setHasExistingConfig(true);
                     setProvider(data.config.provider || 'openai');
@@ -49,10 +44,6 @@ export default function AIConfigPage() {
                     if (data.config.rateLimitRpm !== undefined) setRateLimitRpm(data.config.rateLimitRpm);
                     if (data.config.rateLimitTpm !== undefined) setRateLimitTpm(data.config.rateLimitTpm);
                 }
-            }
-            if (maintenanceRes.ok) {
-                const data = await maintenanceRes.json();
-                setMaintenanceMode(data.maintenanceMode ?? false);
             }
             setLoading(false);
         };
@@ -107,20 +98,6 @@ export default function AIConfigPage() {
         return 'CREATIVE';
     };
 
-    const handleToggleMaintenance = async () => {
-        setTogglingMaintenance(true);
-        const newValue = !maintenanceMode;
-        try {
-            const res = await fetch('/api/admin/maintenance', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ maintenanceMode: newValue }),
-            });
-            if (res.ok) setMaintenanceMode(newValue);
-        } finally {
-            setTogglingMaintenance(false);
-        }
-    };
 
     const handleFetchModels = async () => {
         setFetchingModels(true);
@@ -160,58 +137,6 @@ export default function AIConfigPage() {
 
     return (
         <div className="w-full max-w-4xl mx-auto animate-fade-in">
-            {/* Maintenance Mode Banner */}
-            <div className={cn(
-                'p-5 mb-4 rounded-xl border flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all',
-                maintenanceMode
-                    ? 'bg-amber-500/10 border-amber-500/30'
-                    : 'bg-slate-900 border-slate-800'
-            )}>
-                <div className="flex items-start gap-3">
-                    <div className={cn(
-                        'w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0',
-                        maintenanceMode ? 'bg-amber-500/15 text-amber-400' : 'bg-slate-800 text-slate-400'
-                    )}>
-                        <AlertTriangle className="w-5 h-5" />
-                    </div>
-                    <div>
-                        <div className="flex items-center gap-2">
-                            <h2 className="text-sm font-bold text-[var(--color-fg)]">Maintenance Mode</h2>
-                            <span className={cn(
-                                'text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider',
-                                maintenanceMode
-                                    ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
-                                    : 'bg-slate-800 text-slate-500 border border-slate-700'
-                            )}>
-                                {maintenanceMode ? 'Active' : 'Inactive'}
-                            </span>
-                        </div>
-                        <p className="text-xs text-[var(--color-muted-fg)] mt-0.5">
-                            {maintenanceMode
-                                ? 'Users are currently redirected to the maintenance page. Admins are unaffected.'
-                                : 'When enabled, all user-facing pages redirect to a maintenance notice.'}
-                        </p>
-                    </div>
-                </div>
-                <button
-                    onClick={handleToggleMaintenance}
-                    disabled={togglingMaintenance}
-                    className={cn(
-                        'flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all flex-shrink-0 disabled:opacity-60 disabled:cursor-not-allowed',
-                        maintenanceMode
-                            ? 'bg-amber-500 hover:bg-amber-400 text-black'
-                            : 'bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200'
-                    )}
-                >
-                    {togglingMaintenance ? (
-                        <><Loader2 className="w-4 h-4 animate-spin" /> Updating...</>
-                    ) : maintenanceMode ? (
-                        <><X className="w-4 h-4" /> Disable Maintenance</>
-                    ) : (
-                        <><AlertTriangle className="w-4 h-4" /> Enable Maintenance</>
-                    )}
-                </button>
-            </div>
 
             {/* Breadcrumb */}
             <div className="flex items-center gap-2 mb-6">
