@@ -1,4 +1,4 @@
-import { pgTable, text, integer, boolean, timestamp, serial, jsonb } from "drizzle-orm/pg-core";
+import { pgTable, text, integer, boolean, timestamp, serial, jsonb, real } from "drizzle-orm/pg-core";
 
 // Better-Auth compatible users table
 export const user = pgTable('user', {
@@ -79,6 +79,9 @@ export const aiConfig = pgTable('ai_config', {
     apiKeyEncrypted: text('api_key_encrypted'),
     baseUrl: text('base_url'),
     defaultModel: text('default_model').notNull().default('gpt-4o'),
+    temperature: real('temperature').notNull().default(0.5),
+    rateLimitRpm: integer('rate_limit_rpm').notNull().default(10), // requests per minute per user
+    rateLimitTpm: integer('rate_limit_tpm').notNull().default(100000), // tokens per minute global
     updatedAt: timestamp('updated_at').notNull().defaultNow(),
     updatedBy: text('updated_by').references(() => user.id),
 });

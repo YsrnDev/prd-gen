@@ -7,6 +7,7 @@ import { getPRDPrompt } from '@/lib/ai/prompts';
 import { streamText } from 'ai';
 import { eq, and } from 'drizzle-orm';
 import { logEvent } from '@/lib/logger';
+import { checkRateLimit } from '@/lib/rate-limiter';
 
 export const maxDuration = 300; // 5 minutes
 
@@ -45,6 +46,15 @@ export async function POST(request: NextRequest, { params }: Params) {
         const provider = createAIProvider(aiConfig);
         const { systemPrompt, userPrompt } = getPRDPrompt(answers, additionalInstructions);
 
+        // Rate limiting check
+        const rateLimitResult = checkRateLimit(session.user.id, aiConfig.rateLimitRpm);
+        if (!rateLimitResult.allowed) {
+            return NextResponse.json(
+                { error: `Rate limit exceeded. Try again in ${rateLimitResult.resetInSeconds} seconds.` },
+                { status: 429, headers: { 'Retry-After': String(rateLimitResult.resetInSeconds) } }
+            );
+        }
+
 
         // Use streaming to avoid gateway timeouts on long generations
         const result = streamText({
@@ -76,6 +86,7 @@ MERMAID SYNTAX (when generating or editing diagrams):
 - Edge labels: A -->|Yes| B. Keep labels short.
 - Valid node types: A[text], A([text]), A{text?}`,
             prompt: `Currently existing PRD output (you MUST preserve ALL of this content unless the user specifically asks to change a part):\n${doc.content}\n\nUser request: ${additionalInstructions}`,
+            temperature: aiConfig.temperature,
             maxOutputTokens: 16000,
         });
 

@@ -11,6 +11,9 @@ export interface AIConfigData {
     apiKey: string;
     baseUrl?: string;
     defaultModel: string;
+    temperature: number;
+    rateLimitRpm: number;
+    rateLimitTpm: number;
 }
 
 export async function getAIConfig(): Promise<AIConfigData | null> {
@@ -24,6 +27,9 @@ export async function getAIConfig(): Promise<AIConfigData | null> {
             apiKey,
             baseUrl: configs[0].baseUrl ?? undefined,
             defaultModel: configs[0].defaultModel,
+            temperature: configs[0].temperature ?? 0.5,
+            rateLimitRpm: configs[0].rateLimitRpm ?? 10,
+            rateLimitTpm: configs[0].rateLimitTpm ?? 100000,
         };
     } catch {
         return null;
@@ -35,6 +41,9 @@ export async function saveAIConfig(data: {
     apiKey: string;
     baseUrl?: string;
     defaultModel: string;
+    temperature?: number;
+    rateLimitRpm?: number;
+    rateLimitTpm?: number;
     updatedBy: string;
 }) {
     const encryptedKey = encrypt(data.apiKey);
@@ -48,6 +57,9 @@ export async function saveAIConfig(data: {
                 apiKeyEncrypted: encryptedKey,
                 baseUrl: data.baseUrl ?? null,
                 defaultModel: data.defaultModel,
+                temperature: data.temperature ?? 0.5,
+                rateLimitRpm: data.rateLimitRpm ?? 10,
+                rateLimitTpm: data.rateLimitTpm ?? 100000,
                 updatedBy: data.updatedBy,
                 updatedAt: new Date(),
             });
@@ -57,6 +69,9 @@ export async function saveAIConfig(data: {
             apiKeyEncrypted: encryptedKey,
             baseUrl: data.baseUrl ?? null,
             defaultModel: data.defaultModel,
+            temperature: data.temperature ?? 0.5,
+            rateLimitRpm: data.rateLimitRpm ?? 10,
+            rateLimitTpm: data.rateLimitTpm ?? 100000,
             updatedBy: data.updatedBy,
         });
     }

@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
-import { getAIConfig, saveAIConfig, createAIProvider } from '@/lib/ai/config';
+import { getAIConfig, saveAIConfig } from '@/lib/ai/config';
 import type { AIProvider } from '@/lib/ai/config';
-import { generateText } from 'ai';
 import { logEvent } from '@/lib/logger';
 
 function isAdmin(session: Awaited<ReturnType<typeof auth.api.getSession>>) {
@@ -16,12 +15,14 @@ export async function GET(request: NextRequest) {
         if (!isAdmin(session)) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 
         const config = await getAIConfig();
-        // Return config without exposing the full API key
         return NextResponse.json({
             config: config ? {
                 provider: config.provider,
                 defaultModel: config.defaultModel,
                 baseUrl: config.baseUrl,
+                temperature: config.temperature,
+                rateLimitRpm: config.rateLimitRpm,
+                rateLimitTpm: config.rateLimitTpm,
                 hasApiKey: true,
             } : null,
         });
@@ -38,17 +39,26 @@ export async function PUT(request: NextRequest) {
         if (!isAdmin(session)) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 
         const body = await request.json();
-        const { provider, apiKey, baseUrl, defaultModel } = body;
+        const { provider, apiKey, baseUrl, defaultModel, temperature, rateLimitRpm, rateLimitTpm } = body;
 
-        if (!provider || !apiKey || !defaultModel) {
-            return NextResponse.json({ error: 'provider, apiKey, and defaultModel are required' }, { status: 400 });
+        const existingConfig = await getAIConfig();
+
+        if (!provider || !defaultModel) {
+            return NextResponse.json({ error: 'provider and defaultModel are required' }, { status: 400 });
+        }
+
+        if (!apiKey && !existingConfig?.apiKey) {
+            return NextResponse.json({ error: 'apiKey is required for initial configuration' }, { status: 400 });
         }
 
         await saveAIConfig({
             provider: provider as AIProvider,
-            apiKey,
+            apiKey: apiKey || existingConfig!.apiKey,
             baseUrl,
             defaultModel,
+            temperature: temperature !== undefined ? parseFloat(temperature) : 0.5,
+            rateLimitRpm: rateLimitRpm !== undefined ? parseInt(rateLimitRpm) : 10,
+            rateLimitTpm: rateLimitTpm !== undefined ? parseInt(rateLimitTpm) : 100000,
             updatedBy: session!.user.id,
         });
 

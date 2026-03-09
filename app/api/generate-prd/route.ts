@@ -4,6 +4,7 @@ import { getAIConfig, createAIProvider } from '@/lib/ai/config';
 import { getPRDPrompt } from '@/lib/ai/prompts';
 import { streamText } from 'ai';
 import { logEvent } from '@/lib/logger';
+import { checkRateLimit } from '@/lib/rate-limiter';
 
 export const maxDuration = 300; // 5 minutes
 
@@ -23,15 +24,34 @@ export async function POST(request: NextRequest) {
             );
         }
 
+        // Rate limiting check
+        const rateLimitResult = checkRateLimit(session.user.id, aiConfig.rateLimitRpm);
+        if (!rateLimitResult.allowed) {
+            return NextResponse.json(
+                {
+                    error: `Rate limit exceeded. You can make ${aiConfig.rateLimitRpm} requests per minute. Try again in ${rateLimitResult.resetInSeconds} seconds.`,
+                },
+                {
+                    status: 429,
+                    headers: {
+                        'Retry-After': String(rateLimitResult.resetInSeconds),
+                        'X-RateLimit-Limit': String(aiConfig.rateLimitRpm),
+                        'X-RateLimit-Remaining': '0',
+                        'X-RateLimit-Reset': String(rateLimitResult.resetInSeconds),
+                    },
+                }
+            );
+        }
+
         const provider = createAIProvider(aiConfig);
         const { systemPrompt, userPrompt } = getPRDPrompt(answers, additionalInstructions);
 
-
-        // Use streaming to avoid gateway timeouts on long generations
+        // Use streaming with configured temperature
         const result = streamText({
             model: provider(aiConfig.defaultModel),
             system: systemPrompt,
             prompt: userPrompt,
+            temperature: aiConfig.temperature,
             maxOutputTokens: 16000,
         });
 
@@ -52,7 +72,15 @@ export async function POST(request: NextRequest) {
             status: 'success'
         });
 
-        return NextResponse.json({ content: fullText });
+        return NextResponse.json(
+            { content: fullText },
+            {
+                headers: {
+                    'X-RateLimit-Limit': String(aiConfig.rateLimitRpm),
+                    'X-RateLimit-Remaining': String(rateLimitResult.remaining),
+                },
+            }
+        );
     } catch (error) {
         console.error('Error generating PRD:', error);
         const err = error as { message?: string; cause?: { message?: string } };

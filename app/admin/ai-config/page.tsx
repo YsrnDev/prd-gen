@@ -17,6 +17,8 @@ export default function AIConfigPage() {
     const [baseUrl, setBaseUrl] = useState('');
     const [defaultModel, setDefaultModel] = useState('gpt-4o');
     const [temperature, setTemperature] = useState(0.5);
+    const [rateLimitRpm, setRateLimitRpm] = useState(10);
+    const [rateLimitTpm, setRateLimitTpm] = useState(100000);
     const [showKey, setShowKey] = useState(false);
     const [saving, setSaving] = useState(false);
     const [testing, setTesting] = useState(false);
@@ -38,6 +40,9 @@ export default function AIConfigPage() {
                     setProvider(data.config.provider || 'openai');
                     setDefaultModel(data.config.defaultModel || 'gpt-4o');
                     if (data.config.baseUrl) setBaseUrl(data.config.baseUrl);
+                    if (data.config.temperature !== undefined) setTemperature(data.config.temperature);
+                    if (data.config.rateLimitRpm !== undefined) setRateLimitRpm(data.config.rateLimitRpm);
+                    if (data.config.rateLimitTpm !== undefined) setRateLimitTpm(data.config.rateLimitTpm);
                 }
             }
             setLoading(false);
@@ -53,7 +58,13 @@ export default function AIConfigPage() {
         setSaved(false);
         setTestResult(null);
 
-        const body: Record<string, string> = { provider, defaultModel };
+        const body: Record<string, string | number> = {
+            provider,
+            defaultModel,
+            temperature,
+            rateLimitRpm,
+            rateLimitTpm,
+        };
         if (apiKey) body.apiKey = apiKey;
         if (provider === 'custom' && baseUrl) body.baseUrl = baseUrl;
 
@@ -371,14 +382,15 @@ export default function AIConfigPage() {
                         <div>
                             <div className="flex items-center justify-between mb-1.5">
                                 <label className="text-xs font-semibold text-[var(--color-muted-fg)]">Requests Per Minute (RPM)</label>
-                                <span className="text-xs font-bold text-blue-400">6,000</span>
+                                <span className="text-xs font-bold text-blue-400">{rateLimitRpm.toLocaleString()}</span>
                             </div>
                             <input
                                 type="range"
-                                min="100"
-                                max="10000"
-                                step="100"
-                                defaultValue={6000}
+                                min="1"
+                                max="60"
+                                step="1"
+                                value={rateLimitRpm}
+                                onChange={(e) => setRateLimitRpm(parseInt(e.target.value))}
                                 className="w-full h-1.5 rounded-full appearance-none cursor-pointer bg-[var(--color-border)] accent-blue-500"
                             />
                         </div>
@@ -386,14 +398,15 @@ export default function AIConfigPage() {
                         <div>
                             <div className="flex items-center justify-between mb-1.5">
                                 <label className="text-xs font-semibold text-[var(--color-muted-fg)]">Tokens Per Minute (TPM)</label>
-                                <span className="text-xs font-bold text-emerald-400">84,000</span>
+                                <span className="text-xs font-bold text-emerald-400">{rateLimitTpm.toLocaleString()}</span>
                             </div>
                             <input
                                 type="range"
-                                min="1000"
-                                max="200000"
-                                step="1000"
-                                defaultValue={84000}
+                                min="10000"
+                                max="500000"
+                                step="10000"
+                                value={rateLimitTpm}
+                                onChange={(e) => setRateLimitTpm(parseInt(e.target.value))}
                                 className="w-full h-1.5 rounded-full appearance-none cursor-pointer bg-[var(--color-border)] accent-emerald-500"
                             />
                         </div>
