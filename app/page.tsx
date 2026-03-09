@@ -4,7 +4,7 @@ import LandingAnimations from './components/LandingAnimations';
 import LandingNavbar from './components/LandingNavbar';
 import { db } from '@/lib/db';
 import { subscriptionPlan } from '@/lib/db/schema';
-import { desc } from 'drizzle-orm';
+import { asc } from 'drizzle-orm';
 
 export const metadata: Metadata = {
   title: 'PRDGen AI - Turn Ideas into PRDs in Minutes',
@@ -13,8 +13,12 @@ export const metadata: Metadata = {
 
 export default async function LandingPage() {
   const plans = await db.query.subscriptionPlan.findMany({
-    orderBy: [desc(subscriptionPlan.price)]
+    orderBy: [asc(subscriptionPlan.price)]
   });
+
+  const formatPrice = (price: number) => {
+    return 'Rp ' + new Intl.NumberFormat('id-ID').format(price);
+  };
 
   return (
     <div className="relative min-h-screen bg-[#0f172a] text-slate-100 font-sans selection:bg-blue-600/30">
@@ -148,7 +152,7 @@ export default async function LandingPage() {
                 <h2 className="text-slate-100 text-3xl md:text-4xl font-bold mt-4 mb-4">Simple, Transparent Pricing</h2>
                 <p className="text-slate-400 max-w-xl mx-auto">Start free, scale as you grow. No hidden fees, no surprise charges.</p>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
 
                 {plans.length === 0 ? (
                   <p className="text-slate-400 text-center col-span-3">Our pricing plans are currently being updated. Please check back later.</p>
@@ -165,8 +169,8 @@ export default async function LandingPage() {
                         <p className="text-slate-400 text-sm">Perfect for your product needs</p>
                       </div>
                       <div className="flex items-baseline gap-1 mb-6">
-                        <span className="text-slate-100 text-5xl font-black">
-                          {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(plan.price)}
+                        <span className="text-slate-100 text-4xl font-black whitespace-nowrap">
+                          {formatPrice(plan.price)}
                         </span>
                         <span className="text-slate-500 text-sm">/month</span>
                       </div>

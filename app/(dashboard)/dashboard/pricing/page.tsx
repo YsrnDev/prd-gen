@@ -115,8 +115,7 @@ export default function UserPricingPage() {
     }
 
     const formatPrice = (price: number) => {
-        if (price === 0) return 'Gratis';
-        return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(price);
+        return 'Rp ' + new Intl.NumberFormat('id-ID').format(price);
     };
 
     const getPlanIcon = (name: string) => {
@@ -180,8 +179,8 @@ export default function UserPricingPage() {
                 {/* Message Banner */}
                 {message && (
                     <div className={`mb-6 p-4 rounded-xl border flex items-start gap-3 ${message.type === 'success' ? 'bg-green-500/10 border-green-500/30 text-green-400' :
-                            message.type === 'error' ? 'bg-red-500/10 border-red-500/30 text-red-400' :
-                                'bg-blue-500/10 border-blue-500/30 text-blue-400'
+                        message.type === 'error' ? 'bg-red-500/10 border-red-500/30 text-red-400' :
+                            'bg-blue-500/10 border-blue-500/30 text-blue-400'
                         }`}>
                         {message.type === 'error' && <AlertTriangle className="w-5 h-5 flex-shrink-0 mt-0.5" />}
                         <p className="text-sm">{message.text}</p>
@@ -203,8 +202,8 @@ export default function UserPricingPage() {
                                 <div
                                     key={plan.id}
                                     className={`relative flex flex-col rounded-2xl overflow-hidden transition-all duration-300 ${plan.isPopular
-                                            ? 'border-2 border-[#135bec] shadow-xl shadow-[#135bec]/10 scale-[1.02]'
-                                            : 'border border-slate-700/60'
+                                        ? 'border-2 border-[#135bec] shadow-xl shadow-[#135bec]/10 scale-[1.02]'
+                                        : 'border border-slate-700/60'
                                         } ${current ? 'ring-2 ring-green-500/50' : ''}`}
                                 >
                                     {/* Popular Badge */}
@@ -240,8 +239,8 @@ export default function UserPricingPage() {
                                         {/* Price */}
                                         <div className="mb-6">
                                             <div className="flex items-end gap-1">
-                                                <span className="text-3xl font-black text-white">{formatPrice(plan.price)}</span>
-                                                {plan.price > 0 && <span className="text-sm text-slate-500 mb-1">/30 hari</span>}
+                                                <span className="text-3xl font-black text-white whitespace-nowrap">{formatPrice(plan.price)}</span>
+                                                <span className="text-sm text-slate-500 mb-1">/month</span>
                                             </div>
                                         </div>
 
@@ -269,8 +268,8 @@ export default function UserPricingPage() {
                                                 onClick={() => handleCheckout(plan)}
                                                 disabled={checkoutLoading === plan.id}
                                                 className={`w-full py-3 rounded-xl font-bold text-sm transition-all duration-200 flex items-center justify-center gap-2 ${plan.isPopular
-                                                        ? 'bg-[#135bec] hover:bg-[#104ed0] text-white shadow-lg shadow-[#135bec]/20'
-                                                        : 'bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-900'
+                                                    ? 'bg-[#135bec] hover:bg-[#104ed0] text-white shadow-lg shadow-[#135bec]/20'
+                                                    : 'bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-900'
                                                     } disabled:opacity-50 disabled:cursor-not-allowed`}
                                             >
                                                 {checkoutLoading === plan.id ? (
