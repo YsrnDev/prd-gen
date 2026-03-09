@@ -283,6 +283,7 @@ export function AdminSidebar() {
             navItems={[
                 { href: '/admin', icon: 'admin_panel_settings', label: 'Admin' },
                 { href: '/admin/users', icon: 'group', label: 'Users' },
+                { href: '/admin/pricing', icon: 'payments', label: 'Pricing' },
                 { href: '/admin/ai-config', icon: 'memory', label: 'AI Config' },
                 { href: '/admin/logs', icon: 'list_alt', label: 'Logs' },
                 { href: '/settings', icon: 'settings', label: 'Settings' },
