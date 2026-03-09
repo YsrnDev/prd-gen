@@ -133,43 +133,28 @@ export default function DashboardPage() {
                 ))}
             </div>
 
-            {/* Quick Actions */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
-                <Link
-                    href="/wizard/new"
-                    className="group bg-gradient-to-r from-[#135bec]/10 to-blue-600/5 border border-[#135bec]/20 hover:border-[#135bec]/40 rounded-xl p-5 flex items-center gap-4 transition-all"
-                >
-                    <div className="size-12 rounded-xl bg-[#135bec] flex items-center justify-center text-white group-hover:scale-105 transition-transform">
-                        <span className="material-symbols-outlined">add</span>
-                    </div>
-                    <div>
-                        <h4 className="font-bold text-white">Create New PRD</h4>
-                        <p className="text-sm text-slate-400">Start the AI-powered wizard</p>
-                    </div>
-                </Link>
-                <Link
-                    href="/dashboard/prds"
-                    className="group bg-slate-900 border border-slate-800 hover:border-slate-700 rounded-xl p-5 flex items-center gap-4 transition-all"
-                >
-                    <div className="size-12 rounded-xl bg-slate-800 flex items-center justify-center text-slate-300 group-hover:scale-105 transition-transform">
-                        <span className="material-symbols-outlined">folder_open</span>
-                    </div>
-                    <div>
-                        <h4 className="font-bold text-white">Browse All PRDs</h4>
-                        <p className="text-sm text-slate-400">{totalPrds} document{totalPrds !== 1 ? 's' : ''} available</p>
-                    </div>
-                </Link>
-            </div>
+
 
             {/* Recent PRDs Table */}
             <section className="bg-slate-900 border border-slate-800 rounded-xl shadow-sm overflow-hidden">
                 <div className="px-6 py-5 border-b border-slate-800 flex justify-between items-center">
                     <h3 className="text-lg font-bold">Recent PRDs</h3>
-                    {prds.length > 5 && (
-                        <Link href="/dashboard/prds" className="text-sm font-semibold text-[#135bec] hover:underline">
-                            View all ({totalPrds})
+                    <div className="flex items-center gap-3">
+                        <Link
+                            href="/dashboard/prds"
+                            className="flex items-center gap-2 px-3 py-1.5 text-sm font-bold text-slate-300 bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors border border-slate-700"
+                        >
+                            <span className="material-symbols-outlined text-[18px]">folder_open</span>
+                            Browse All PRDs
                         </Link>
-                    )}
+                        <Link
+                            href="/wizard/new"
+                            className="flex items-center gap-2 px-3 py-1.5 text-sm font-bold text-white bg-[#135bec] hover:bg-blue-600 rounded-lg transition-colors"
+                        >
+                            <span className="material-symbols-outlined text-[18px]">add</span>
+                            Create New PRD
+                        </Link>
+                    </div>
                 </div>
 
                 {loading ? (
