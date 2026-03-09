@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { Menu, X } from 'lucide-react';
+import Image from 'next/image';
 
 export default function LandingNavbar() {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -15,9 +16,7 @@ export default function LandingNavbar() {
         <header data-anim="navbar" className="flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-800/50 px-6 md:px-20 py-4 bg-[#0f172a]/80 backdrop-blur-md fixed top-0 left-0 right-0 z-50">
             {/* Logo */}
             <div className="flex items-center gap-3 shrink-0">
-                <div className="flex items-center justify-center bg-[#135bec] rounded-lg p-1.5">
-                    <span className="material-symbols-outlined text-white text-2xl">controller_gen</span>
-                </div>
+                <Image src="/logo.png" alt="PRDGen AI Logo" width={36} height={36} className="object-contain" />
                 <h2 className="text-slate-100 text-xl font-extrabold leading-tight tracking-tight">PRDGen AI</h2>
             </div>
 
