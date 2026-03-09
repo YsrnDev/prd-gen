@@ -174,7 +174,7 @@ export default async function AdminDashboardPage() {
 
                 {/* Real Recent Activity (Latest Registered Users) */}
                 <div className="glass-card p-5">
-                    <h3 className="text-sm font-bold text-[var(--color-fg)] mb-4">Recent Users</h3>
+                    <h3 className="text-sm font-bold text-[var(--color-fg)] mb-4">Recent Activity</h3>
                     <div className="space-y-4">
                         {recentUsers.length === 0 ? (
                             <p className="text-xs text-[var(--color-muted-fg)]">No users registered yet.</p>
