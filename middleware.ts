@@ -34,7 +34,7 @@ export async function middleware(request: NextRequest) {
 
     // Check maintenance mode for non-admin users on user-facing routes only
     if (!isAdmin && !isAdminRoute) {
-        const protectedUserRoutes = ['/dashboard', '/prd', '/wizard', '/settings', '/login', '/register'];
+        const protectedUserRoutes = ['/dashboard', '/prd', '/wizard', '/settings'];
         const isUserRoute = protectedUserRoutes.some((route) => pathname.startsWith(route));
 
         if (isUserRoute) {
