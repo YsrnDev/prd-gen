@@ -309,17 +309,19 @@ export default function AIConfigPage() {
                                 <p className="text-xs text-red-400 mb-2">{fetchModelError}</p>
                             )}
                             {fetchedModels.length > 0 ? (
-                                <div className="relative">
-                                    <select
-                                        value={defaultModel}
-                                        onChange={(e) => setDefaultModel(e.target.value)}
-                                        className="w-full appearance-none px-4 py-2.5 pr-10 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-fg)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-ring)]"
-                                    >
-                                        {fetchedModels.map((m) => (
-                                            <option key={m} value={m}>{m}</option>
-                                        ))}
-                                    </select>
-                                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-muted-fg)] pointer-events-none" />
+                                <div>
+                                    <div className="relative">
+                                        <select
+                                            value={defaultModel}
+                                            onChange={(e) => setDefaultModel(e.target.value)}
+                                            className="w-full appearance-none px-4 py-2.5 pr-10 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-fg)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-ring)]"
+                                        >
+                                            {fetchedModels.map((m) => (
+                                                <option key={m} value={m}>{m}</option>
+                                            ))}
+                                        </select>
+                                        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-muted-fg)] pointer-events-none" />
+                                    </div>
                                     <span className="block mt-1.5 text-[10px] text-emerald-400 font-semibold">
                                         {fetchedModels.length} models loaded from API
                                     </span>

@@ -111,18 +111,18 @@ function SidebarShell({
                         {isMobile ? (
                             <button
                                 onClick={() => setMobileOpen(false)}
-                                className="p-1.5 rounded-lg text-slate-500 hover:text-slate-200 hover:bg-slate-800 transition-colors"
+                                className="size-8 flex items-center justify-center rounded-lg text-slate-500 hover:text-slate-200 hover:bg-slate-800 transition-colors flex-shrink-0"
                                 title="Close sidebar"
                             >
-                                <span className="material-symbols-outlined text-[20px]">close</span>
+                                <span className="material-symbols-outlined text-[20px] leading-none">close</span>
                             </button>
                         ) : (
                             <button
                                 onClick={() => setCollapsed(true)}
-                                className="p-1.5 rounded-lg text-slate-500 hover:text-slate-200 hover:bg-slate-800 transition-colors"
+                                className="size-8 flex items-center justify-center rounded-lg text-slate-500 hover:text-slate-200 hover:bg-slate-800 transition-colors flex-shrink-0"
                                 title="Collapse sidebar"
                             >
-                                <span className="material-symbols-outlined text-[20px]">menu_open</span>
+                                <span className="material-symbols-outlined text-[20px] leading-none">menu_open</span>
                             </button>
                         )}
                     </>
@@ -176,10 +176,10 @@ function SidebarShell({
                             </div>
                             <button
                                 onClick={() => signOut({ fetchOptions: { onSuccess: () => { window.location.href = '/login'; } } })}
-                                className="p-1.5 rounded-md text-slate-500 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+                                className="size-8 flex items-center justify-center rounded-lg text-slate-500 hover:text-red-400 hover:bg-red-500/10 transition-colors flex-shrink-0"
                                 title="Sign out"
                             >
-                                <span className="material-symbols-outlined text-[18px]">logout</span>
+                                <span className="material-symbols-outlined text-[18px] leading-none">logout</span>
                             </button>
                         </>
                     )}

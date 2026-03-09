@@ -1,5 +1,6 @@
 import { db } from '@/lib/db';
 import { aiConfig } from '@/lib/db/schema';
+import { eq } from 'drizzle-orm';
 import { decrypt, encrypt } from '@/lib/crypto';
 import { createOpenAI } from '@ai-sdk/openai';
 import { createAnthropic } from '@ai-sdk/anthropic';
@@ -62,7 +63,8 @@ export async function saveAIConfig(data: {
                 rateLimitTpm: data.rateLimitTpm ?? 100000,
                 updatedBy: data.updatedBy,
                 updatedAt: new Date(),
-            });
+            })
+            .where(eq(aiConfig.id, existing[0].id));
     } else {
         await db.insert(aiConfig).values({
             provider: data.provider,
