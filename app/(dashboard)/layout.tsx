@@ -2,6 +2,7 @@ import { Sidebar, AdminSidebar } from '@/components/layout/Sidebar';
 import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
 import { MaintenanceWatcher } from '@/components/MaintenanceWatcher';
+import { EmailVerificationBanner } from '@/components/EmailVerificationBanner';
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
     const session = await auth.api.getSession({ headers: await headers() });
@@ -13,6 +14,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
             {/* Poll maintenance status for regular users only */}
             {!isAdmin && <MaintenanceWatcher />}
             <main className="flex-1 overflow-y-auto p-4 pt-24 pb-32 md:p-8 md:pt-8 md:pb-8">
+                <EmailVerificationBanner />
                 {children}
             </main>
         </div>

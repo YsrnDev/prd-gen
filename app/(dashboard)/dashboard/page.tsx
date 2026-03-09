@@ -105,6 +105,12 @@ export default function DashboardPage() {
         return { totalPrds, drafts, completed, totalWords, recentPrds, stats };
     }, [prds]);
 
+    const isVerifiedOrAdmin = useMemo(() => {
+        if (!session?.user) return false;
+        if ((session.user as any).role === 'admin') return true;
+        return !!session.user.emailVerified;
+    }, [session]);
+
     return (
         <div className="max-w-6xl mx-auto">
             {/* Header */}
@@ -149,13 +155,24 @@ export default function DashboardPage() {
                             <span className="material-symbols-outlined text-[18px]">folder_open</span>
                             Browse All PRDs
                         </Link>
-                        <Link
-                            href="/wizard/new"
-                            className="flex items-center gap-2 px-3 py-1.5 text-sm font-bold text-white bg-[#135bec] hover:bg-blue-600 rounded-lg transition-colors"
-                        >
-                            <span className="material-symbols-outlined text-[18px]">add</span>
-                            Create New PRD
-                        </Link>
+                        {isVerifiedOrAdmin ? (
+                            <Link
+                                href="/wizard/new"
+                                className="flex items-center gap-2 px-3 py-1.5 text-sm font-bold text-white bg-[#135bec] hover:bg-blue-600 rounded-lg transition-colors"
+                            >
+                                <span className="material-symbols-outlined text-[18px]">add</span>
+                                Create New PRD
+                            </Link>
+                        ) : (
+                            <button
+                                disabled
+                                title="Please verify your email to create a PRD"
+                                className="flex items-center gap-2 px-3 py-1.5 text-sm font-bold text-white/50 bg-[#135bec]/50 rounded-lg cursor-not-allowed"
+                            >
+                                <span className="material-symbols-outlined text-[18px]">add</span>
+                                Create New PRD
+                            </button>
+                        )}
                     </div>
                 </div>
 
@@ -174,13 +191,24 @@ export default function DashboardPage() {
                         <span className="material-symbols-outlined text-slate-600 text-5xl block mb-3">description</span>
                         <h4 className="text-white font-bold mb-1">No PRDs yet</h4>
                         <p className="text-slate-500 text-sm mb-5">Create your first AI-powered PRD to get started.</p>
-                        <Link
-                            href="/wizard/new"
-                            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#135bec] text-white text-sm font-bold hover:bg-[#135bec]/90 transition-all"
-                        >
-                            <span className="material-symbols-outlined text-[18px]">add</span>
-                            Create PRD
-                        </Link>
+                        {isVerifiedOrAdmin ? (
+                            <Link
+                                href="/wizard/new"
+                                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#135bec] text-white text-sm font-bold hover:bg-[#135bec]/90 transition-all"
+                            >
+                                <span className="material-symbols-outlined text-[18px]">add</span>
+                                Create PRD
+                            </Link>
+                        ) : (
+                            <button
+                                disabled
+                                title="Please verify your email to create a PRD"
+                                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#135bec]/50 text-white/50 text-sm font-bold cursor-not-allowed"
+                            >
+                                <span className="material-symbols-outlined text-[18px]">add</span>
+                                Create PRD
+                            </button>
+                        )}
                     </div>
                 ) : (
                     <div className="overflow-x-auto">

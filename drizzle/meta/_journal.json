@@ -15,6 +15,13 @@
       "when": 1772973161606,
       "tag": "0001_parallel_mach_iv",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1773091616246,
+      "tag": "0002_complete_gamora",
+      "breakpoints": true
     }
   ]
 }

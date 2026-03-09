@@ -4,6 +4,7 @@ import { db } from '@/lib/db';
 import * as schema from '@/lib/db/schema';
 import { sql } from 'drizzle-orm';
 import { logEvent } from '@/lib/logger';
+import { sendEmail } from '@/lib/email';
 
 export const auth = betterAuth({
     database: drizzleAdapter(db, {
@@ -18,6 +19,24 @@ export const auth = betterAuth({
     emailAndPassword: {
         enabled: true,
         requireEmailVerification: false,
+    },
+    emailVerification: {
+        sendOnSignUp: true,
+        autoSignInAfterVerification: true,
+        sendVerificationEmail: async ({ user, url, token }, request) => {
+            void sendEmail({
+                to: user.email,
+                subject: 'Verify your email address - PRD Generator',
+                html: `
+                    <div style="font-family: Arial, sans-serif; padding: 20px;">
+                        <h2>Welcome to PRD Generator!</h2>
+                        <p>Hi ${user.name}, please verify your email address to unlock full features.</p>
+                        <a href="${url}" style="display:inline-block; padding:10px 20px; background-color:#3b82f6; color:#ffffff; text-decoration:none; border-radius:5px;">Verify My Email</a>
+                        <p style="margin-top: 20px; font-size: 12px; color: #666;">If you didn't request this, you can safely ignore this email.</p>
+                    </div>
+                `,
+            });
+        },
     },
     databaseHooks: {
         user: {

@@ -8,6 +8,24 @@ export const user = pgTable('user', {
     emailVerified: boolean('email_verified').notNull().default(false),
     image: text('image'),
     role: text('role').notNull().default('user'), // 'admin' | 'user'
+
+    // Billing & Tier
+    tier: text('tier').notNull().default('FREE'), // 'FREE' | 'PLUS' | 'PRO'
+    subscriptionStatus: text('subscription_status').notNull().default('NONE'), // 'NONE' | 'ACTIVE' | 'EXPIRED'
+    subscriptionUntil: timestamp('subscription_until'),
+
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+    updatedAt: timestamp('updated_at').notNull().defaultNow(),
+});
+
+// Pricing Plans table (Managed by Admin)
+export const subscriptionPlan = pgTable('subscription_plan', {
+    id: serial('id').primaryKey(),
+    name: text('name').notNull().unique(), // 'PLUS' | 'PRO'
+    price: integer('price').notNull(), // Amount in IDR
+    features: jsonb('features').$type<string[]>().default([]),
+    isPopular: boolean('is_popular').notNull().default(false),
+    isActive: boolean('is_active').notNull().default(true),
     createdAt: timestamp('created_at').notNull().defaultNow(),
     updatedAt: timestamp('updated_at').notNull().defaultNow(),
 });
