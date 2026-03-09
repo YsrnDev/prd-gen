@@ -194,19 +194,6 @@ export default async function AdminDashboardPage() {
                     </div>
                 </div>
             </div>
-
-            {/* Bottom status bar */}
-            <div className="glass-card px-4 sm:px-5 py-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
-                <div className="flex items-center gap-3">
-                    <span className="text-xs font-semibold text-[var(--color-muted-fg)]">
-                        Supabase Database Connection
-                    </span>
-                </div>
-                <div className="flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                    <span className="text-[10px] text-emerald-400 uppercase tracking-wider font-bold">Connected & Live</span>
-                </div>
-            </div>
         </div>
     );
 }
