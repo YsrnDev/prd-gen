@@ -2,13 +2,20 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import LandingAnimations from './components/LandingAnimations';
 import LandingNavbar from './components/LandingNavbar';
+import { db } from '@/lib/db';
+import { subscriptionPlan } from '@/lib/db/schema';
+import { desc } from 'drizzle-orm';
 
 export const metadata: Metadata = {
   title: 'PRDGen AI - Turn Ideas into PRDs in Minutes',
   description: 'Generate enterprise-ready Product Requirements Documents in minutes using AI. Our 6-step interview wizard produces comprehensive, stakeholder-ready PRDs instantly.',
 };
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  const plans = await db.query.subscriptionPlan.findMany({
+    orderBy: [desc(subscriptionPlan.price)]
+  });
+
   return (
     <div className="relative min-h-screen bg-[#0f172a] text-slate-100 font-sans selection:bg-blue-600/30">
       {/* Client component for GSAP animations */}
@@ -142,70 +149,44 @@ export default function LandingPage() {
                 <p className="text-slate-400 max-w-xl mx-auto">Start free, scale as you grow. No hidden fees, no surprise charges.</p>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
-                {/* Free */}
-                <div data-anim="pricing-card" className="flex flex-col p-8 rounded-2xl bg-slate-800/40 border border-slate-700/50 hover:border-slate-600 transition-colors">
-                  <div className="mb-6">
-                    <h3 className="text-slate-100 text-xl font-bold mb-1">Starter</h3>
-                    <p className="text-slate-400 text-sm">For individuals exploring AI-powered PRDs</p>
-                  </div>
-                  <div className="flex items-baseline gap-1 mb-6">
-                    <span className="text-slate-100 text-5xl font-black">$0</span>
-                    <span className="text-slate-500 text-sm">/month</span>
-                  </div>
-                  <ul className="flex flex-col gap-3 mb-8 text-sm text-slate-400">
-                    <li className="flex items-center gap-2"><span className="material-symbols-outlined text-green-400 text-base" style={{ fontSize: '18px', width: '18px' }}>check_circle</span> 3 PRDs per month</li>
-                    <li className="flex items-center gap-2"><span className="material-symbols-outlined text-green-400 text-base" style={{ fontSize: '18px', width: '18px' }}>check_circle</span> Basic AI analysis</li>
-                    <li className="flex items-center gap-2"><span className="material-symbols-outlined text-green-400 text-base" style={{ fontSize: '18px', width: '18px' }}>check_circle</span> PDF export</li>
-                    <li className="flex items-center gap-2"><span className="material-symbols-outlined text-slate-600 text-base" style={{ fontSize: '18px', width: '18px' }}>cancel</span> Market research</li>
-                    <li className="flex items-center gap-2"><span className="material-symbols-outlined text-slate-600 text-base" style={{ fontSize: '18px', width: '18px' }}>cancel</span> API access</li>
-                  </ul>
-                  <Link href="/register" className="flex items-center justify-center rounded-xl h-12 px-6 bg-slate-700 text-white text-sm font-bold transition-all hover:bg-slate-600 mt-auto">
-                    Get Started Free
-                  </Link>
-                </div>
-                {/* Pro - highlighted */}
-                <div data-anim="pricing-card" className="flex flex-col p-8 rounded-2xl bg-[#135bec]/10 border-2 border-[#135bec] relative hover:border-[#135bec] transition-colors shadow-lg shadow-[#135bec]/10">
-                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-[#135bec] text-white text-xs font-bold px-4 py-1 rounded-full">Most Popular</div>
-                  <div className="mb-6">
-                    <h3 className="text-slate-100 text-xl font-bold mb-1">Pro</h3>
-                    <p className="text-slate-400 text-sm">For teams shipping products at scale</p>
-                  </div>
-                  <div className="flex items-baseline gap-1 mb-6">
-                    <span className="text-slate-100 text-5xl font-black">$29</span>
-                    <span className="text-slate-500 text-sm">/month</span>
-                  </div>
-                  <ul className="flex flex-col gap-3 mb-8 text-sm text-slate-400">
-                    <li className="flex items-center gap-2"><span className="material-symbols-outlined text-green-400 text-base" style={{ fontSize: '18px', width: '18px' }}>check_circle</span> Unlimited PRDs</li>
-                    <li className="flex items-center gap-2"><span className="material-symbols-outlined text-green-400 text-base" style={{ fontSize: '18px', width: '18px' }}>check_circle</span> Advanced AI analysis</li>
-                    <li className="flex items-center gap-2"><span className="material-symbols-outlined text-green-400 text-base" style={{ fontSize: '18px', width: '18px' }}>check_circle</span> All export formats</li>
-                    <li className="flex items-center gap-2"><span className="material-symbols-outlined text-green-400 text-base" style={{ fontSize: '18px', width: '18px' }}>check_circle</span> Market research</li>
-                    <li className="flex items-center gap-2"><span className="material-symbols-outlined text-green-400 text-base" style={{ fontSize: '18px', width: '18px' }}>check_circle</span> Priority support</li>
-                  </ul>
-                  <Link href="/register" className="flex items-center justify-center rounded-xl h-12 px-6 bg-[#135bec] text-white text-sm font-bold transition-all hover:bg-[#135bec]/90 shadow-lg shadow-[#135bec]/20 mt-auto">
-                    Start Pro Trial
-                  </Link>
-                </div>
-                {/* Enterprise */}
-                <div data-anim="pricing-card" className="flex flex-col p-8 rounded-2xl bg-slate-800/40 border border-slate-700/50 hover:border-slate-600 transition-colors">
-                  <div className="mb-6">
-                    <h3 className="text-slate-100 text-xl font-bold mb-1">Enterprise</h3>
-                    <p className="text-slate-400 text-sm">For organizations with advanced needs</p>
-                  </div>
-                  <div className="flex items-baseline gap-1 mb-6">
-                    <span className="text-slate-100 text-5xl font-black">$99</span>
-                    <span className="text-slate-500 text-sm">/month</span>
-                  </div>
-                  <ul className="flex flex-col gap-3 mb-8 text-sm text-slate-400">
-                    <li className="flex items-center gap-2"><span className="material-symbols-outlined text-green-400 text-base" style={{ fontSize: '18px', width: '18px' }}>check_circle</span> Everything in Pro</li>
-                    <li className="flex items-center gap-2"><span className="material-symbols-outlined text-green-400 text-base" style={{ fontSize: '18px', width: '18px' }}>check_circle</span> Full API access</li>
-                    <li className="flex items-center gap-2"><span className="material-symbols-outlined text-green-400 text-base" style={{ fontSize: '18px', width: '18px' }}>check_circle</span> SSO & SAML</li>
-                    <li className="flex items-center gap-2"><span className="material-symbols-outlined text-green-400 text-base" style={{ fontSize: '18px', width: '18px' }}>check_circle</span> Custom integrations</li>
-                    <li className="flex items-center gap-2"><span className="material-symbols-outlined text-green-400 text-base" style={{ fontSize: '18px', width: '18px' }}>check_circle</span> Dedicated support</li>
-                  </ul>
-                  <Link href="/register" className="flex items-center justify-center rounded-xl h-12 px-6 bg-slate-700 text-white text-sm font-bold transition-all hover:bg-slate-600 mt-auto">
-                    Contact Sales
-                  </Link>
-                </div>
+
+                {plans.length === 0 ? (
+                  <p className="text-slate-400 text-center col-span-3">Our pricing plans are currently being updated. Please check back later.</p>
+                ) : (
+                  plans.map((plan) => (
+                    <div
+                      key={plan.id}
+                      data-anim="pricing-card"
+                      className={`flex flex-col p-8 rounded-2xl relative transition-colors ${plan.isPopular ? 'bg-[#135bec]/10 border-2 border-[#135bec] hover:border-[#135bec] shadow-lg shadow-[#135bec]/10' : 'bg-slate-800/40 border border-slate-700/50 hover:border-slate-600'}`}
+                    >
+                      {plan.isPopular && <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-[#135bec] text-white text-xs font-bold px-4 py-1 rounded-full">Most Popular</div>}
+                      <div className="mb-6">
+                        <h3 className="text-slate-100 text-xl font-bold mb-1">{plan.name}</h3>
+                        <p className="text-slate-400 text-sm">Perfect for your product needs</p>
+                      </div>
+                      <div className="flex items-baseline gap-1 mb-6">
+                        <span className="text-slate-100 text-5xl font-black">
+                          {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(plan.price)}
+                        </span>
+                        <span className="text-slate-500 text-sm">/month</span>
+                      </div>
+                      <ul className="flex flex-col gap-3 mb-8 text-sm text-slate-400">
+                        {plan.features?.map((feature: string, i: number) => (
+                          <li key={i} className="flex items-center gap-2">
+                            <span className="material-symbols-outlined text-green-400 text-base" style={{ fontSize: '18px', width: '18px' }}>check_circle</span>
+                            {feature}
+                          </li>
+                        ))}
+                      </ul>
+                      <Link
+                        href="/register"
+                        className={`flex items-center justify-center rounded-xl h-12 px-6 text-white text-sm font-bold transition-all mt-auto ${plan.isPopular ? 'bg-[#135bec] hover:bg-[#135bec]/90 shadow-lg shadow-[#135bec]/20' : 'bg-slate-700 hover:bg-slate-600'}`}
+                      >
+                        {plan.price === 0 ? 'Get Started Free' : 'Choose Plan'}
+                      </Link>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
           </section>
