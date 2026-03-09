@@ -267,6 +267,7 @@ export function Sidebar() {
             navItems={[
                 { href: '/dashboard', icon: 'dashboard', label: 'Dashboard' },
                 { href: '/dashboard/prds', icon: 'description', label: 'My PRDs' },
+                { href: '/dashboard/pricing', icon: 'credit_card', label: 'Pricing' },
                 { href: '/settings', icon: 'settings', label: 'Settings' },
             ]}
             brandIcon="auto_awesome"
