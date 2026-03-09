@@ -261,8 +261,8 @@ export default async function LandingPage() {
         </main>
 
         {/* Footer */}
-        <footer data-anim="footer" className="border-t border-slate-800/50 py-6 px-6 md:px-20 bg-[#0f172a]">
-          <div className="max-w-[1200px] mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
+        <footer data-anim="footer" className="border-t border-slate-800/50 py-6 bg-[#0f172a]">
+          <div className="max-w-[1200px] mx-auto px-6 flex flex-col sm:flex-row justify-between items-center gap-4">
             <div className="flex items-center gap-2">
               <Image src="/logo.webp" alt="PRDGen AI" width={28} height={28} className="object-contain rounded-md" />
               <span className="text-slate-400 text-sm font-semibold">PRDGen AI</span>
