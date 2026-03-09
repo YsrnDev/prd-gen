@@ -71,11 +71,10 @@ export default function SettingsClient() {
 
 
             {/* Sign out */}
-            <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-sm">
-                <h3 className="text-sm font-bold text-white mb-3">Account Actions</h3>
+            <div className="mt-8">
                 <button
                     onClick={handleSignOut}
-                    className="flex items-center gap-3 px-4 py-3 rounded-lg border border-red-500/30 text-red-400 hover:bg-red-500/10 transition-colors text-sm font-bold w-full"
+                    className="flex items-center gap-3 px-4 py-3 rounded-lg border border-red-500/30 text-red-500 hover:bg-red-500/10 transition-colors text-sm font-bold w-full justify-center"
                 >
                     <span className="material-symbols-outlined text-[20px]">logout</span>
                     Sign out of PRDGen AI
