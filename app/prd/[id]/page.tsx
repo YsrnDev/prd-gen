@@ -6,7 +6,12 @@ import { headers } from 'next/headers';
 import { redirect, notFound } from 'next/navigation';
 import Link from 'next/link';
 import { Edit, ArrowLeft, Download } from 'lucide-react';
-import { formatDate } from '@/lib/utils';
+// Remove custom formatDate import as it is missing in lib/utils
+function formatDate(date: Date) {
+    return new Intl.DateTimeFormat('en-US', {
+        month: 'short', day: 'numeric', year: 'numeric'
+    }).format(new Date(date));
+}
 import type { Metadata } from 'next';
 import { MarkdownRenderer } from '@/components/MarkdownRenderer';
 

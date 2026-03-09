@@ -3,7 +3,12 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { formatDate } from '@/lib/utils';
+// Remove broken formatDate import 
+function formatDate(date: string) {
+    return new Intl.DateTimeFormat('en-US', {
+        month: 'short', day: 'numeric', year: 'numeric'
+    }).format(new Date(date));
+}
 import { DeletePrdButton } from '@/components/DeletePrdButton';
 
 interface PRD {
