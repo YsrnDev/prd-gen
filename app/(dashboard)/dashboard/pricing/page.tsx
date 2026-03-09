@@ -44,10 +44,10 @@ export default function UserPricingPage() {
 
     async function fetchPlans() {
         try {
-            const res = await fetch('/api/admin/pricing');
+            const res = await fetch('/api/pricing');
             if (res.ok) {
                 const data = await res.json();
-                setPlans(data.plans.filter((p: Plan) => p.isActive));
+                setPlans(data.plans || []);
             }
         } catch (err) {
             console.error('Failed to fetch plans:', err);
