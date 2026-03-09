@@ -4,10 +4,12 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
 
-    // Public routes that we explicitly don't need to authenticate but we still want session checks to redirect if already logged in. Except `/api/auth` to prevent infinite loops.
-
-    // Stop middleware entirely for api/auth to prevent infinite loops or redundant checks
-    if (pathname.startsWith('/api/auth')) {
+    // Always allow: auth callbacks, static assets, maintenance page itself
+    if (
+        pathname.startsWith('/api/auth') ||
+        pathname.startsWith('/api/maintenance-status') ||
+        pathname === '/maintenance'
+    ) {
         return NextResponse.next();
     }
 
@@ -24,6 +26,30 @@ export async function middleware(request: NextRequest) {
         console.error('Session fetch error in middleware', error);
     }
 
+    const userRole = (session?.user as { role?: string } | undefined)?.role;
+    const isAdmin = userRole === 'admin';
+
+    // Check maintenance mode for non-admin users only
+    if (!isAdmin) {
+        const protectedUserRoutes = ['/dashboard', '/prd', '/wizard', '/settings', '/login', '/register'];
+        const isUserRoute = protectedUserRoutes.some((route) => pathname.startsWith(route));
+
+        if (isUserRoute) {
+            try {
+                const maintenanceUrl = new URL('/api/maintenance-status', request.url);
+                const maintenanceRes = await fetch(maintenanceUrl.toString());
+                if (maintenanceRes.ok) {
+                    const { maintenanceMode } = await maintenanceRes.json();
+                    if (maintenanceMode) {
+                        return NextResponse.redirect(new URL('/maintenance', request.url));
+                    }
+                }
+            } catch {
+                // If maintenance-status fetch fails, let users through (fail open)
+            }
+        }
+    }
+
     // Protected routes - redirect to login if no session
     const protectedRoutes = ['/dashboard', '/prd', '/wizard', '/settings'];
     const isProtected = protectedRoutes.some((route) => pathname.startsWith(route));
@@ -33,8 +59,7 @@ export async function middleware(request: NextRequest) {
             return NextResponse.redirect(new URL('/login', request.url));
         }
 
-        const userRole = (session.user as { role?: string })?.role;
-        if (userRole === 'admin' && pathname === '/dashboard') {
+        if (isAdmin && pathname === '/dashboard') {
             return NextResponse.redirect(new URL('/admin', request.url));
         }
     }
@@ -44,8 +69,7 @@ export async function middleware(request: NextRequest) {
         if (!session) {
             return NextResponse.redirect(new URL('/login', request.url));
         }
-        const userRole = (session.user as { role?: string }).role;
-        if (userRole !== 'admin') {
+        if (!isAdmin) {
             return NextResponse.redirect(new URL('/dashboard', request.url));
         }
     }
@@ -53,8 +77,7 @@ export async function middleware(request: NextRequest) {
     // Guest routes - redirect to dashboard if logged in
     const guestRoutes = ['/login', '/register'];
     if (session && guestRoutes.includes(pathname)) {
-        const userRole = (session.user as { role?: string })?.role;
-        return NextResponse.redirect(new URL(userRole === 'admin' ? '/admin' : '/dashboard', request.url));
+        return NextResponse.redirect(new URL(isAdmin ? '/admin' : '/dashboard', request.url));
     }
 
     return NextResponse.next();
@@ -65,3 +88,4 @@ export const config = {
         '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
     ],
 };
+
