@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import Image from 'next/image';
 import type { Metadata } from 'next';
 import LandingAnimations from './components/LandingAnimations';
 import LandingNavbar from './components/LandingNavbar';
@@ -263,11 +262,11 @@ export default async function LandingPage() {
         {/* Footer */}
         <footer data-anim="footer" className="border-t border-slate-800/50 py-6 bg-[#0f172a]">
           <div className="max-w-[1200px] mx-auto px-6 flex flex-col sm:flex-row justify-between items-center gap-4">
-            <div className="flex items-center gap-2">
-              <Image src="/logo.webp" alt="PRDGen AI" width={28} height={28} className="object-contain rounded-md" />
-              <span className="text-slate-400 text-sm font-semibold">PRDGen AI</span>
+            <p className="text-slate-600 text-xs">© 2025 PRDGen AI. All rights reserved.</p>
+            <div className="flex items-center gap-6">
+              <Link href="/terms" className="text-slate-500 hover:text-slate-300 text-xs transition-colors">Terms of Service</Link>
+              <Link href="/privacy" className="text-slate-500 hover:text-slate-300 text-xs transition-colors">Privacy Policy</Link>
             </div>
-            <p className="text-slate-600 text-xs">© 2024 PRDGen AI. All rights reserved.</p>
           </div>
         </footer>
       </div>
