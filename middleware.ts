@@ -29,8 +29,11 @@ export async function middleware(request: NextRequest) {
     const userRole = (session?.user as { role?: string } | undefined)?.role;
     const isAdmin = userRole === 'admin';
 
-    // Check maintenance mode for non-admin users only
-    if (!isAdmin) {
+    // Admin routes bypass maintenance mode entirely — check auth separately below
+    const isAdminRoute = pathname.startsWith('/admin');
+
+    // Check maintenance mode for non-admin users on user-facing routes only
+    if (!isAdmin && !isAdminRoute) {
         const protectedUserRoutes = ['/dashboard', '/prd', '/wizard', '/settings', '/login', '/register'];
         const isUserRoute = protectedUserRoutes.some((route) => pathname.startsWith(route));
 
@@ -64,8 +67,8 @@ export async function middleware(request: NextRequest) {
         }
     }
 
-    // Admin routes - redirect to dashboard if not admin
-    if (pathname.startsWith('/admin')) {
+    // Admin routes - redirect to login if not authenticated, 403 if not admin
+    if (isAdminRoute) {
         if (!session) {
             return NextResponse.redirect(new URL('/login', request.url));
         }
