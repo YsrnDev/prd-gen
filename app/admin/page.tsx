@@ -1,10 +1,9 @@
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { user as userSchema, prdDocument, wizardSession } from '@/lib/db/schema';
-import { count, desc, sql, gte } from 'drizzle-orm';
+import { sql, count, desc, gte } from 'drizzle-orm';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { Users, FileText, Activity } from 'lucide-react';
 import { LiveDataButton, ExportReportButton } from './components/DashboardButtons';
 import type { Metadata } from 'next';
 
@@ -65,9 +64,30 @@ export default async function AdminDashboardPage() {
     const maxVal = Math.max(...chartData.map(d => Math.max(d.prds, d.sessions)), 1);
 
     const stats = [
-        { label: 'Total Registered Users', value: totalUsers[0]?.count ?? 0, icon: Users, color: 'text-blue-400', bg: 'bg-blue-500/10', change: 'Live', trend: 'up' as const },
-        { label: 'Total PRDs Generated', value: totalPRDs[0]?.count ?? 0, icon: FileText, color: 'text-emerald-400', bg: 'bg-emerald-500/10', change: 'Live', trend: 'up' as const },
-        { label: 'Total AI Sessions', value: totalSessions[0]?.count ?? 0, icon: Activity, color: 'text-cyan-400', bg: 'bg-cyan-500/10', change: 'Live', trend: 'up' as const },
+        {
+            label: 'Total Registered Users',
+            value: totalUsers[0]?.count ?? 0,
+            sub: 'Active platform accounts',
+            icon: 'group',
+            iconColor: 'text-[#135bec]',
+            iconBg: 'bg-[#135bec]/10'
+        },
+        {
+            label: 'Total PRDs Generated',
+            value: totalPRDs[0]?.count ?? 0,
+            sub: 'Documents created by users',
+            icon: 'description',
+            iconColor: 'text-amber-400',
+            iconBg: 'bg-amber-500/10'
+        },
+        {
+            label: 'Total AI Sessions',
+            value: totalSessions[0]?.count ?? 0,
+            sub: 'Total wizard interactions',
+            icon: 'memory',
+            iconColor: 'text-emerald-400',
+            iconBg: 'bg-emerald-500/10'
+        },
     ];
 
     return (
@@ -85,23 +105,17 @@ export default async function AdminDashboardPage() {
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-                {stats.map((stat) => (
-                    <div key={stat.label} className="glass-card p-5">
-                        <div className="flex items-center justify-between mb-4">
-                            <div className={`w-10 h-10 rounded-lg ${stat.bg} flex items-center justify-center`}>
-                                <stat.icon className={`w-5 h-5 ${stat.color}`} />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                {stats.map((stat, i) => (
+                    <div key={i} className="bg-slate-900 border border-slate-800 p-6 rounded-xl flex flex-col gap-1 shadow-sm">
+                        <div className="flex justify-between items-center mb-2">
+                            <span className="text-sm font-medium text-slate-400">{stat.label}</span>
+                            <div className={`size-9 rounded-lg ${stat.iconBg} flex items-center justify-center`}>
+                                <span className={`material-symbols-outlined text-[20px] ${stat.iconColor}`}>{stat.icon}</span>
                             </div>
-                            <span className={`flex items-center gap-1 text-xs font-bold ${stat.trend === 'up' ? 'text-emerald-400' : 'text-red-400'}`}>
-                                <span className="relative flex h-2 w-2 mr-1">
-                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                                </span>
-                                {stat.change}
-                            </span>
                         </div>
-                        <p className="text-xs text-[var(--color-muted-fg)] mb-1 uppercase tracking-wider font-semibold">{stat.label}</p>
-                        <p className="text-3xl font-black text-[var(--color-fg)]">{stat.value.toLocaleString()}</p>
+                        <p className="text-3xl font-bold">{stat.value.toLocaleString()}</p>
+                        <p className="text-sm text-slate-500 mt-1">{stat.sub}</p>
                     </div>
                 ))}
             </div>
