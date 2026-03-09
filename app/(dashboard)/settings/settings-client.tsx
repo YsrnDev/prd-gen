@@ -66,10 +66,26 @@ export default function SettingsClient() {
                     <div>
                         <h2 className="text-lg font-bold text-white">{session?.user?.name || 'User'}</h2>
                         <p className="text-sm text-slate-400">{session?.user?.email || '—'}</p>
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold mt-1 ${userRole === 'admin' ? 'bg-red-500/10 text-red-400' : 'bg-blue-500/10 text-blue-400'
-                            }`}>
-                            {userRole || 'user'}
-                        </span>
+                        <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                            {/* Role badge */}
+                            <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold ${userRole === 'admin' ? 'bg-red-500/15 text-red-400 border border-red-500/25' : 'bg-slate-700/60 text-slate-400 border border-slate-600/50'}`}>
+                                {userRole || 'user'}
+                            </span>
+                            {/* Plan tier badge */}
+                            {(() => {
+                                const tier = ((session?.user as any)?.tier || 'FREE').toUpperCase();
+                                const styles: Record<string, string> = {
+                                    FREE: 'bg-slate-700/60 text-slate-300 border border-slate-600/50',
+                                    PLUS: 'bg-blue-500/20 text-blue-300 border border-blue-500/30',
+                                    PRO: 'bg-amber-500/20 text-amber-300 border border-amber-500/30',
+                                };
+                                return (
+                                    <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold ${styles[tier] ?? styles.FREE}`}>
+                                        {tier}
+                                    </span>
+                                );
+                            })()}
+                        </div>
                     </div>
                 </div>
 
