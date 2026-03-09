@@ -210,7 +210,6 @@ export const WIZARD_STEPS = [
                 required: false,
                 aiRecommendable: true,
                 options: [
-                    "I don't know, please recommend the best tech stack based on my features to AI.",
                     "Frontend: Next.js (React), Backend: Node.js, Database: PostgreSQL, Auth: Better Auth",
                     "Frontend: React Native, Backend: Node.js, Database: Firebase (Mobile App Focus)",
                     "Frontend: Vue.js / Nuxt, Backend: Laravel (PHP), Database: MySQL",

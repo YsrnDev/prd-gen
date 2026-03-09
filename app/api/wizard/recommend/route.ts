@@ -46,12 +46,25 @@ export async function POST(request: NextRequest) {
             system: prompt.systemPrompt,
             prompt: prompt.userPrompt,
             temperature: aiConfig.temperature,
-            maxOutputTokens: 1000,
+            maxOutputTokens: 4000,
         });
 
         return NextResponse.json({ recommendation: result.text.trim() });
-    } catch (error) {
+    } catch (error: unknown) {
         console.error('Recommendation error:', error);
-        return NextResponse.json({ error: 'Failed to generate recommendation.' }, { status: 500 });
+
+        const err = error as { message?: string; cause?: { message?: string }; status?: number; statusCode?: number };
+        const message = err.message || err.cause?.message || 'Failed to generate recommendation.';
+        const statusCode = err.status || err.statusCode || 500;
+
+        // Surface rate limit errors from upstream AI providers
+        if (statusCode === 429 || message.toLowerCase().includes('rate limit')) {
+            return NextResponse.json(
+                { error: 'AI provider rate limit reached. Please wait a moment and try again.' },
+                { status: 429 }
+            );
+        }
+
+        return NextResponse.json({ error: message }, { status: 500 });
     }
 }
