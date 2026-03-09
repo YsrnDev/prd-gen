@@ -104,7 +104,7 @@ export default async function AdminDashboardPage() {
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                 {stats.map((stat, i) => (
                     <div key={i} className="bg-slate-900 border border-slate-800 p-6 rounded-xl flex flex-col gap-1 shadow-sm">
                         <div className="flex justify-between items-center mb-2">
@@ -120,9 +120,9 @@ export default async function AdminDashboardPage() {
             </div>
 
             {/* Usage Trends + Recent Activity */}
-            <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-4 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                 {/* Usage Trends Chart - Real Data */}
-                <div className="glass-card p-6">
+                <div className="glass-card p-6 md:col-span-2">
                     <div className="flex items-center justify-between mb-6">
                         <div>
                             <h2 className="text-base font-bold text-[var(--color-fg)]">Usage Trends</h2>
