@@ -30,6 +30,18 @@ export const subscriptionPlan = pgTable('subscription_plan', {
     updatedAt: timestamp('updated_at').notNull().defaultNow(),
 });
 
+// User Subscriptions tracking table
+export const subscription = pgTable('subscription', {
+    id: serial('id').primaryKey(),
+    userId: text('user_id').notNull().references(() => user.id, { onDelete: 'cascade' }),
+    planType: text('plan_type').notNull().default('FREE'),
+    status: text('status').notNull().default('NONE'), // 'NONE' | 'ACTIVE' | 'EXPIRED'
+    midtransOrderId: text('midtrans_order_id'),
+    activeUntil: timestamp('active_until'),
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+    updatedAt: timestamp('updated_at').notNull().defaultNow(),
+});
+
 // Better-Auth sessions table
 export const session = pgTable('session', {
     id: text('id').primaryKey(),
