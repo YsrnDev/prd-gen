@@ -156,10 +156,7 @@ export default function UserPricingPage() {
             <div className="max-w-5xl mx-auto">
                 {/* Header */}
                 <div className="mb-8">
-                    <Link href="/dashboard" className="inline-flex items-center gap-1.5 text-sm text-slate-400 hover:text-white transition-colors mb-4">
-                        <ArrowLeft className="w-4 h-4" />
-                        Kembali ke Dashboard
-                    </Link>
+
                     <h1 className="text-3xl font-bold text-white mb-2">Pilih Paket Anda</h1>
                     <p className="text-slate-400">
                         Upgrade untuk akses penuh fitur AI, unlimited PRDs, dan banyak lagi.
@@ -201,17 +198,15 @@ export default function UserPricingPage() {
                             return (
                                 <div
                                     key={plan.id}
-                                    className={`relative flex flex-col rounded-2xl overflow-hidden transition-all duration-300 ${plan.isPopular
-                                        ? 'border-2 border-[#135bec] shadow-xl shadow-[#135bec]/10 scale-[1.02]'
-                                        : 'border border-slate-700/60'
+                                    className={`flex flex-col p-8 rounded-2xl relative transition-all duration-300 ${plan.isPopular
+                                        ? 'bg-[#135bec]/10 border-2 border-[#135bec] hover:border-[#135bec] shadow-lg shadow-[#135bec]/10 scale-[1.02]'
+                                        : 'bg-slate-800/40 border border-slate-700/50 hover:border-slate-600'
                                         } ${current ? 'ring-2 ring-green-500/50' : ''}`}
                                 >
                                     {/* Popular Badge */}
                                     {plan.isPopular && (
-                                        <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-[#135bec] to-blue-500 text-center py-1.5">
-                                            <span className="text-xs font-bold text-white uppercase tracking-wider">
-                                                ⭐ Paling Populer
-                                            </span>
+                                        <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-[#135bec] text-white text-xs font-bold px-4 py-1 rounded-full whitespace-nowrap">
+                                            Most Popular
                                         </div>
                                     )}
 
@@ -222,54 +217,46 @@ export default function UserPricingPage() {
                                         </div>
                                     )}
 
-                                    <div className={`p-6 ${plan.isPopular ? 'pt-10' : ''}`}>
-                                        {/* Plan Icon & Name */}
-                                        <div className="flex items-center gap-3 mb-4">
-                                            <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center text-white`}>
-                                                {getPlanIcon(plan.name)}
-                                            </div>
-                                            <div>
-                                                <h3 className="text-lg font-bold text-white">{plan.name}</h3>
-                                                <p className="text-xs text-slate-400">
-                                                    {plan.name === 'FREE' ? 'Untuk memulai' : plan.name === 'PLUS' ? 'Paling laris' : 'Tanpa batas'}
-                                                </p>
-                                            </div>
-                                        </div>
+                                    <div className="mb-6">
+                                        <h3 className="text-slate-100 text-xl font-bold mb-1">{plan.name}</h3>
+                                        <p className="text-slate-400 text-sm">
+                                            {plan.name === 'FREE' ? 'Untuk memulai' : plan.name === 'PLUS' ? 'Paling laris' : 'Tanpa batas'}
+                                        </p>
+                                    </div>
 
-                                        {/* Price */}
-                                        <div className="mb-6">
-                                            <div className="flex items-end gap-1">
-                                                <span className="text-3xl font-black text-white whitespace-nowrap">{formatPrice(plan.price)}</span>
-                                                <span className="text-sm text-slate-500 mb-1">/month</span>
-                                            </div>
-                                        </div>
+                                    <div className="flex items-baseline gap-1 mb-6">
+                                        <span className="text-slate-100 text-4xl font-black whitespace-nowrap">
+                                            {formatPrice(plan.price)}
+                                        </span>
+                                        <span className="text-slate-500 text-sm">/month</span>
+                                    </div>
 
-                                        {/* Features */}
-                                        <ul className="space-y-3 mb-6">
-                                            {plan.features?.map((feature, i) => (
-                                                <li key={i} className="flex items-start gap-2.5 text-sm">
-                                                    <Check className="w-4 h-4 text-green-400 flex-shrink-0 mt-0.5" />
-                                                    <span className="text-slate-300">{feature}</span>
-                                                </li>
-                                            ))}
-                                        </ul>
+                                    <ul className="flex flex-col gap-3 mb-8 text-sm text-slate-400">
+                                        {plan.features?.map((feature, i) => (
+                                            <li key={i} className="flex items-center gap-2">
+                                                <span className="material-symbols-outlined text-green-400 text-base" style={{ fontSize: '18px', width: '18px' }}>check_circle</span>
+                                                {feature}
+                                            </li>
+                                        ))}
+                                    </ul>
 
+                                    <div className="mt-auto pt-4">
                                         {/* CTA Button */}
                                         {current ? (
-                                            <div className="w-full py-3 rounded-xl bg-green-500/10 border border-green-500/30 text-green-400 text-sm font-semibold text-center">
+                                            <div className="w-full h-12 flex items-center justify-center rounded-xl bg-green-500/10 border border-green-500/30 text-green-400 text-sm font-semibold text-center">
                                                 ✓ Paket Aktif Anda
                                             </div>
                                         ) : plan.price === 0 ? (
-                                            <div className="w-full py-3 rounded-xl bg-slate-800 text-slate-500 text-sm font-semibold text-center">
+                                            <div className="w-full h-12 flex items-center justify-center rounded-xl bg-slate-800 text-slate-500 text-sm font-semibold text-center mt-auto">
                                                 Paket Dasar
                                             </div>
                                         ) : (
                                             <button
                                                 onClick={() => handleCheckout(plan)}
                                                 disabled={checkoutLoading === plan.id}
-                                                className={`w-full py-3 rounded-xl font-bold text-sm transition-all duration-200 flex items-center justify-center gap-2 ${plan.isPopular
-                                                    ? 'bg-[#135bec] hover:bg-[#104ed0] text-white shadow-lg shadow-[#135bec]/20'
-                                                    : 'bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-900'
+                                                className={`w-full h-12 flex items-center justify-center rounded-xl font-bold text-sm transition-all duration-200 gap-2 ${plan.isPopular
+                                                    ? 'bg-[#135bec] hover:bg-[#135bec]/90 text-white shadow-lg shadow-[#135bec]/20'
+                                                    : 'bg-slate-700 hover:bg-slate-600 text-white'
                                                     } disabled:opacity-50 disabled:cursor-not-allowed`}
                                             >
                                                 {checkoutLoading === plan.id ? (
@@ -279,8 +266,7 @@ export default function UserPricingPage() {
                                                     </>
                                                 ) : (
                                                     <>
-                                                        <Zap className="w-4 h-4" />
-                                                        Berlangganan {plan.name}
+                                                        {plan.price === 0 ? 'Get Started Free' : 'Choose Plan'}
                                                     </>
                                                 )}
                                             </button>
