@@ -283,7 +283,7 @@ export default function PRDEditPage() {
             <div className="flex-shrink-0 bg-slate-900 border-b border-slate-800 px-4 py-2.5 flex items-center gap-3">
                 <Link href="/dashboard/prds" className="flex items-center gap-2 text-white hover:opacity-80 transition-opacity flex-shrink-0">
                     <Sparkles className="w-5 h-5 text-blue-500" />
-                    <span className="font-bold text-sm">PRDGen AI</span>
+                    <span className="font-bold text-sm">Lucky Brew</span>
                 </Link>
 
                 <div className="w-px h-5 bg-[var(--color-border)] mx-1" />

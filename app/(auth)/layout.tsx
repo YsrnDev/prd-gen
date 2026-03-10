@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: 'Sign In | PRDGen AI',
+    title: 'Sign In',
 };
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {

@@ -3,22 +3,25 @@ import './globals.css';
 import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
 
 export const metadata: Metadata = {
   title: {
-    default: 'PRDGen AI - AI-Powered Product Requirements Documents',
-    template: '%s | PRDGen AI',
+    default: 'Lucky Brew - AI-Powered Product Requirements Documents',
+    template: '%s | Lucky Brew',
   },
   description:
     'Generate comprehensive, enterprise-ready Product Requirements Documents in minutes using AI. Turn ideas into structured PRDs with our 6-step wizard.',
   keywords: ['PRD', 'product requirements', 'AI', 'product management', 'documentation'],
-  authors: [{ name: 'PRDGen AI' }],
+  authors: [{ name: 'Lucky Brew' }],
   openGraph: {
     type: 'website',
-    title: 'PRDGen AI',
+    title: 'Lucky Brew',
     description: 'AI-Powered Product Requirements Documents',
-    siteName: 'PRDGen AI',
+    siteName: 'Lucky Brew',
+  },
+  icons: {
+    icon: '/logo.webp',
   },
 };
 

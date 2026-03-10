@@ -111,7 +111,7 @@ export default function MaintenanceClient() {
                     </h1>
 
                     <p style={{ color: '#94a3b8', fontSize: '0.925rem', lineHeight: 1.7, margin: '0 0 2.5rem' }}>
-                        PRDGen AI is currently undergoing scheduled maintenance to bring you a better experience.
+                        Lucky Brew is currently undergoing scheduled maintenance to bring you a better experience.
                         We&apos;ll be back online shortly. Thank you for your patience.
                     </p>
 
@@ -152,8 +152,8 @@ export default function MaintenanceClient() {
 
                     <p style={{ fontSize: '0.8rem', color: '#475569' }}>
                         Questions? Contact{' '}
-                        <a href="mailto:support@prdgen.ai" style={{ color: '#135bec', textDecoration: 'none' }}>
-                            support@prdgen.ai
+                        <a href="mailto:support@luckybrew.com" style={{ color: '#135bec', textDecoration: 'none' }}>
+                            support@luckybrew.com
                         </a>
                     </p>
                 </div>
