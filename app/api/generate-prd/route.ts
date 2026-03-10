@@ -83,8 +83,6 @@ export async function POST(request: NextRequest) {
         );
     } catch (error) {
         console.error('Error generating PRD:', error);
-        const err = error as { message?: string; cause?: { message?: string } };
-        const message = err.message || err.cause?.message || 'Failed to generate PRD';
-        return NextResponse.json({ error: message }, { status: 500 });
+        return NextResponse.json({ error: 'Failed to generate PRD. Please try again later.' }, { status: 500 });
     }
 }

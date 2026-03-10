@@ -256,10 +256,27 @@ function SidebarShell({
                 </div>
             )}
 
+            {/* Mobile Sidebar Overlay */}
+            {isMobile && (
+                <div
+                    className={`fixed inset-0 z-[60] flex transition-opacity duration-300 ${mobileOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
+                >
+                    <div
+                        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+                        onClick={() => setMobileOpen(false)}
+                    />
+                    <aside
+                        className={`relative w-64 max-w-[80vw] h-full bg-slate-900 border-r border-slate-800 flex flex-col shadow-2xl transition-transform duration-300 ease-in-out ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}`}
+                    >
+                        {sidebarContent}
+                    </aside>
+                </div>
+            )}
+
             {/* Mobile Bottom Navigation */}
             {isMobile && (
                 <div className="fixed bottom-0 left-0 right-0 z-50 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 flex items-center justify-around px-2 pt-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))]">
-                    {navItems.map((item) => {
+                    {navItems.slice(0, navItems.length > 4 ? 3 : 4).map((item) => {
                         const active = pathname === item.href || (item.href !== basePath && pathname.startsWith(item.href));
                         return (
                             <Link
@@ -278,7 +295,15 @@ function SidebarShell({
                             </Link>
                         );
                     })}
-                    {!hideMobileLogout && (
+                    {navItems.length > 4 ? (
+                        <button
+                            onClick={() => setMobileOpen(true)}
+                            className="flex flex-col items-center justify-center p-2 rounded-xl flex-1 min-w-0 transition-colors text-slate-400 hover:text-slate-200"
+                        >
+                            <span className="material-symbols-outlined text-[24px]">menu</span>
+                            <span className="text-[10px] font-medium mt-1 truncate w-full text-center">Menu</span>
+                        </button>
+                    ) : !hideMobileLogout && (
                         <button
                             onClick={() => signOut({ fetchOptions: { onSuccess: () => { window.location.href = '/login'; } } })}
                             className="flex flex-col items-center justify-center p-2 rounded-xl flex-1 min-w-0 transition-colors text-slate-400 hover:text-red-400"
@@ -325,7 +350,7 @@ export function AdminSidebar() {
     return (
         <SidebarShell
             navItems={[
-                { href: '/admin', icon: 'admin_panel_settings', label: 'Admin' },
+                { href: '/admin', icon: 'dashboard', label: 'Dashboard' },
                 { href: '/admin/users', icon: 'group', label: 'Users' },
                 { href: '/admin/pricing', icon: 'payments', label: 'Pricing' },
                 { href: '/admin/ai-config', icon: 'memory', label: 'AI Config' },

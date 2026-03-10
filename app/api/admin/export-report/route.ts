@@ -5,6 +5,17 @@ import { count, desc, sql, gte } from 'drizzle-orm';
 import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 
+// Prevent CSV injection: escape formula-trigger characters and wrap in quotes
+function sanitizeCsvCell(value: string): string {
+    // Remove commas and double-quotes for safety
+    let safe = value.replace(/"/g, '""');
+    // If starts with formula-trigger chars, prefix with single-quote
+    if (/^[=+\-@\t\r]/.test(safe)) {
+        safe = `'${safe}`;
+    }
+    return `"${safe}"`;
+}
+
 export async function GET() {
     const session = await auth.api.getSession({ headers: await headers() });
     if (!session || (session.user as { role?: string }).role !== 'admin') {
@@ -59,9 +70,11 @@ export async function GET() {
         csv += `=== REGISTERED USERS (Latest 50) ===\n`;
         csv += `Name,Email,Role,Registered At\n`;
         for (const u of recentUsers) {
-            const name = (u.name || 'N/A').replace(/,/g, ' ');
+            const name = sanitizeCsvCell(u.name || 'N/A');
+            const email = sanitizeCsvCell(u.email);
+            const role = sanitizeCsvCell(u.role || 'user');
             const dateStr = u.createdAt ? new Date(u.createdAt).toISOString().split('T')[0] : 'N/A';
-            csv += `${name},${u.email},${u.role || 'user'},${dateStr}\n`;
+            csv += `${name},${email},${role},${dateStr}\n`;
         }
 
         return new Response(csv, {
@@ -70,7 +83,8 @@ export async function GET() {
                 'Content-Disposition': `attachment; filename="prdgen-report-${now}.csv"`,
             },
         });
-    } catch (error: any) {
-        return NextResponse.json({ error: error.message || 'Failed to export' }, { status: 500 });
+    } catch (error) {
+        console.error('Export report error:', error);
+        return NextResponse.json({ error: 'Failed to export report' }, { status: 500 });
     }
 }

@@ -23,8 +23,8 @@ export const sendEmail = async ({
     html?: string;
 }) => {
     if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
-        console.warn('⚠️ SMTP credentials not configured. Skipping email send to:', to);
-        console.warn(`Content: ${html || text}`);
+        console.warn('⚠️ SMTP credentials not configured. Skipping email send.');
+        console.warn(`  To: ${to} | Subject: ${subject}`);
         return;
     }
 

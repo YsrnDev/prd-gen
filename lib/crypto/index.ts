@@ -6,8 +6,10 @@ const IV_LENGTH = 12;
 function getKey(): Buffer {
     const key = process.env.ENCRYPTION_KEY;
     if (!key) throw new Error('ENCRYPTION_KEY environment variable is not set');
-    // Pad or truncate to 32 bytes
-    return Buffer.from(key.padEnd(64, '0').slice(0, 64), 'hex');
+    if (!/^[a-fA-F0-9]{64}$/.test(key)) {
+        throw new Error('ENCRYPTION_KEY must be exactly 64 hex characters (32 bytes). Generate one with: node -e "console.log(require(\'crypto\').randomBytes(32).toString(\'hex\'))"');
+    }
+    return Buffer.from(key, 'hex');
 }
 
 export function encrypt(text: string): string {

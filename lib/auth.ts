@@ -18,7 +18,7 @@ export const auth = betterAuth({
     }),
     emailAndPassword: {
         enabled: true,
-        requireEmailVerification: false,
+        requireEmailVerification: true,
     },
     emailVerification: {
         sendOnSignUp: true,
@@ -42,9 +42,12 @@ export const auth = betterAuth({
         user: {
             create: {
                 before: async (user) => {
-                    // Check if it's the first user ever registered
-                    const result = await db.select({ count: sql<number>`count(*)` }).from(schema.user);
-                    if (Number(result[0].count) === 0) {
+                    // Check if it's the first user: no users exist AND no admin role exists
+                    const [userCount, adminCheck] = await Promise.all([
+                        db.select({ count: sql<number>`count(*)` }).from(schema.user),
+                        db.select({ count: sql<number>`count(*)` }).from(schema.user).where(sql`role = 'admin'`),
+                    ]);
+                    if (Number(userCount[0].count) === 0 && Number(adminCheck[0].count) === 0) {
                         return {
                             data: {
                                 ...user,
@@ -85,8 +88,8 @@ export const auth = betterAuth({
         },
     },
     session: {
-        expiresIn: 60 * 60 * 24 * 7, // 7 days
-        updateAge: 60 * 60 * 24, // Update every day
+        expiresIn: 60 * 60 * 24, // 24 hours
+        updateAge: 60 * 60, // Update every hour
     },
     secret: process.env.BETTER_AUTH_SECRET!,
     baseURL: process.env.BETTER_AUTH_URL || 'http://localhost:3000',

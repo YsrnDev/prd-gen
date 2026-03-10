@@ -13,6 +13,33 @@ export async function middleware(request: NextRequest) {
         return NextResponse.next();
     }
 
+    // CORS protection for API routes
+    if (pathname.startsWith('/api/')) {
+        const origin = request.headers.get('origin');
+        const appUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.BETTER_AUTH_URL || 'http://localhost:3000';
+        const allowedOrigin = new URL(appUrl).origin;
+
+        // Handle preflight
+        if (request.method === 'OPTIONS') {
+            return new NextResponse(null, {
+                status: 204,
+                headers: {
+                    'Access-Control-Allow-Origin': allowedOrigin,
+                    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+                    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+                    'Access-Control-Max-Age': '86400',
+                },
+            });
+        }
+
+        // Allow same-origin and webhook requests (no origin header)
+        const isWebhook = pathname.startsWith('/api/webhooks/');
+        const isPublicApi = pathname === '/api/pricing';
+        if (origin && origin !== allowedOrigin && !isWebhook && !isPublicApi) {
+            return NextResponse.json({ error: 'CORS not allowed' }, { status: 403 });
+        }
+    }
+
     let session = null;
     try {
         const url = new URL('/api/auth/get-session', request.url);
@@ -46,9 +73,13 @@ export async function middleware(request: NextRequest) {
                     if (maintenanceMode) {
                         return NextResponse.redirect(new URL('/maintenance', request.url));
                     }
+                } else {
+                    // Fail-closed: if status check returns non-OK, assume maintenance
+                    return NextResponse.redirect(new URL('/maintenance', request.url));
                 }
             } catch {
-                // If maintenance-status fetch fails, let users through (fail open)
+                // Fail-closed: if maintenance-status fetch fails, redirect to maintenance
+                return NextResponse.redirect(new URL('/maintenance', request.url));
             }
         }
     }

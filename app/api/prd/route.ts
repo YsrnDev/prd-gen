@@ -3,6 +3,13 @@ import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { prdDocument, wizardSession } from '@/lib/db/schema';
 import { eq, and } from 'drizzle-orm';
+import { z } from 'zod';
+
+const createPrdSchema = z.object({
+    title: z.string().max(200).optional(),
+    content: z.string().min(1, 'Content is required').max(500000),
+    sessionId: z.union([z.string(), z.number()]).optional(),
+});
 
 // GET /api/prd - List user's PRDs
 export async function GET(request: NextRequest) {
@@ -35,7 +42,6 @@ export async function GET(request: NextRequest) {
 
         const formattedDrafts = activeSessions.map(s => {
             const answers = s.answers as Record<string, string> || {};
-            // Using logic: maybe "project_name" or "project-name" mapping to the title
             const prjName = answers['project_name'] || answers['project-name'] || answers['projectName'];
             const title = prjName ? `${prjName} (Draft)` : 'Untitled Draft';
             return {
@@ -68,9 +74,16 @@ export async function POST(request: NextRequest) {
         if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
         const body = await request.json();
-        const { title, content, sessionId } = body;
+        const parsed = createPrdSchema.safeParse(body);
+        if (!parsed.success) {
+            return NextResponse.json({ error: 'Invalid input', details: parsed.error.flatten().fieldErrors }, { status: 400 });
+        }
 
-        if (!content) return NextResponse.json({ error: 'Content is required' }, { status: 400 });
+        const { title, content, sessionId } = parsed.data;
+        const parsedSessionId = sessionId ? parseInt(String(sessionId)) : null;
+        if (sessionId && (parsedSessionId === null || isNaN(parsedSessionId))) {
+            return NextResponse.json({ error: 'Invalid session ID' }, { status: 400 });
+        }
 
         const [doc] = await db
             .insert(prdDocument)
@@ -78,18 +91,17 @@ export async function POST(request: NextRequest) {
                 userId: session.user.id,
                 title: title || extractTitle(content) || 'Untitled PRD',
                 content,
-                sessionId: sessionId ? parseInt(sessionId) : null,
+                sessionId: parsedSessionId,
             })
             .returning();
 
-        // Mark the wizard session as completed so it no longer shows up as a draft
-        if (sessionId) {
+        if (parsedSessionId) {
             await db
                 .update(wizardSession)
                 .set({ status: 'completed' })
                 .where(
                     and(
-                        eq(wizardSession.id, parseInt(sessionId)),
+                        eq(wizardSession.id, parsedSessionId),
                         eq(wizardSession.userId, session.user.id)
                     )
                 );

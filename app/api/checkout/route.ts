@@ -81,8 +81,8 @@ export async function POST(req: NextRequest) {
             redirect_url: transaction.redirect_url // Jika tidak pakai custom UI pop-up
         });
 
-    } catch (error: any) {
+    } catch (error) {
         console.error('Midtrans Checkout Error:', error);
-        return NextResponse.json({ error: error.message || 'Internal Server Error' }, { status: 500 });
+        return NextResponse.json({ error: 'Checkout failed. Please try again.' }, { status: 500 });
     }
 }
