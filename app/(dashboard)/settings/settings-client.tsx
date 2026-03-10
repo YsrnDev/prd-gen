@@ -67,14 +67,11 @@ export default function SettingsClient() {
                         <h2 className="text-lg font-bold text-white">{session?.user?.name || 'User'}</h2>
                         <p className="text-sm text-slate-400">{session?.user?.email || '—'}</p>
                         <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-                            {/* Role badge - admin only */}
-                            {userRole === 'admin' && (
+                            {userRole === 'admin' ? (
                                 <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-red-500/15 text-red-400 border border-red-500/25">
-                                    admin
+                                    ADMIN
                                 </span>
-                            )}
-                            {/* Plan tier badge */}
-                            {(() => {
+                            ) : (() => {
                                 const tier = ((session?.user as any)?.tier || 'FREE').toUpperCase();
                                 const styles: Record<string, string> = {
                                     FREE: 'bg-slate-700/60 text-slate-300 border border-slate-600/50',

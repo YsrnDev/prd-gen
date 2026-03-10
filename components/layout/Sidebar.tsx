@@ -171,6 +171,14 @@ function SidebarShell({
                             )}
                         </div>
                         {collapsed && !isMobile && (() => {
+                            const userRole = (session?.user as any)?.role;
+                            if (userRole === 'admin') {
+                                return (
+                                    <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-semibold tracking-wide bg-red-500/15 text-red-400 border border-red-500/25">
+                                        ADMIN
+                                    </span>
+                                );
+                            }
                             const tier = ((session?.user as any)?.tier || 'FREE').toUpperCase();
                             const styles: Record<string, string> = {
                                 FREE: 'bg-slate-700/60 text-slate-300 border border-slate-600/50',
@@ -190,6 +198,14 @@ function SidebarShell({
                             <div className="flex flex-col flex-1 min-w-0">
                                 <p className="text-sm font-bold text-slate-100 truncate">{session?.user?.name || 'User'}</p>
                                 {(() => {
+                                    const userRole = (session?.user as any)?.role;
+                                    if (userRole === 'admin') {
+                                        return (
+                                            <span className="inline-flex w-fit items-center px-1.5 py-0.5 rounded text-[10px] font-semibold tracking-wide mt-0.5 bg-red-500/15 text-red-400 border border-red-500/25">
+                                                ADMIN
+                                            </span>
+                                        );
+                                    }
                                     const tier = ((session?.user as any)?.tier || 'FREE').toUpperCase();
                                     const styles: Record<string, string> = {
                                         FREE: 'bg-slate-700/60 text-slate-300 border border-slate-600/50',
