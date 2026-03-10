@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 export const metadata: Metadata = {
     title: 'Privacy Policy',
-    description: 'Learn how Lucky Brew collects, uses, and protects your personal data. Your privacy is our priority.',
+    description: 'Learn how PRDGen AI collects, uses, and protects your personal data. Your privacy is our priority.',
 };
 
 export default function PrivacyPolicyPage() {
@@ -13,7 +13,7 @@ export default function PrivacyPolicyPage() {
             <header className="border-b border-slate-800/50 py-5 bg-[#0f172a]/90 backdrop-blur-md sticky top-0 z-10">
                 <div className="max-w-[860px] mx-auto px-6 flex items-center justify-between">
                     <Link href="/" className="text-slate-100 font-bold text-lg hover:text-white transition-colors">
-                        ← Lucky Brew
+                        ← PRDGen AI
                     </Link>
                     <span className="text-slate-500 text-sm">Last updated: March 2026</span>
                 </div>
@@ -24,7 +24,7 @@ export default function PrivacyPolicyPage() {
                 <div className="mb-12">
                     <h1 className="text-4xl font-black text-white mb-4">Privacy Policy</h1>
                     <p className="text-slate-400 text-lg leading-relaxed">
-                        At Lucky Brew, we take your privacy seriously. This policy explains what information we collect,
+                        At PRDGen AI, we take your privacy seriously. This policy explains what information we collect,
                         how we use it, and what rights you have regarding your personal data.
                     </p>
                 </div>
@@ -55,7 +55,7 @@ export default function PrivacyPolicyPage() {
                     <Section title="2. How We Use Your Information">
                         <p>We use the information we collect to:</p>
                         <ul className="list-disc pl-6 space-y-2 text-slate-400">
-                            <li>Provide, operate, and improve the Lucky Brew Service</li>
+                            <li>Provide, operate, and improve the PRDGen AI Service</li>
                             <li>Process your requests and generate AI-powered documents</li>
                             <li>Manage your account and subscription</li>
                             <li>Send transactional emails (account verification, invoices, password resets)</li>
@@ -93,7 +93,7 @@ export default function PrivacyPolicyPage() {
                             <li><strong className="text-slate-300">Service Providers:</strong> Trusted third parties who assist in operating the Service (hosting, email delivery, analytics). They are bound by confidentiality agreements.</li>
                             <li><strong className="text-slate-300">Legal Requirements:</strong> When required by law, court order, or governmental authority.</li>
                             <li><strong className="text-slate-300">Business Transfers:</strong> In the event of a merger or acquisition, your data may be transferred with prior notice.</li>
-                            <li><strong className="text-slate-300">Safety:</strong> To protect the rights, safety, or property of Lucky Brew, our users, or the public.</li>
+                            <li><strong className="text-slate-300">Safety:</strong> To protect the rights, safety, or property of PRDGen AI, our users, or the public.</li>
                         </ul>
                     </Section>
 
@@ -102,7 +102,7 @@ export default function PrivacyPolicyPage() {
                         <div className="bg-slate-800/40 rounded-xl p-5 border border-slate-700/40 space-y-3">
                             <div><strong className="text-slate-300">Google OAuth</strong> — For &quot;Sign in with Google&quot; functionality. Subject to Google&apos;s Privacy Policy.</div>
                             <div><strong className="text-slate-300">Google Gemini AI</strong> — Powers document generation. Inputs are processed per Google&apos;s API terms.</div>
-                            <div><strong className="text-slate-300">Midtrans</strong> — Payment processing. Lucky Brew does not store card details.</div>
+                            <div><strong className="text-slate-300">Midtrans</strong> — Payment processing. PRDGen AI does not store card details.</div>
                             <div><strong className="text-slate-300">Vercel / Neon DB</strong> — Hosting and database infrastructure with enterprise-grade security.</div>
                         </div>
                     </Section>
@@ -126,7 +126,7 @@ export default function PrivacyPolicyPage() {
                             <li><strong className="text-slate-300">Portability:</strong> Receive your data in a machine-readable format</li>
                             <li><strong className="text-slate-300">Opt-out:</strong> Unsubscribe from marketing communications at any time</li>
                         </ul>
-                        <p>To exercise these rights, contact us at <a href="mailto:privacy@luckybrew.com" className="text-[#135bec] hover:underline">privacy@luckybrew.com</a>.</p>
+                        <p>To exercise these rights, contact us at <a href="mailto:privacy@prdgen.ai" className="text-[#135bec] hover:underline">privacy@prdgen.ai</a>.</p>
                     </Section>
 
                     <Section title="9. Security">
@@ -142,7 +142,7 @@ export default function PrivacyPolicyPage() {
                     </Section>
 
                     <Section title="10. Children's Privacy">
-                        <p>Lucky Brew is not intended for children under 13 years of age. We do not knowingly collect personal information
+                        <p>PRDGen AI is not intended for children under 13 years of age. We do not knowingly collect personal information
                             from children under 13. If you believe we have inadvertently collected such information, please contact us immediately
                             and we will delete it promptly.</p>
                     </Section>
@@ -160,16 +160,16 @@ export default function PrivacyPolicyPage() {
                     <Section title="12. Contact Us">
                         <p>If you have questions or concerns about this Privacy Policy or how we handle your data:</p>
                         <div className="bg-slate-800/50 rounded-xl p-5 mt-4 border border-slate-700/50 space-y-1">
-                            <p className="text-slate-300"><strong>Lucky Brew — Privacy Team</strong></p>
-                            <p className="text-slate-400">Email: <a href="mailto:privacy@luckybrew.com" className="text-[#135bec] hover:underline">privacy@luckybrew.com</a></p>
-                            <p className="text-slate-400">Website: <Link href="/" className="text-[#135bec] hover:underline">luckybrew.com</Link></p>
+                            <p className="text-slate-300"><strong>PRDGen AI — Privacy Team</strong></p>
+                            <p className="text-slate-400">Email: <a href="mailto:privacy@prdgen.ai" className="text-[#135bec] hover:underline">privacy@prdgen.ai</a></p>
+                            <p className="text-slate-400">Website: <Link href="/" className="text-[#135bec] hover:underline">prdgen.ai</Link></p>
                         </div>
                     </Section>
                 </div>
 
                 {/* Footer nav */}
                 <div className="mt-16 pt-8 border-t border-slate-800/50 flex flex-col sm:flex-row justify-between items-center gap-4">
-                    <p className="text-slate-600 text-sm">© 2026 Lucky Brew. All rights reserved.</p>
+                    <p className="text-slate-600 text-sm">© 2026 PRDGen AI. All rights reserved.</p>
                     <div className="flex gap-6 text-sm">
                         <Link href="/terms" className="text-slate-400 hover:text-white transition-colors">Terms of Service</Link>
                         <Link href="/" className="text-slate-400 hover:text-white transition-colors">Back to Home</Link>

@@ -7,7 +7,7 @@ import { subscriptionPlan } from '@/lib/db/schema';
 import { asc } from 'drizzle-orm';
 
 export const metadata: Metadata = {
-  title: 'Lucky Brew - Accelerate your documentation',
+  title: 'PRDGen AI - Turn Ideas into PRDs in Minutes',
   description: 'Generate enterprise-ready Product Requirements Documents in minutes using AI. Our 6-step interview wizard produces comprehensive, stakeholder-ready PRDs instantly.',
 };
 
@@ -43,7 +43,7 @@ export default async function LandingPage() {
                     Turn Ideas into PRDs in <span className="text-[#135bec]">Minutes</span>
                   </h1>
                   <p data-anim="hero-desc" className="text-slate-400 text-lg md:text-xl font-normal leading-relaxed max-w-xl">
-                    Lucky Brew automates your product management workflow. Generate comprehensive, enterprise-ready requirements documents using our advanced AI engine.
+                    PRDGen AI automates your product management workflow. Generate comprehensive, enterprise-ready requirements documents using our advanced AI engine.
                   </p>
                 </div>
                 <div data-anim="hero-buttons" className="flex flex-col sm:flex-row gap-4">
@@ -113,7 +113,7 @@ export default async function LandingPage() {
               <div data-anim="features-title" className="max-w-2xl">
                 <h2 className="text-slate-100 text-3xl md:text-4xl font-black mb-6">Powerful Features for Modern Teams</h2>
                 <p className="text-slate-400 text-lg">
-                  Designed for speed, built for security. Lucky Brew provides the tools you need to scale your product discovery process globally.
+                  Designed for speed, built for security. PRDGen AI provides the tools you need to scale your product discovery process globally.
                 </p>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -135,7 +135,7 @@ export default async function LandingPage() {
                   <span className="material-symbols-outlined text-[#135bec] text-4xl group-hover:scale-110 transition-transform">api</span>
                   <div className="flex flex-col gap-3">
                     <h3 className="text-slate-100 text-xl font-bold">Full API Access</h3>
-                    <p className="text-slate-400 leading-relaxed">Integrate Lucky Brew directly into your existing CI/CD or PM toolchain via our robust REST API.</p>
+                    <p className="text-slate-400 leading-relaxed">Integrate PRDGen AI directly into your existing CI/CD or PM toolchain via our robust REST API.</p>
                   </div>
                 </div>
               </div>
@@ -205,7 +205,7 @@ export default async function LandingPage() {
                   </span>
                   <h2 className="text-slate-100 text-3xl md:text-4xl font-black leading-tight">Built by Product People,<br />for Product People</h2>
                   <p className="text-slate-400 text-lg leading-relaxed">
-                    Lucky Brew was born from the frustration of spending weeks crafting PRDs that should take hours. Our team of ex-PMs from Google, Meta, and Stripe built an AI engine that understands product thinking — not just text generation.
+                    PRDGen AI was born from the frustration of spending weeks crafting PRDs that should take hours. Our team of ex-PMs from Google, Meta, and Stripe built an AI engine that understands product thinking — not just text generation.
                   </p>
                   <p className="text-slate-400 leading-relaxed">
                     We believe great products start with great documentation. Our mission is to eliminate the gap between ideation and execution by giving every product team the tools to articulate their vision clearly, comprehensively, and fast.
@@ -250,7 +250,7 @@ export default async function LandingPage() {
               <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(#fff 2px, transparent 2px)', backgroundSize: '32px 32px' }}></div>
               <div data-anim="cta-content" className="relative z-10 flex flex-col items-center gap-8">
                 <h2 className="text-white text-4xl md:text-5xl font-black leading-tight">Ready to ship better products faster?</h2>
-                <p className="text-white/80 text-xl max-w-2xl">Join 50,000+ product managers using Lucky Brew to streamline their documentation.</p>
+                <p className="text-white/80 text-xl max-w-2xl">Join 50,000+ product managers using PRDGen AI to streamline their documentation.</p>
                 <Link href="/register" className="flex min-w-[240px] cursor-pointer items-center justify-center rounded-xl h-16 px-10 bg-white text-[#135bec] text-xl font-black shadow-xl transition-all hover:scale-105 active:scale-95">
                   Get Started for Free
                 </Link>
@@ -262,7 +262,7 @@ export default async function LandingPage() {
         {/* Footer */}
         <footer data-anim="footer" className="border-t border-slate-800/50 py-6 bg-[#0f172a]">
           <div className="max-w-[1200px] mx-auto px-6 flex flex-col sm:flex-row justify-between items-center gap-4">
-            <p className="text-slate-600 text-xs">© 2026 Lucky Brew. All rights reserved.</p>
+            <p className="text-slate-600 text-xs">© 2026 PRDGen AI. All rights reserved.</p>
             <div className="flex items-center gap-6">
               <Link href="/terms" className="text-slate-500 hover:text-slate-300 text-xs transition-colors">Terms of Service</Link>
               <Link href="/privacy" className="text-slate-500 hover:text-slate-300 text-xs transition-colors">Privacy Policy</Link>

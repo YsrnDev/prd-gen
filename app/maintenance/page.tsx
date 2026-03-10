@@ -3,7 +3,7 @@ import MaintenanceClient from './MaintenanceClient';
 
 export const metadata: Metadata = {
     title: 'Under Maintenance',
-    description: 'Lucky Brew is currently undergoing scheduled maintenance. We will be back shortly.',
+    description: 'PRDGen AI is currently undergoing scheduled maintenance. We will be back shortly.',
     robots: { index: false },
 };
 

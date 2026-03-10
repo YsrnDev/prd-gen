@@ -7,18 +7,18 @@ const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
 
 export const metadata: Metadata = {
   title: {
-    default: 'Lucky Brew - AI-Powered Product Requirements Documents',
-    template: '%s | Lucky Brew',
+    default: 'PRDGen AI - AI-Powered Product Requirements Documents',
+    template: '%s | PRDGen AI',
   },
   description:
     'Generate comprehensive, enterprise-ready Product Requirements Documents in minutes using AI. Turn ideas into structured PRDs with our 6-step wizard.',
   keywords: ['PRD', 'product requirements', 'AI', 'product management', 'documentation'],
-  authors: [{ name: 'Lucky Brew' }],
+  authors: [{ name: 'PRDGen AI' }],
   openGraph: {
     type: 'website',
-    title: 'Lucky Brew',
+    title: 'PRDGen AI',
     description: 'AI-Powered Product Requirements Documents',
-    siteName: 'Lucky Brew',
+    siteName: 'PRDGen AI',
   },
   icons: {
     icon: '/logo.webp',

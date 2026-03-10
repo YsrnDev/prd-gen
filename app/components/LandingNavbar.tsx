@@ -17,8 +17,8 @@ export default function LandingNavbar() {
             <div className="max-w-[1200px] mx-auto px-6 flex items-center justify-between">
                 {/* Logo */}
                 <div className="flex items-center gap-3 shrink-0">
-                    <Image src="/logo.webp" alt="Lucky Brew Logo" width={36} height={36} className="object-contain rounded-md" />
-                    <h2 className="text-slate-100 text-xl font-extrabold leading-tight tracking-tight">Lucky Brew</h2>
+                    <Image src="/logo.webp" alt="PRDGen AI Logo" width={36} height={36} className="object-contain rounded-md" />
+                    <h2 className="text-slate-100 text-xl font-extrabold leading-tight tracking-tight">PRDGen AI</h2>
                 </div>
 
                 {/* Centered Desktop Menu */}

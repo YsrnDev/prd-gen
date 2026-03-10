@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 export const metadata: Metadata = {
     title: 'Terms of Service',
-    description: 'Read the Terms of Service for Lucky Brew. Understand your rights and responsibilities when using our platform.',
+    description: 'Read the Terms of Service for PRDGen AI. Understand your rights and responsibilities when using our platform.',
 };
 
 export default function TermsOfServicePage() {
@@ -13,7 +13,7 @@ export default function TermsOfServicePage() {
             <header className="border-b border-slate-800/50 py-5 bg-[#0f172a]/90 backdrop-blur-md sticky top-0 z-10">
                 <div className="max-w-[860px] mx-auto px-6 flex items-center justify-between">
                     <Link href="/" className="text-slate-100 font-bold text-lg hover:text-white transition-colors">
-                        ← Lucky Brew
+                        ← PRDGen AI
                     </Link>
                     <span className="text-slate-500 text-sm">Last updated: March 2026</span>
                 </div>
@@ -24,20 +24,20 @@ export default function TermsOfServicePage() {
                 <div className="mb-12">
                     <h1 className="text-4xl font-black text-white mb-4">Terms of Service</h1>
                     <p className="text-slate-400 text-lg leading-relaxed">
-                        Please read these Terms of Service carefully before using Lucky Brew. By accessing or using our platform, you agree to be bound by these terms.
+                        Please read these Terms of Service carefully before using PRDGen AI. By accessing or using our platform, you agree to be bound by these terms.
                     </p>
                 </div>
 
                 <div className="space-y-10 text-[15px] leading-8">
                     <Section title="1. Acceptance of Terms">
-                        <p>By accessing and using Lucky Brew (&quot;Service&quot;, &quot;Platform&quot;, or &quot;we&quot;), you accept and agree to be bound by
+                        <p>By accessing and using PRDGen AI (&quot;Service&quot;, &quot;Platform&quot;, or &quot;we&quot;), you accept and agree to be bound by
                             these Terms of Service and our Privacy Policy. If you do not agree to these terms, please do not use the Service.</p>
                         <p>We reserve the right to update these Terms at any time. Continued use of the Service after changes are posted constitutes
                             your acceptance of the updated Terms.</p>
                     </Section>
 
                     <Section title="2. Description of Service">
-                        <p>Lucky Brew is an AI-powered platform that helps product managers, developers, and teams generate
+                        <p>PRDGen AI is an AI-powered platform that helps product managers, developers, and teams generate
                             Product Requirements Documents (PRDs) quickly and efficiently. The Service includes:</p>
                         <ul className="list-disc pl-6 space-y-2 text-slate-400">
                             <li>AI-assisted PRD generation from natural language inputs</li>
@@ -60,7 +60,7 @@ export default function TermsOfServicePage() {
                     </Section>
 
                     <Section title="4. Subscription Plans and Payments">
-                        <p>Lucky Brew offers the following subscription tiers:</p>
+                        <p>PRDGen AI offers the following subscription tiers:</p>
                         <ul className="list-disc pl-6 space-y-2 text-slate-400">
                             <li><strong className="text-slate-300">Free:</strong> Limited access with basic features at no cost</li>
                             <li><strong className="text-slate-300">Plus:</strong> Enhanced features with increased usage limits</li>
@@ -85,8 +85,8 @@ export default function TermsOfServicePage() {
                     </Section>
 
                     <Section title="6. Intellectual Property">
-                        <p><strong className="text-slate-300">Your Content:</strong> You retain ownership of all documents and content you create using Lucky Brew. By using the Service, you grant us a limited, non-exclusive license to process your input to provide the Service.</p>
-                        <p><strong className="text-slate-300">Our Platform:</strong> Lucky Brew, its design, algorithms, and underlying technology are protected by intellectual property laws. We grant you a limited, revocable license to use the platform solely for its intended purpose.</p>
+                        <p><strong className="text-slate-300">Your Content:</strong> You retain ownership of all documents and content you create using PRDGen AI. By using the Service, you grant us a limited, non-exclusive license to process your input to provide the Service.</p>
+                        <p><strong className="text-slate-300">Our Platform:</strong> PRDGen AI, its design, algorithms, and underlying technology are protected by intellectual property laws. We grant you a limited, revocable license to use the platform solely for its intended purpose.</p>
                         <p><strong className="text-slate-300">AI-Generated Content:</strong> Documents generated by our AI are provided to you for your use. We make no claim of ownership over these outputs, but we are not responsible for ensuring they are free from third-party IP conflicts.</p>
                     </Section>
 
@@ -106,7 +106,7 @@ export default function TermsOfServicePage() {
                     </Section>
 
                     <Section title="9. Limitation of Liability">
-                        <p>To the maximum extent permitted by law, Lucky Brew shall not be liable for any indirect, incidental, special,
+                        <p>To the maximum extent permitted by law, PRDGen AI shall not be liable for any indirect, incidental, special,
                             consequential, or punitive damages, including loss of profits, data, or business opportunities arising from your use of the Service.
                             Our total liability to you shall not exceed the amount you paid in the 12 months preceding the claim.</p>
                     </Section>
@@ -130,16 +130,16 @@ export default function TermsOfServicePage() {
                     <Section title="12. Contact Us">
                         <p>For questions about these Terms of Service, please contact us at:</p>
                         <div className="bg-slate-800/50 rounded-xl p-5 mt-4 border border-slate-700/50">
-                            <p className="text-slate-300"><strong>Lucky Brew</strong></p>
-                            <p className="text-slate-400">Email: legal@luckybrew.com</p>
-                            <p className="text-slate-400">Website: <Link href="/" className="text-[#135bec] hover:underline">luckybrew.com</Link></p>
+                            <p className="text-slate-300"><strong>PRDGen AI</strong></p>
+                            <p className="text-slate-400">Email: legal@prdgen.ai</p>
+                            <p className="text-slate-400">Website: <Link href="/" className="text-[#135bec] hover:underline">prdgen.ai</Link></p>
                         </div>
                     </Section>
                 </div>
 
                 {/* Footer nav */}
                 <div className="mt-16 pt-8 border-t border-slate-800/50 flex flex-col sm:flex-row justify-between items-center gap-4">
-                    <p className="text-slate-600 text-sm">© 2026 Lucky Brew. All rights reserved.</p>
+                    <p className="text-slate-600 text-sm">© 2026 PRDGen AI. All rights reserved.</p>
                     <div className="flex gap-6 text-sm">
                         <Link href="/privacy" className="text-slate-400 hover:text-white transition-colors">Privacy Policy</Link>
                         <Link href="/" className="text-slate-400 hover:text-white transition-colors">Back to Home</Link>

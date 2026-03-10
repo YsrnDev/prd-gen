@@ -185,7 +185,7 @@ export default function SettingsClient() {
 
             {/* Footer */}
             <div className="mt-12 text-center text-xs text-slate-500">
-                <p>&copy; {new Date().getFullYear()} Lucky Brew. All rights reserved.</p>
+                <p>&copy; {new Date().getFullYear()} PRDGen AI. All rights reserved.</p>
                 <p className="mt-1">Version 0.1.0</p>
             </div>
         </div>
