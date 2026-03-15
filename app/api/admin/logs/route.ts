@@ -5,6 +5,9 @@ import { desc, eq } from 'drizzle-orm';
 import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
 
+const LOGS_CACHE_TTL_MS = 5000;
+let logsCache: { data: unknown; fetchedAt: number } | null = null;
+
 export async function GET(request: Request) {
     try {
         const session = await auth.api.getSession({ headers: await headers() });
@@ -12,6 +15,11 @@ export async function GET(request: Request) {
 
         if (userRole !== 'admin') {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
+        const now = Date.now();
+        if (logsCache && now - logsCache.fetchedAt < LOGS_CACHE_TTL_MS) {
+            return NextResponse.json(logsCache.data);
         }
 
         const logs = await db.select({
@@ -39,7 +47,9 @@ export async function GET(request: Request) {
             ip: log.ip
         }));
 
-        return NextResponse.json({ logs: formattedLogs });
+        const payload = { logs: formattedLogs };
+        logsCache = { data: payload, fetchedAt: now };
+        return NextResponse.json(payload);
     } catch (error: any) {
         console.error('Error fetching logs:', error);
         return NextResponse.json({ error: 'Failed to fetch logs' }, { status: 500 });

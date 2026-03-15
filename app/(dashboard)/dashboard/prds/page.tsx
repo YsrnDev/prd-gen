@@ -7,20 +7,18 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { PrdTableClient } from '@/components/PrdTableClient';
+import { unstable_cache } from 'next/cache';
 
 export const metadata: Metadata = { title: 'My PRDs' };
 
-export default async function PRDsPage() {
-    const session = await auth.api.getSession({ headers: await headers() });
-    if (!session) redirect('/login');
-
+const getUserPrdsData = (userId: string) => unstable_cache(async () => {
     const docs = await db.query.prdDocument.findMany({
-        where: (prd, { eq }) => eq(prd.userId, session.user.id),
+        where: (prd, { eq }) => eq(prd.userId, userId),
         columns: { content: false },
     });
 
     const activeSessions = await db.query.wizardSession.findMany({
-        where: (ws, { eq, and }) => and(eq(ws.userId, session.user.id), eq(ws.status, 'in_progress')),
+        where: (ws, { eq, and }) => and(eq(ws.userId, userId), eq(ws.status, 'in_progress')),
     });
 
     const formattedDocs = docs.map(d => ({ ...d, type: 'prd' }));
@@ -42,19 +40,27 @@ export default async function PRDsPage() {
     const prds = [...formattedDocs, ...formattedDrafts]
         .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
 
-
     const serializedPrds = prds.map(p => ({
         ...p,
         createdAt: new Date(p.createdAt).toISOString(),
         updatedAt: new Date(p.updatedAt).toISOString()
     }));
 
+    return { serializedPrds, totalCount: prds.length };
+}, ['user-prds', userId], { revalidate: 5 })();
+
+export default async function PRDsPage() {
+    const session = await auth.api.getSession({ headers: await headers() });
+    if (!session) redirect('/login');
+
+    const { serializedPrds, totalCount } = await getUserPrdsData(session.user.id);
+
     return (
         <div className="max-w-6xl mx-auto">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
                 <div>
                     <h1 className="text-2xl md:text-3xl font-black tracking-tight text-white mb-1">My PRDs</h1>
-                    <p className="text-sm text-slate-400">{prds.length} document{prds.length !== 1 ? 's' : ''}</p>
+                    <p className="text-sm text-slate-400">{totalCount} document{totalCount !== 1 ? 's' : ''}</p>
                 </div>
                 <Link
                     href="/wizard/new"

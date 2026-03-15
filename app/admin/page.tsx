@@ -6,10 +6,12 @@ import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { ExportReportButton, MaintenanceToggleButton } from './components/DashboardButtons';
 import type { Metadata } from 'next';
+import { unstable_cache } from 'next/cache';
 
 export const metadata: Metadata = { title: 'Admin Dashboard' };
 
-function formatTimeAgo(date: Date) {
+function formatTimeAgo(input: number | Date | string) {
+    const date = typeof input === 'number' ? new Date(input) : typeof input === 'string' ? new Date(input) : input;
     const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
     let interval = seconds / 31536000;
     if (interval > 1) return Math.floor(interval) + 'yr ago';
@@ -24,16 +26,12 @@ function formatTimeAgo(date: Date) {
     return 'Just now';
 }
 
-export default async function AdminDashboardPage() {
-    const session = await auth.api.getSession({ headers: await headers() });
-    if (!session || (session.user as { role?: string }).role !== 'admin') redirect('/dashboard');
-
+const getAdminDashboardData = unstable_cache(async () => {
     // Last 7 days range
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
     sevenDaysAgo.setHours(0, 0, 0, 0);
 
-    // Fetch real stats from Supabase Database
     const [totalUsers, totalPRDs, totalSessions, prdsByDay, sessionsByDay] = await Promise.all([
         db.select({ count: count() }).from(userSchema),
         db.select({ count: count() }).from(prdDocument),
@@ -76,8 +74,8 @@ export default async function AdminDashboardPage() {
         ...recentUsersRaw.map(u => ({
             id: `user-${u.id}`,
             title: `New user: ${u.name || 'Anonymous User'}`,
-            subtitle: `${u.email} • Role: ${u.role}`,
-            timestamp: new Date(u.createdAt),
+            subtitle: `${u.email} â€¢ Role: ${u.role}`,
+            timestamp: new Date(u.createdAt).getTime(),
             icon: 'person_add',
             bgColor: 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.3)]'
         })),
@@ -85,19 +83,19 @@ export default async function AdminDashboardPage() {
             id: `prd-${p.id}`,
             title: `Generated PRD: ${p.title || 'Untitled'}`,
             subtitle: `By ${p.userName || 'Anonymous'}`,
-            timestamp: new Date(p.createdAt),
+            timestamp: new Date(p.createdAt).getTime(),
             icon: 'description',
             bgColor: 'bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.3)]'
         })),
         ...recentSessionsRaw.map(s => ({
             id: `session-${s.id}`,
             title: 'Started AI Session',
-            subtitle: `By ${s.userName || 'Anonymous'} • ${s.status === 'completed' ? 'Done' : 'Draft'}`,
-            timestamp: new Date(s.createdAt),
+            subtitle: `By ${s.userName || 'Anonymous'} â€¢ ${s.status === 'completed' ? 'Done' : 'Draft'}`,
+            timestamp: new Date(s.createdAt).getTime(),
             icon: 'memory',
             bgColor: 'bg-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.3)]'
         }))
-    ].sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime()).slice(0, 5);
+    ].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()).slice(0, 5);
 
     // Build 7-day chart data
     const dayLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -140,6 +138,15 @@ export default async function AdminDashboardPage() {
         },
     ];
 
+    return { stats, chartData, maxVal, combinedActivities };
+}, ['admin-dashboard'], { revalidate: 10 });
+
+export default async function AdminDashboardPage() {
+    const session = await auth.api.getSession({ headers: await headers() });
+    if (!session || (session.user as { role?: string }).role !== 'admin') redirect('/dashboard');
+
+    const { stats, chartData, maxVal, combinedActivities } = await getAdminDashboardData();
+
     return (
         <div className="w-full max-w-7xl mx-auto animate-fade-in">
             {/* Header */}
@@ -177,7 +184,7 @@ export default async function AdminDashboardPage() {
                     <div className="flex items-center justify-between mb-6">
                         <div>
                             <h2 className="text-base font-bold text-[var(--color-fg)]">Usage Trends</h2>
-                            <p className="text-xs text-[var(--color-muted-fg)]">PRDs generated & AI sessions — last 7 days</p>
+                            <p className="text-xs text-[var(--color-muted-fg)]">PRDs generated & AI sessions â€” last 7 days</p>
                         </div>
                         <div className="flex items-center gap-4 text-xs">
                             <div className="flex items-center gap-1.5">

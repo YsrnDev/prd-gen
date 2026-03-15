@@ -5,16 +5,21 @@ import LandingNavbar from './components/LandingNavbar';
 import { db } from '@/lib/db';
 import { subscriptionPlan } from '@/lib/db/schema';
 import { asc } from 'drizzle-orm';
+import { unstable_cache } from 'next/cache';
 
 export const metadata: Metadata = {
   title: 'PRDGen AI - Turn Ideas into PRDs in Minutes',
   description: 'Generate enterprise-ready Product Requirements Documents in minutes using AI. Our 6-step interview wizard produces comprehensive, stakeholder-ready PRDs instantly.',
 };
 
-export default async function LandingPage() {
-  const plans = await db.query.subscriptionPlan.findMany({
+const getSubscriptionPlans = unstable_cache(async () => {
+  return db.query.subscriptionPlan.findMany({
     orderBy: [asc(subscriptionPlan.price)]
   });
+}, ['landing-plans'], { revalidate: 60 });
+
+export default async function LandingPage() {
+  const plans = await getSubscriptionPlans();
 
   const formatPrice = (price: number) => {
     return 'Rp ' + new Intl.NumberFormat('id-ID').format(price);
