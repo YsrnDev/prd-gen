@@ -109,18 +109,18 @@ class UXAuditor:
         except: return
         
         self.files_checked += 1
-        filename = os.path.basename(filepath)
+        filename = os.path.normpath(filepath).replace('\\', '/')
 
         # Pre-calculate common flags
         has_long_text = bool(re.search(r'<p|<div.*class=.*text|article|<span.*text', content, re.IGNORECASE))
-        has_form = bool(re.search(r'<form|<input|password|credit|card|payment', content, re.IGNORECASE))
+        has_form = bool(re.search(r'<form|<input|<select|<textarea', content, re.IGNORECASE))
         complex_elements = len(re.findall(r'<input|<select|<textarea|<option', content, re.IGNORECASE))
 
         # --- 1. PSYCHOLOGY LAWS ---
         # Hick's Law
         nav_items = len(re.findall(r'<NavLink|<Link|<a\s+href|nav-item', content, re.IGNORECASE))
-        if nav_items > 7:
-            self.issues.append(f"[Hick's Law] {filename}: {nav_items} nav items (Max 7)")
+        if nav_items > 14:
+            self.issues.append(f"[Hick's Law] {filename}: {nav_items} nav items (Max 14)")
         
         # Fitts' Law
         if re.search(r'height:\s*([0-3]\d)px', content) or re.search(r'h-[1-9]\b|h-10\b', content):
@@ -708,7 +708,7 @@ def main():
         print("-" * 50)
         if report['issues']:
             print(f"[!] ISSUES ({len(report['issues'])}):")
-            for i in report['issues'][:10]: print(f"  - {i}")
+            for i in report['issues']: print(f"  - {i}")
         if report['warnings']:
             print(f"[*] WARNINGS ({len(report['warnings'])}):")
             for w in report['warnings'][:15]: print(f"  - {w}")

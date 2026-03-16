@@ -118,6 +118,7 @@ export function PrdTableClient({ initialPrds }: { initialPrds: PRD[] }) {
                             <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider w-12">
                                 <input
                                     type="checkbox"
+                                    aria-label="Select all PRDs"
                                     checked={selectedIds.size === initialPrds.length && initialPrds.length > 0}
                                     onChange={toggleSelectAll}
                                     className="rounded border-slate-700 bg-slate-800 text-[#135bec] focus:ring-[#135bec] focus:ring-offset-slate-900 cursor-pointer"
@@ -137,6 +138,7 @@ export function PrdTableClient({ initialPrds }: { initialPrds: PRD[] }) {
                                     <td className="px-6 py-5">
                                         <input
                                             type="checkbox"
+                                            aria-label={`Select PRD ${prd.title}`}
                                             checked={isSelected}
                                             onChange={() => toggleRow(prd.id)}
                                             className="rounded border-slate-700 bg-slate-800 text-[#135bec] focus:ring-[#135bec] focus:ring-offset-slate-900 cursor-pointer"

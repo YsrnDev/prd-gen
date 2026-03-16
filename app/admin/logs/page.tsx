@@ -124,7 +124,7 @@ export default function SystemLogsPage() {
         switch (type) {
             case 'AUTH': return 'bg-blue-500/10 text-blue-500 border border-blue-500/20';
             case 'ERROR': return 'bg-red-500/10 text-red-500 border border-red-500/20';
-            case 'AI_GENERATION': return 'bg-purple-500/10 text-purple-500 border border-purple-500/20';
+            case 'AI_GENERATION': return 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20';
             case 'SYSTEM': return 'bg-cyan-500/10 text-cyan-500 border border-cyan-500/20';
             case 'USER_ACTION': return 'bg-amber-500/10 text-amber-500 border border-amber-500/20';
             default: return 'bg-[var(--color-accent)] text-[var(--color-muted-fg)] border border-[var(--color-border)]';

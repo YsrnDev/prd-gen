@@ -215,7 +215,7 @@ export default function WizardPage() {
                                                     "flex items-center gap-2 mt-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all",
                                                     isFreeTier
                                                         ? "bg-slate-800/50 border border-slate-700/50 text-slate-500 hover:text-slate-300 hover:bg-slate-800"
-                                                        : "bg-gradient-to-r from-[#135bec]/20 to-purple-500/20 border border-[#135bec]/30 text-[#6ea8fe] hover:from-[#135bec]/30 hover:to-purple-500/30 hover:text-white disabled:opacity-60 disabled:cursor-wait"
+                                                        : "bg-gradient-to-r from-[#135bec]/20 to-emerald-500/20 border border-[#135bec]/30 text-[#6ea8fe] hover:from-[#135bec]/30 hover:to-emerald-500/30 hover:text-white disabled:opacity-60 disabled:cursor-wait"
                                                 )}
                                             >
                                                 {recommendingFor === question.id ? (

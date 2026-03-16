@@ -1,0 +1,21 @@
+
+[UX AUDIT] 49 files checked
+--------------------------------------------------
+[*] WARNINGS (304):
+  - [Cognitive Load] app/globals.css: High visual noise detected. Many colors and borders increase cognitive load.
+  - [Typography] app/globals.css: Adjacent font weights (600/500). Skip at least 2 levels for contrast.
+  - [Typography] app/globals.css: Adjacent font weights (700/600). Skip at least 2 levels for contrast.
+  - [Typography] app/globals.css: Adjacent font weights (600/500). Skip at least 2 levels for contrast.
+  - [Typography] app/globals.css: Adjacent font weights (800/700). Skip at least 2 levels for contrast.
+  - [Typography] app/globals.css: Adjacent font weights (700/600). Skip at least 2 levels for contrast.
+  - [Typography] app/globals.css: Fixed font sizes without clamp(). Consider fluid typography: clamp(MIN, PREFERRED, MAX)
+  - [Performance] app/globals.css: Animating expensive properties (top, width, bottom, left, height, margin, padding). Use transform/opacity where possible.
+  - [Accessibility] app/globals.css: Animations found without prefers-reduced-motion check
+  - [Visual] app/globals.css: Many border declarations (19). Simplify for cleaner look.
+  - [Visual] app/globals.css: Multiple glow effects detected. Use sparingly for emphasis only.
+  - [Color] app/globals.css: 27 distinct colors. Consider 60-30-10 rule: dominant (60%), secondary (30%), accent (10%).
+  - [Color] app/globals.css: Color variables without HSL. Consider HSL for easier palette adjustment (Hue, Saturation, Lightness).
+  - [Motion] app/globals.css: Many animations (12). Ensure majority serve functional purpose (feedback, guidance), not decoration.
+  - [Fitts' Law] app/page.tsx: Small targets (< 44px)
+[+] PASSED CHECKS: 27
+STATUS: PASS
