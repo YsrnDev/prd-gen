@@ -15,7 +15,7 @@ const remarkPlugins = [remarkGfm];
 
 const components: Components = {
     // Custom code block renderer — intercepts ```mermaid blocks
-    code({ node, className: cls, children, ...props }) {
+    code({ className: cls, children, ...props }) {
         const match = /language-(\w+)/.exec(cls || '');
         const lang = match?.[1];
         const code = String(children).replace(/\n$/, '');

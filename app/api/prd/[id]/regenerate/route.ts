@@ -103,7 +103,7 @@ export async function POST(request: NextRequest, { params }: Params) {
         }
 
         const provider = createAIProvider(aiConfig);
-        const { systemPrompt, userPrompt } = getPRDPrompt(answers, additionalInstructions);
+        const { systemPrompt } = getPRDPrompt(answers, additionalInstructions);
 
         // Rate limiting check
         const rateLimitResult = checkRateLimit(session.user.id, aiConfig.rateLimitRpm);

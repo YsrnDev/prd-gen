@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Loader2, Zap, AlertTriangle, ArrowRight } from 'lucide-react';
+import { Loader2, Zap, AlertTriangle } from 'lucide-react';
 import Link from 'next/link';
 
 export default function WizardNewPage() {

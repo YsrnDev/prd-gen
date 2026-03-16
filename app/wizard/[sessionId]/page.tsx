@@ -47,7 +47,7 @@ export default function WizardPage() {
             }
         };
         initSession();
-    }, [sessionId]);
+    }, [sessionId, router]);
 
     const saveAnswers = useCallback(async (answersToSave: WizardAnswers) => {
         if (!wizardSessionId) return;

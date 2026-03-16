@@ -1,6 +1,6 @@
 import { db } from '@/lib/db';
 import * as schema from '@/lib/db/schema';
-import { eq } from 'drizzle-orm';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 

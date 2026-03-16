@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Loader2, ShieldAlert, Cpu, UserCircle, Wand2, Info, Search, CheckCircle2, XCircle, AlertTriangle, RefreshCw } from 'lucide-react';
+import { ShieldAlert, Cpu, UserCircle, Wand2, Info, Search, CheckCircle2, XCircle, AlertTriangle, RefreshCw } from 'lucide-react';
 
 interface SystemLog {
     id: string;

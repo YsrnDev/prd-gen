@@ -189,12 +189,6 @@ export default function AIConfigPage() {
         setTesting(false);
     };
 
-    const getTemperatureLabel = () => {
-        if (temperature <= 0.3) return 'PRECISE';
-        if (temperature <= 0.7) return 'BALANCED';
-        return 'CREATIVE';
-    };
-
 
     const handleFetchModels = async () => {
         setFetchingModels(true);

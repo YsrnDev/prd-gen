@@ -8,7 +8,7 @@ import { headers } from 'next/headers';
 const LOGS_CACHE_TTL_MS = 5000;
 let logsCache: { data: unknown; fetchedAt: number } | null = null;
 
-export async function GET(request: Request) {
+export async function GET() {
     try {
         const session = await auth.api.getSession({ headers: await headers() });
         const userRole = (session?.user as { role?: string })?.role;

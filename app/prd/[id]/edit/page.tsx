@@ -34,8 +34,6 @@ export default function PRDEditPage() {
     const [saving, setSaving] = useState(false);
     const [saved, setSaved] = useState(false);
     const [regenerating, setRegenerating] = useState(false);
-    const [showRegenDialog, setShowRegenDialog] = useState(false);
-    const [regenInstructions, setRegenInstructions] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(true);
     const [copied, setCopied] = useState(false);
@@ -57,7 +55,6 @@ export default function PRDEditPage() {
         if (!userMsg.trim() || regenerating) return;
         setChatInput('');
         setChatMessages(prev => [...prev, { role: 'user', text: userMsg }]);
-        setRegenInstructions(userMsg);
         setRegenerating(true);
         setError('');
 
@@ -234,33 +231,6 @@ export default function PRDEditPage() {
         return () => clearTimeout(timer);
     }, [title, content, isModified, handleSave]);
 
-    const handleRegenerate = async () => {
-        setRegenerating(true);
-        setError('');
-        try {
-            const res = await fetch(`/api/prd/${id}/regenerate`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ additionalInstructions: regenInstructions }),
-            });
-            const data = await res.json();
-            if (res.ok) {
-                if (data.content) {
-                    setContent(data.content);
-                }
-                // Optional: surface the AI response as a toast or chat update if modal triggered it.
-                // We'll leave the PRD content updated and close the dialog.
-                setShowRegenDialog(false);
-                setRegenInstructions('');
-            } else {
-                setError(data.error || 'Regeneration failed');
-            }
-        } catch {
-            setError('Something went wrong');
-        } finally {
-            setRegenerating(false);
-        }
-    };
 
     const handleDelete = async () => {
         if (!confirm('Are you sure you want to delete this PRD?')) return;

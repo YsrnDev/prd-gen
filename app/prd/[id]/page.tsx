@@ -5,7 +5,7 @@ import { eq, and } from 'drizzle-orm';
 import { headers } from 'next/headers';
 import { redirect, notFound } from 'next/navigation';
 import Link from 'next/link';
-import { Edit, ArrowLeft, Download } from 'lucide-react';
+import { Edit, ArrowLeft } from 'lucide-react';
 // Remove custom formatDate import as it is missing in lib/utils
 function formatDate(date: Date) {
     return new Intl.DateTimeFormat('en-US', {
@@ -37,7 +37,6 @@ export default async function PRDViewPage({ params }: Props) {
     if (!doc) notFound();
 
     // Render markdown server-side simply (client editor handles full rendering)
-    const lines = doc.content.split('\n');
 
     return (
         <div className="min-h-screen bg-[#0f172a]">

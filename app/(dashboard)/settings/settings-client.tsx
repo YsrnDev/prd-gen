@@ -3,7 +3,7 @@
 import { useSession, signOut } from '@/lib/auth-client';
 import { useCurrentUser } from '@/lib/use-current-user';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { AlertTriangle, Loader2, X } from 'lucide-react';

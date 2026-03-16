@@ -3,8 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useSession } from '@/lib/auth-client';
 import { useCurrentUser } from '@/lib/use-current-user';
-import { Zap, Check, Crown, Sparkles, Loader2, AlertTriangle, ArrowLeft } from 'lucide-react';
-import Link from 'next/link';
+import { Loader2, AlertTriangle } from 'lucide-react';
+
 import Script from 'next/script';
 
 type Plan = {
@@ -81,22 +81,22 @@ export default function UserPricingPage() {
     const subscriptionStatus = currentUser?.subscriptionStatus || (session?.user as any)?.subscriptionStatus || 'NONE';
 
     useEffect(() => {
-        fetchPlans();
-    }, []);
-
-    async function fetchPlans() {
-        try {
-            const res = await fetch('/api/pricing');
-            if (res.ok) {
-                const data = await res.json();
-                setPlans(data.plans || []);
+        let cancelled = false;
+        (async () => {
+            try {
+                const res = await fetch('/api/pricing');
+                if (res.ok && !cancelled) {
+                    const data = await res.json();
+                    setPlans(data.plans || []);
+                }
+            } catch (err) {
+                console.error('Failed to fetch plans:', err);
+            } finally {
+                if (!cancelled) setLoading(false);
             }
-        } catch (err) {
-            console.error('Failed to fetch plans:', err);
-        } finally {
-            setLoading(false);
-        }
-    }
+        })();
+        return () => { cancelled = true; };
+    }, []);
 
     async function handleCheckout(plan: Plan) {
         if (plan.price === 0) return;
@@ -160,23 +160,6 @@ export default function UserPricingPage() {
         return 'Rp ' + new Intl.NumberFormat('id-ID').format(price);
     };
 
-    const getPlanIcon = (name: string) => {
-        switch (name) {
-            case 'FREE': return <Zap className="w-6 h-6" />;
-            case 'PLUS': return <Sparkles className="w-6 h-6" />;
-            case 'PRO': return <Crown className="w-6 h-6" />;
-            default: return <Zap className="w-6 h-6" />;
-        }
-    };
-
-    const getPlanGradient = (name: string, isPopular: boolean) => {
-        if (isPopular) return 'from-[#135bec] to-blue-700';
-        switch (name) {
-            case 'FREE': return 'from-slate-600 to-slate-700';
-            case 'PRO': return 'from-amber-500 to-orange-600';
-            default: return 'from-slate-600 to-slate-700';
-        }
-    };
 
     const isCurrentPlan = (planName: string) => {
         return userTier === planName && (planName === 'FREE' || subscriptionStatus === 'ACTIVE');
@@ -223,7 +206,6 @@ export default function UserPricingPage() {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         {plans.sort((a, b) => a.price - b.price).map((plan) => {
                             const current = isCurrentPlan(plan.name);
-                            const gradient = getPlanGradient(plan.name, plan.isPopular);
 
                             return (
                                 <div

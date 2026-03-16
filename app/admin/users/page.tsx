@@ -147,7 +147,7 @@ export default function AdminUsersPage() {
                     setResetSuccess('');
                 }, 2000);
             }
-        } catch (err) {
+        } catch {
             setResetError('An expected error occurred');
         } finally {
             setResetLoading(false);

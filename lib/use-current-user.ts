@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSession } from '@/lib/auth-client';
 
 export type CurrentUser = {
@@ -18,7 +18,7 @@ export function useCurrentUser(pollIntervalMs: number = DEFAULT_POLL_INTERVAL_MS
     const [error, setError] = useState<string | null>(null);
     const pollingRef = useRef<NodeJS.Timeout | null>(null);
 
-    const fetchCurrentUser = async () => {
+    const fetchCurrentUser = useCallback(async () => {
         if (!session?.user) {
             setData(null);
             setLoading(false);
@@ -36,14 +36,14 @@ export function useCurrentUser(pollIntervalMs: number = DEFAULT_POLL_INTERVAL_MS
         } finally {
             setLoading(false);
         }
-    };
+    }, [session?.user]);
 
     useEffect(() => {
         fetchCurrentUser();
         return () => {
             if (pollingRef.current) clearInterval(pollingRef.current);
         };
-    }, [session?.user?.id]);
+    }, [fetchCurrentUser, session?.user?.id]);
 
     useEffect(() => {
         if (!session?.user) return;
@@ -52,7 +52,7 @@ export function useCurrentUser(pollIntervalMs: number = DEFAULT_POLL_INTERVAL_MS
         return () => {
             if (pollingRef.current) clearInterval(pollingRef.current);
         };
-    }, [session?.user?.id, pollIntervalMs]);
+    }, [fetchCurrentUser, session?.user, session?.user?.id, pollIntervalMs]);
 
     useEffect(() => {
         if (!session?.user) return;
@@ -66,7 +66,7 @@ export function useCurrentUser(pollIntervalMs: number = DEFAULT_POLL_INTERVAL_MS
             window.removeEventListener('focus', handleFocus);
             document.removeEventListener('visibilitychange', handleVisibility);
         };
-    }, [session?.user?.id]);
+    }, [fetchCurrentUser, session?.user, session?.user?.id]);
 
     return { data, loading, error, refresh: fetchCurrentUser };
 }
