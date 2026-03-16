@@ -68,7 +68,7 @@ export default function DashboardPage() {
         return () => window.removeEventListener('prd-deleted', handler);
     }, [fetchPrds]);
 
-    const { totalPrds, drafts, completed, totalWords, recentPrds, stats } = useMemo(() => {
+    const { recentPrds, stats } = useMemo(() => {
         const totalPrds = prds.length;
         const drafts = prds.filter(p => !p.status || p.status === 'draft').length;
         const completed = prds.filter(p => p.status === 'completed').length;

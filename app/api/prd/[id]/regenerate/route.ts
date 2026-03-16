@@ -6,7 +6,7 @@ import { getAIConfig, createAIProvider, getCustomApiMode, setCustomApiMode } fro
 import { getPRDPrompt } from '@/lib/ai/prompts';
 import { streamText } from 'ai';
 import { eq, and } from 'drizzle-orm';
-import { logEvent } from '@/lib/logger';
+
 import { checkRateLimit } from '@/lib/rate-limiter';
 
 export const maxDuration = 300; // 5 minutes

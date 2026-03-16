@@ -7,7 +7,7 @@ import { useCurrentUser } from '@/lib/use-current-user';
 import { WIZARD_STEPS, type WizardAnswers } from '@/lib/ai/prompts';
 import { cn } from '@/lib/utils';
 import { Sidebar } from '@/components/layout/Sidebar';
-import { Sparkles, Loader2, Check, AlertCircle, Save } from 'lucide-react';
+import { Sparkles, Loader2, AlertCircle, Save } from 'lucide-react';
 
 export default function WizardPage() {
     const router = useRouter();
