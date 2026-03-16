@@ -16,6 +16,35 @@ interface Plan {
     updatedAt: string;
 }
 
+function PricingSkeleton() {
+    return (
+        <div className="w-full max-w-7xl mx-auto space-y-6 animate-pulse">
+            <div className="flex justify-between items-start sm:items-center mb-6 gap-4">
+                <div className="space-y-2">
+                    <div className="h-6 w-44 bg-slate-800 rounded" />
+                    <div className="h-4 w-60 bg-slate-800 rounded" />
+                </div>
+                <div className="h-9 w-32 bg-slate-800 rounded-lg" />
+            </div>
+
+            <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
+                <div className="h-12 bg-slate-800/60" />
+                <div className="divide-y divide-slate-800">
+                    {[...Array(5)].map((_, i) => (
+                        <div key={i} className="px-6 py-4 flex items-center gap-4">
+                            <div className="w-32 h-4 bg-slate-800 rounded" />
+                            <div className="w-24 h-4 bg-slate-800 rounded" />
+                            <div className="w-20 h-4 bg-slate-800 rounded" />
+                            <div className="w-16 h-4 bg-slate-800 rounded" />
+                            <div className="ml-auto w-16 h-8 bg-slate-800 rounded" />
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
+}
+
 export default function PricingManagementPage() {
     const [plans, setPlans] = useState<Plan[]>([]);
     const [loading, setLoading] = useState(true);
@@ -137,7 +166,7 @@ export default function PricingManagementPage() {
             </div>
 
             {loading ? (
-                <div className="flex justify-center py-12"><Loader2 className="w-8 h-8 animate-spin text-blue-500" /></div>
+                <PricingSkeleton />
             ) : error && !isDialogOpen ? (
                 <div className="bg-red-500/10 text-red-500 p-4 rounded-lg">{error}</div>
             ) : (

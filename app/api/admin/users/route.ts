@@ -27,6 +27,8 @@ export async function GET(request: NextRequest) {
             name: user.name,
             email: user.email,
             role: user.role,
+            tier: user.tier,
+            subscriptionStatus: user.subscriptionStatus,
             createdAt: user.createdAt,
             image: user.image,
         }).from(user).orderBy(desc(user.createdAt));

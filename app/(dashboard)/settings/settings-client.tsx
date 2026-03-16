@@ -1,6 +1,7 @@
 'use client';
 
 import { useSession, signOut } from '@/lib/auth-client';
+import { useCurrentUser } from '@/lib/use-current-user';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -10,6 +11,7 @@ import { cn } from '@/lib/utils';
 
 export default function SettingsClient() {
     const { data: session } = useSession();
+    const { data: currentUser } = useCurrentUser();
     const router = useRouter();
     const [maintenanceMode, setMaintenanceMode] = useState(false);
     const [loadingMaintenance, setLoadingMaintenance] = useState(false);
@@ -72,7 +74,7 @@ export default function SettingsClient() {
                                     ADMIN
                                 </span>
                             ) : (() => {
-                                const tier = ((session?.user as any)?.tier || 'FREE').toUpperCase();
+                                const tier = (currentUser?.tier || (session?.user as any)?.tier || 'FREE').toUpperCase();
                                 const styles: Record<string, string> = {
                                     FREE: 'bg-slate-700/60 text-slate-300 border border-slate-600/50',
                                     PLUS: 'bg-blue-500/20 text-blue-300 border border-blue-500/30',

@@ -13,6 +13,13 @@ export async function POST(request: NextRequest) {
         // PRD Quota Validation for FREE Tier
         const userData = await db.select().from(user).where(eq(user.id, session.user.id)).limit(1);
         if (userData.length > 0) {
+            if (!userData[0].emailVerified) {
+                return NextResponse.json(
+                    { error: 'Please verify your email to create a PRD.' },
+                    { status: 403 }
+                );
+            }
+
             const currentTier = userData[0].tier || 'FREE';
             if (currentTier === 'FREE') {
                 const prdCount = await db.select().from(prdDocument).where(eq(prdDocument.userId, session.user.id));

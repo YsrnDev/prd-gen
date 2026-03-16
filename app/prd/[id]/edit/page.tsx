@@ -12,6 +12,7 @@ import { MarkdownRenderer } from '@/components/MarkdownRenderer';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { useSession } from '@/lib/auth-client';
+import { useCurrentUser } from '@/lib/use-current-user';
 
 function wordCount(text: string): number {
     if (!text) return 0;
@@ -23,6 +24,8 @@ export default function PRDEditPage() {
     const router = useRouter();
     const id = params.id as string;
     const { data: session } = useSession();
+    const { data: currentUser } = useCurrentUser();
+    const currentTier = currentUser?.tier || (session?.user as any)?.tier || 'FREE';
 
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
@@ -380,7 +383,7 @@ export default function PRDEditPage() {
                         />
 
                         {/* Paywall Overlay */}
-                        {(session?.user as any)?.tier === 'FREE' && (
+                        {currentTier === 'FREE' && (
                             <div className="absolute inset-0 z-20 flex flex-col items-center justify-center p-6 bg-slate-900/60 backdrop-blur-sm rounded-l-2xl">
                                 <div className="bg-slate-900 p-6 rounded-2xl border border-slate-700 shadow-xl text-center space-y-4 max-w-[90%]">
                                     <div className="w-12 h-12 bg-amber-500/10 rounded-full flex items-center justify-center mx-auto">

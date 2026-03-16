@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { prdDocument, wizardSession, prdChatLog, user } from '@/lib/db/schema';
-import { getAIConfig, createAIProvider } from '@/lib/ai/config';
+import { getAIConfig, createAIProvider, getCustomApiMode, setCustomApiMode } from '@/lib/ai/config';
 import { getPRDPrompt } from '@/lib/ai/prompts';
 import { streamText } from 'ai';
 import { eq, and } from 'drizzle-orm';
@@ -13,6 +13,46 @@ export const maxDuration = 300; // 5 minutes
 
 type Params = { params: Promise<{ id: string }> };
 
+function isResponsesUnsupported(error: unknown) {
+    const raw = error as {
+        statusCode?: number;
+        url?: string;
+        responseBody?: string;
+        data?: { error?: { code?: string; message?: string } };
+        message?: string;
+        lastError?: unknown;
+    };
+    const err = raw?.lastError ?? raw;
+    const statusCode = err?.statusCode;
+    const url = typeof err?.url === 'string' ? err.url : '';
+    const responseBody = typeof err?.responseBody === 'string' ? err.responseBody : '';
+    const code = err?.data?.error?.code;
+    const message = `${err?.message || ''} ${err?.data?.error?.message || ''} ${responseBody}`.toLowerCase();
+    return url.includes('/responses') && (
+        statusCode === 404 ||
+        code === 'convert_request_failed' ||
+        message.includes('not implemented')
+    );
+}
+
+function isModelOverloaded(error: unknown) {
+    const raw = error as {
+        statusCode?: number;
+        responseBody?: string;
+        data?: { error?: { message?: string } };
+        message?: string;
+        lastError?: unknown;
+    };
+    const err = raw?.lastError ?? raw;
+    const statusCode = err?.statusCode;
+    const responseBody = typeof err?.responseBody === 'string' ? err.responseBody : '';
+    const message = `${err?.message || ''} ${err?.data?.error?.message || ''} ${responseBody}`.toLowerCase();
+
+    if (message.includes('available model group fallbacks') || message.includes('fallback')) return true;
+    if (message.includes('overload') || message.includes('capacity') || message.includes('busy')) return true;
+    return statusCode === 429 || statusCode === 500 && message.includes('rate limit');
+}
+
 // POST /api/prd/[id]/regenerate
 export async function POST(request: NextRequest, { params }: Params) {
     try {
@@ -20,6 +60,9 @@ export async function POST(request: NextRequest, { params }: Params) {
         if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
         const userData = await db.select().from(user).where(eq(user.id, session.user.id)).limit(1);
+        if (userData.length > 0 && !userData[0].emailVerified) {
+            return NextResponse.json({ error: 'Please verify your email to use AI chat revisions.' }, { status: 403 });
+        }
         if (userData.length > 0 && (!userData[0].tier || userData[0].tier === 'FREE')) {
             return NextResponse.json({ error: 'Upgrade to PLUS for AI Chat Revisions' }, { status: 403 });
         }
@@ -61,9 +104,15 @@ export async function POST(request: NextRequest, { params }: Params) {
         }
 
 
+        const isCustom = aiConfig.provider === 'custom';
+        const initialMode = isCustom ? getCustomApiMode(aiConfig) : 'responses';
+        const fallbackModel = aiConfig.fallbackModel && aiConfig.fallbackModel !== aiConfig.defaultModel ? aiConfig.fallbackModel : '';
+        const getModel = (mode: 'responses' | 'chat', modelId: string) =>
+            mode === 'chat' ? provider.chat(modelId) : provider(modelId);
+
         // Use streaming to avoid gateway timeouts on long generations
-        const result = streamText({
-            model: provider(aiConfig.defaultModel),
+        const createStreamResult = (mode: 'responses' | 'chat', modelId: string) => streamText({
+            model: getModel(mode, modelId),
             system: systemPrompt + `\n\nCRITICAL COMMUNICATION RULE:
 You are acting as a conversational AI PM assistant. The user will chat with you via a panel.
 You must reply depending on the user's intent:
@@ -99,11 +148,35 @@ MERMAID SYNTAX (when generating or editing diagrams):
         const stream = new ReadableStream({
             async start(controller) {
                 try {
-                    let fullText = '';
-                    for await (const chunk of result.textStream) {
-                        fullText += chunk;
-                        controller.enqueue(encoder.encode(chunk));
-                    }
+                    let mode: 'responses' | 'chat' = initialMode;
+                    let attemptedFallback = false;
+                    let attemptedModelFallback = false;
+
+                    while (true) {
+                        let fullText = '';
+                        let hasOutput = false;
+                        const modelId = attemptedModelFallback && fallbackModel ? fallbackModel : aiConfig.defaultModel;
+                        const result = createStreamResult(mode, modelId);
+
+                        try {
+                            for await (const chunk of result.textStream) {
+                                fullText += chunk;
+                                hasOutput = true;
+                                controller.enqueue(encoder.encode(chunk));
+                            }
+                        } catch (err) {
+                            if (isCustom && mode === 'responses' && !attemptedFallback && !hasOutput && isResponsesUnsupported(err)) {
+                                attemptedFallback = true;
+                                mode = 'chat';
+                                setCustomApiMode(aiConfig, 'chat');
+                                continue;
+                            }
+                            if (fallbackModel && !attemptedModelFallback && !hasOutput && isModelOverloaded(err)) {
+                                attemptedModelFallback = true;
+                                continue;
+                            }
+                            throw err;
+                        }
 
                     // Done streaming. Parse response to just log what AI actually said avoiding the raw PRD
                     let replyText = fullText.trim();
@@ -133,6 +206,8 @@ MERMAID SYNTAX (when generating or editing diagrams):
                     }
 
                     controller.close();
+                    break;
+                    }
                 } catch (err) {
                     console.error('Streaming error:', err);
                     controller.error(err);

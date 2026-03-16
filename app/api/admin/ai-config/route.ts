@@ -19,6 +19,7 @@ export async function GET(request: NextRequest) {
             config: config ? {
                 provider: config.provider,
                 defaultModel: config.defaultModel,
+                fallbackModel: config.fallbackModel ?? null,
                 baseUrl: config.baseUrl,
                 temperature: config.temperature,
                 rateLimitRpm: config.rateLimitRpm,
@@ -39,7 +40,7 @@ export async function PUT(request: NextRequest) {
         if (!isAdmin(session)) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 
         const body = await request.json();
-        const { provider, apiKey, baseUrl, defaultModel, temperature, rateLimitRpm, rateLimitTpm } = body;
+        const { provider, apiKey, baseUrl, defaultModel, fallbackModel, temperature, rateLimitRpm, rateLimitTpm } = body;
 
         const existingConfig = await getAIConfig();
 
@@ -56,6 +57,7 @@ export async function PUT(request: NextRequest) {
             apiKey: apiKey || existingConfig!.apiKey,
             baseUrl,
             defaultModel,
+            fallbackModel: typeof fallbackModel === 'string' && fallbackModel.length > 0 ? fallbackModel : null,
             temperature: temperature !== undefined ? parseFloat(temperature) : 0.5,
             rateLimitRpm: rateLimitRpm !== undefined ? parseInt(rateLimitRpm) : 10,
             rateLimitTpm: rateLimitTpm !== undefined ? parseInt(rateLimitTpm) : 100000,

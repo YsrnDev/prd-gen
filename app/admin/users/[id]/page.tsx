@@ -12,6 +12,9 @@ interface UserData {
     name: string;
     email: string;
     role: string;
+    tier?: string;
+    subscriptionStatus?: string;
+    subscriptionUntil?: string | null;
     createdAt: string;
     image?: string | null;
 }
@@ -78,6 +81,21 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ id: 
         );
     }
 
+    const tier = (user.tier || 'FREE').toUpperCase();
+    const subscriptionStatus = (user.subscriptionStatus || 'NONE').toUpperCase();
+
+    const tierStyles: Record<string, string> = {
+        FREE: 'bg-slate-700/60 text-slate-300 border border-slate-600/50',
+        PLUS: 'bg-blue-500/20 text-blue-300 border border-blue-500/30',
+        PRO: 'bg-amber-500/20 text-amber-300 border border-amber-500/30',
+    };
+
+    const statusStyles: Record<string, string> = {
+        ACTIVE: 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30',
+        EXPIRED: 'bg-rose-500/10 text-rose-400 border border-rose-500/30',
+        NONE: 'bg-slate-700/40 text-slate-300 border border-slate-600/40',
+    };
+
     return (
         <div className="w-full max-w-7xl mx-auto space-y-6">
             {/* Header / Back */}
@@ -110,6 +128,18 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ id: 
                             )}>
                                 {user.role === 'admin' ? <Crown className="w-3 h-3" /> : <User className="w-3 h-3" />}
                                 {user.role}
+                            </span>
+                            <span className={cn(
+                                'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wide',
+                                tierStyles[tier] || tierStyles.FREE
+                            )}>
+                                {tier}
+                            </span>
+                            <span className={cn(
+                                'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wide',
+                                statusStyles[subscriptionStatus] || statusStyles.NONE
+                            )}>
+                                {subscriptionStatus}
                             </span>
                         </h2>
                         <p className="text-[var(--color-muted-fg)] truncate max-w-full">{user.email}</p>

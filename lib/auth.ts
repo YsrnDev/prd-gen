@@ -18,7 +18,7 @@ export const auth = betterAuth({
     }),
     emailAndPassword: {
         enabled: true,
-        requireEmailVerification: true,
+        requireEmailVerification: false,
     },
     emailVerification: {
         sendOnSignUp: true,
@@ -82,6 +82,18 @@ export const auth = betterAuth({
             role: {
                 type: 'string',
                 defaultValue: 'user',
+                required: false,
+                input: false,
+            },
+            tier: {
+                type: 'string',
+                defaultValue: 'FREE',
+                required: false,
+                input: false,
+            },
+            subscriptionStatus: {
+                type: 'string',
+                defaultValue: 'NONE',
                 required: false,
                 input: false,
             },

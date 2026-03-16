@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { useSession } from '@/lib/auth-client';
+import { useCurrentUser } from '@/lib/use-current-user';
 import { WIZARD_STEPS, type WizardAnswers } from '@/lib/ai/prompts';
 import { cn } from '@/lib/utils';
 import { Sidebar } from '@/components/layout/Sidebar';
@@ -13,6 +14,7 @@ export default function WizardPage() {
     const params = useParams();
     const sessionId = params.sessionId as string;
     const { data: session } = useSession();
+    const { data: currentUser } = useCurrentUser();
 
     const [currentStep, setCurrentStep] = useState(0);
     const [answers, setAnswers] = useState<WizardAnswers>({});
@@ -25,7 +27,8 @@ export default function WizardPage() {
     const progress = ((currentStep + 1) / WIZARD_STEPS.length) * 100;
     const step = WIZARD_STEPS[currentStep];
 
-    const isFreeTier = (session?.user as any)?.tier === 'FREE' || !(session?.user as any)?.tier;
+    const currentTier = currentUser?.tier || (session?.user as any)?.tier || 'FREE';
+    const isFreeTier = currentTier === 'FREE';
 
     useEffect(() => {
         const initSession = async () => {

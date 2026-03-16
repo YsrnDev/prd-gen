@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
-import { prdDocument, wizardSession } from '@/lib/db/schema';
+import { prdDocument, wizardSession, user } from '@/lib/db/schema';
 import { eq, and } from 'drizzle-orm';
 import { z } from 'zod';
 
@@ -72,6 +72,17 @@ export async function POST(request: NextRequest) {
     try {
         const session = await auth.api.getSession({ headers: request.headers });
         if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+        const [userData] = await db.select({ emailVerified: user.emailVerified })
+            .from(user)
+            .where(eq(user.id, session.user.id))
+            .limit(1);
+        if (!userData?.emailVerified) {
+            return NextResponse.json(
+                { error: 'Please verify your email to create PRDs.' },
+                { status: 403 }
+            );
+        }
 
         const body = await request.json();
         const parsed = createPrdSchema.safeParse(body);

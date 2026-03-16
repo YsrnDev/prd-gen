@@ -12,8 +12,41 @@ interface UserData {
     name: string;
     email: string;
     role: string;
+    tier?: string;
+    subscriptionStatus?: string;
     createdAt: string;
     image?: string | null;
+}
+
+function UsersSkeleton() {
+    return (
+        <div className="w-full max-w-7xl mx-auto animate-pulse">
+            <div className="mb-8 space-y-2">
+                <div className="h-6 w-56 bg-slate-800 rounded" />
+                <div className="h-4 w-36 bg-slate-800 rounded" />
+            </div>
+
+            <div className="h-10 w-full bg-slate-800 rounded-lg mb-4" />
+
+            <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
+                <div className="h-12 bg-slate-800/60" />
+                <div className="divide-y divide-slate-800">
+                    {[...Array(6)].map((_, i) => (
+                        <div key={i} className="px-6 py-4 flex items-center gap-4">
+                            <div className="w-8 h-8 rounded-full bg-slate-800" />
+                            <div className="flex-1 space-y-2">
+                                <div className="h-4 w-48 bg-slate-800 rounded" />
+                                <div className="h-3 w-32 bg-slate-800 rounded" />
+                            </div>
+                            <div className="h-6 w-16 bg-slate-800 rounded-full" />
+                            <div className="h-4 w-20 bg-slate-800 rounded" />
+                            <div className="h-8 w-16 bg-slate-800 rounded" />
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
 }
 
 export default function AdminUsersPage() {
@@ -51,6 +84,37 @@ export default function AdminUsersPage() {
             setUsers((prev) => prev.filter((u) => u.id !== userId));
         }
         setActionLoading(null);
+    };
+
+    const updateUserPlan = async (userId: string, nextTier: string) => {
+        setActionLoading(userId);
+        setError('');
+        try {
+            const res = await fetch(`/api/admin/users/${userId}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ tier: nextTier }),
+            });
+            if (!res.ok) {
+                const data = await res.json().catch(() => null);
+                setError(data?.error || 'Failed to update plan');
+                return;
+            }
+            const normalizedTier = nextTier.toUpperCase();
+            setUsers((prev) =>
+                prev.map((u) =>
+                    u.id === userId
+                        ? {
+                            ...u,
+                            tier: normalizedTier,
+                            subscriptionStatus: normalizedTier === 'FREE' ? 'NONE' : 'ACTIVE',
+                        }
+                        : u
+                )
+            );
+        } finally {
+            setActionLoading(null);
+        }
     };
 
     const handleResetPassword = async (e: React.FormEvent) => {
@@ -123,11 +187,14 @@ export default function AdminUsersPage() {
                     className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-[var(--color-border)] bg-[var(--color-card)] text-[var(--color-fg)] placeholder:text-[var(--color-muted-fg)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-ring)]"
                 />
             </div>
+            {error && (
+                <div className="mb-4 text-sm text-red-500 bg-red-500/10 p-3 rounded-lg border border-red-500/20">
+                    {error}
+                </div>
+            )}
 
             {loading ? (
-                <div className="flex items-center justify-center py-20">
-                    <Loader2 className="w-6 h-6 animate-spin text-blue-500" />
-                </div>
+                <UsersSkeleton />
             ) : (
                 <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl overflow-hidden">
                     {/* Desktop View */}
@@ -136,6 +203,7 @@ export default function AdminUsersPage() {
                             <thead>
                                 <tr className="border-b border-[var(--color-border)] bg-[#131b33]">
                                     <th className="text-left px-6 py-3 text-xs font-semibold text-[var(--color-muted-fg)] uppercase tracking-wider">User</th>
+                                    <th className="text-left px-6 py-3 text-xs font-semibold text-[var(--color-muted-fg)] uppercase tracking-wider">Plan</th>
                                     <th className="text-left px-6 py-3 text-xs font-semibold text-[var(--color-muted-fg)] uppercase tracking-wider">Role</th>
                                     <th className="text-left px-6 py-3 text-xs font-semibold text-[var(--color-muted-fg)] uppercase tracking-wider">Joined</th>
                                     <th className="text-right px-6 py-3 text-xs font-semibold text-[var(--color-muted-fg)] uppercase tracking-wider">Actions</th>
@@ -163,6 +231,18 @@ export default function AdminUsersPage() {
                                                     <p className="text-xs text-[var(--color-muted-fg)] truncate">{u.email}</p>
                                                 </div>
                                             </div>
+                                        </td>
+                                        <td className="px-6 py-3">
+                                            <select
+                                                value={(u.tier || 'FREE').toUpperCase()}
+                                                onChange={(e) => updateUserPlan(u.id, e.target.value)}
+                                                disabled={actionLoading === u.id}
+                                                className="rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-fg)] text-xs font-semibold px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-[var(--color-ring)] disabled:opacity-50"
+                                            >
+                                                <option value="FREE">FREE</option>
+                                                <option value="PLUS">PLUS</option>
+                                                <option value="PRO">PRO</option>
+                                            </select>
                                         </td>
                                         <td className="px-6 py-3">
                                             <span className={cn(
@@ -232,6 +312,9 @@ export default function AdminUsersPage() {
                                             {u.role === 'admin' ? <Crown className="w-2.5 h-2.5" /> : <User className="w-2.5 h-2.5" />}
                                             {u.role}
                                         </span>
+                                        <span className="inline-flex flex-shrink-0 items-center px-1.5 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider bg-slate-700/60 text-slate-200 border border-slate-600/50">
+                                            {(u.tier || 'FREE').toUpperCase()}
+                                        </span>
                                     </div>
                                     <p className="text-xs text-[var(--color-muted-fg)] truncate mb-0.5">{u.email}</p>
                                     <p className="text-[10px] text-[var(--color-muted-fg)]/70 font-medium tracking-wide">Joined • {new Date(u.createdAt).toLocaleDateString()}</p>
@@ -239,6 +322,16 @@ export default function AdminUsersPage() {
 
                                 {/* Actions */}
                                 <div className="flex flex-col sm:flex-row items-center justify-center gap-1.5 flex-shrink-0">
+                                    <select
+                                        value={(u.tier || 'FREE').toUpperCase()}
+                                        onChange={(e) => updateUserPlan(u.id, e.target.value)}
+                                        disabled={actionLoading === u.id}
+                                        className="px-2 py-1 rounded-md border border-[var(--color-border)] bg-[var(--color-bg)] text-[10px] font-bold uppercase tracking-wider text-[var(--color-fg)] disabled:opacity-50"
+                                    >
+                                        <option value="FREE">FREE</option>
+                                        <option value="PLUS">PLUS</option>
+                                        <option value="PRO">PRO</option>
+                                    </select>
                                     <button
                                         onClick={() => setResetUser({ id: u.id, name: u.name })}
                                         disabled={actionLoading === u.id}

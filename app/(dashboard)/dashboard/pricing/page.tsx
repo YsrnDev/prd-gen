@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useSession } from '@/lib/auth-client';
+import { useCurrentUser } from '@/lib/use-current-user';
 import { Zap, Check, Crown, Sparkles, Loader2, AlertTriangle, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import Script from 'next/script';
@@ -70,13 +71,14 @@ function PricingSkeleton() {
 
 export default function UserPricingPage() {
     const { data: session } = useSession();
+    const { data: currentUser } = useCurrentUser();
     const [plans, setPlans] = useState<Plan[]>([]);
     const [loading, setLoading] = useState(true);
     const [checkoutLoading, setCheckoutLoading] = useState<number | null>(null);
     const [message, setMessage] = useState<{ type: 'success' | 'error' | 'info'; text: string } | null>(null);
 
-    const userTier = (session?.user as any)?.tier || 'FREE';
-    const subscriptionStatus = (session?.user as any)?.subscriptionStatus || 'NONE';
+    const userTier = currentUser?.tier || (session?.user as any)?.tier || 'FREE';
+    const subscriptionStatus = currentUser?.subscriptionStatus || (session?.user as any)?.subscriptionStatus || 'NONE';
 
     useEffect(() => {
         fetchPlans();
@@ -201,16 +203,6 @@ export default function UserPricingPage() {
                     <p className="text-slate-400">
                         Upgrade untuk akses penuh fitur AI, unlimited PRDs, dan banyak lagi.
                     </p>
-
-                    {/* Current Plan Badge */}
-                    <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800 border border-slate-700">
-                        <div className={`w-2 h-2 rounded-full ${subscriptionStatus === 'ACTIVE' ? 'bg-green-400' : 'bg-slate-500'}`} />
-                        <span className="text-sm text-slate-300">
-                            Paket saat ini: <strong className="text-white">{userTier}</strong>
-                            {subscriptionStatus === 'ACTIVE' && <span className="text-green-400 ml-1">(Aktif)</span>}
-                            {subscriptionStatus === 'EXPIRED' && <span className="text-red-400 ml-1">(Kedaluwarsa)</span>}
-                        </span>
-                    </div>
                 </div>
 
                 {/* Message Banner */}
@@ -242,7 +234,7 @@ export default function UserPricingPage() {
                                         } ${current ? 'ring-2 ring-green-500/50' : ''}`}
                                 >
                                     {/* Popular Badge */}
-                                    {plan.isPopular && (
+                                    {plan.isPopular && !current && (
                                         <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-[#135bec] text-white text-xs font-bold px-4 py-1 rounded-full whitespace-nowrap">
                                             Most Popular
                                         </div>
@@ -250,8 +242,8 @@ export default function UserPricingPage() {
 
                                     {/* Current Plan Indicator */}
                                     {current && (
-                                        <div className="absolute top-0 right-3 bg-green-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-b-lg">
-                                            AKTIF
+                                        <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-emerald-500 text-white text-xs font-bold px-4 py-1 rounded-full whitespace-nowrap">
+                                            Paket Aktif
                                         </div>
                                     )}
 

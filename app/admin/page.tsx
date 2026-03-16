@@ -74,7 +74,7 @@ const getAdminDashboardData = unstable_cache(async () => {
         ...recentUsersRaw.map(u => ({
             id: `user-${u.id}`,
             title: `New user: ${u.name || 'Anonymous User'}`,
-            subtitle: `${u.email} â€¢ Role: ${u.role}`,
+            subtitle: `${u.email} \u2022 Role: ${u.role}`,
             timestamp: new Date(u.createdAt).getTime(),
             icon: 'person_add',
             bgColor: 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.3)]'
@@ -90,7 +90,7 @@ const getAdminDashboardData = unstable_cache(async () => {
         ...recentSessionsRaw.map(s => ({
             id: `session-${s.id}`,
             title: 'Started AI Session',
-            subtitle: `By ${s.userName || 'Anonymous'} â€¢ ${s.status === 'completed' ? 'Done' : 'Draft'}`,
+            subtitle: `By ${s.userName || 'Anonymous'} \u2022 ${s.status === 'completed' ? 'Done' : 'Draft'}`,
             timestamp: new Date(s.createdAt).getTime(),
             icon: 'memory',
             bgColor: 'bg-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.3)]'
@@ -184,7 +184,7 @@ export default async function AdminDashboardPage() {
                     <div className="flex items-center justify-between mb-6">
                         <div>
                             <h2 className="text-base font-bold text-[var(--color-fg)]">Usage Trends</h2>
-                            <p className="text-xs text-[var(--color-muted-fg)]">PRDs generated & AI sessions â€” last 7 days</p>
+                            <p className="text-xs text-[var(--color-muted-fg)]">PRDs generated & AI sessions \u2014 last 7 days</p>
                         </div>
                         <div className="flex items-center gap-4 text-xs">
                             <div className="flex items-center gap-1.5">

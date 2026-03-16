@@ -6,15 +6,38 @@ import { createOpenAI } from '@ai-sdk/openai';
 import { createAnthropic } from '@ai-sdk/anthropic';
 
 export type AIProvider = 'openai' | 'anthropic' | 'custom';
+export type CustomApiMode = 'responses' | 'chat';
 
 export interface AIConfigData {
     provider: AIProvider;
     apiKey: string;
     baseUrl?: string;
     defaultModel: string;
+    fallbackModel?: string;
     temperature: number;
     rateLimitRpm: number;
     rateLimitTpm: number;
+}
+
+const customApiModeByBaseUrl = new Map<string, CustomApiMode>();
+
+function normalizeBaseUrl(baseUrl?: string) {
+    return (baseUrl || 'default').replace(/\/+$/, '');
+}
+
+export function getCustomApiMode(config: AIConfigData): CustomApiMode {
+    if (config.provider !== 'custom') return 'responses';
+    const key = normalizeBaseUrl(config.baseUrl);
+    const cached = customApiModeByBaseUrl.get(key);
+    if (cached) return cached;
+    if (key.includes('bluesminds.com')) return 'chat';
+    return 'responses';
+}
+
+export function setCustomApiMode(config: AIConfigData, mode: CustomApiMode) {
+    if (config.provider !== 'custom') return;
+    const key = normalizeBaseUrl(config.baseUrl);
+    customApiModeByBaseUrl.set(key, mode);
 }
 
 export async function getAIConfig(): Promise<AIConfigData | null> {
@@ -28,6 +51,7 @@ export async function getAIConfig(): Promise<AIConfigData | null> {
             apiKey,
             baseUrl: configs[0].baseUrl ?? undefined,
             defaultModel: configs[0].defaultModel,
+            fallbackModel: configs[0].fallbackModel ?? undefined,
             temperature: configs[0].temperature ?? 0.5,
             rateLimitRpm: configs[0].rateLimitRpm ?? 10,
             rateLimitTpm: configs[0].rateLimitTpm ?? 100000,
@@ -42,6 +66,7 @@ export async function saveAIConfig(data: {
     apiKey: string;
     baseUrl?: string;
     defaultModel: string;
+    fallbackModel?: string | null;
     temperature?: number;
     rateLimitRpm?: number;
     rateLimitTpm?: number;
@@ -58,6 +83,7 @@ export async function saveAIConfig(data: {
                 apiKeyEncrypted: encryptedKey,
                 baseUrl: data.baseUrl ?? null,
                 defaultModel: data.defaultModel,
+                fallbackModel: data.fallbackModel ?? null,
                 temperature: data.temperature ?? 0.5,
                 rateLimitRpm: data.rateLimitRpm ?? 10,
                 rateLimitTpm: data.rateLimitTpm ?? 100000,
@@ -71,6 +97,7 @@ export async function saveAIConfig(data: {
             apiKeyEncrypted: encryptedKey,
             baseUrl: data.baseUrl ?? null,
             defaultModel: data.defaultModel,
+            fallbackModel: data.fallbackModel ?? null,
             temperature: data.temperature ?? 0.5,
             rateLimitRpm: data.rateLimitRpm ?? 10,
             rateLimitTpm: data.rateLimitTpm ?? 100000,

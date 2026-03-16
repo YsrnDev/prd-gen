@@ -109,6 +109,7 @@ export const aiConfig = pgTable('ai_config', {
     apiKeyEncrypted: text('api_key_encrypted'),
     baseUrl: text('base_url'),
     defaultModel: text('default_model').notNull().default('gpt-4o'),
+    fallbackModel: text('fallback_model'),
     temperature: real('temperature').notNull().default(0.5),
     rateLimitRpm: integer('rate_limit_rpm').notNull().default(10), // requests per minute per user
     rateLimitTpm: integer('rate_limit_tpm').notNull().default(100000), // tokens per minute global

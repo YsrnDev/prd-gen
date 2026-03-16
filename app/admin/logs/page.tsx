@@ -13,6 +13,40 @@ interface SystemLog {
     ip?: string;
 }
 
+function LogsSkeleton() {
+    return (
+        <div className="w-full max-w-7xl mx-auto animate-pulse">
+            <div className="mb-4 space-y-2">
+                <div className="h-6 w-40 bg-slate-800 rounded" />
+                <div className="h-4 w-36 bg-slate-800 rounded" />
+            </div>
+
+            <div className="h-10 w-full bg-slate-800 rounded-lg mb-4" />
+
+            <div className="flex gap-2 mb-4">
+                {[...Array(5)].map((_, i) => (
+                    <div key={i} className="h-8 w-24 bg-slate-800 rounded-lg" />
+                ))}
+            </div>
+
+            <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
+                <div className="h-12 bg-slate-800/60" />
+                <div className="divide-y divide-slate-800">
+                    {[...Array(6)].map((_, i) => (
+                        <div key={i} className="px-6 py-4 flex items-center gap-4">
+                            <div className="w-8 h-8 rounded bg-slate-800" />
+                            <div className="w-40 h-4 bg-slate-800 rounded" />
+                            <div className="w-24 h-4 bg-slate-800 rounded" />
+                            <div className="flex-1 h-4 bg-slate-800 rounded" />
+                            <div className="w-32 h-4 bg-slate-800 rounded" />
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
+}
+
 export default function SystemLogsPage() {
     const [filter, setFilter] = useState<string>('ALL');
     const [searchQuery, setSearchQuery] = useState('');
@@ -97,6 +131,12 @@ export default function SystemLogsPage() {
         }
     }
 
+    function formatIp(ip?: string) {
+        if (!ip || ip === 'unknown') return 'System';
+        if (/^[0-9a-f]{16}$/i.test(ip)) return 'IP masked';
+        return ip;
+    }
+
     return (
         <div className="w-full max-w-7xl mx-auto">
             {/* Header - outside the card, like User Management */}
@@ -145,9 +185,7 @@ export default function SystemLogsPage() {
 
             {/* Content */}
             {loading ? (
-                <div className="flex items-center justify-center py-20">
-                    <Loader2 className="w-6 h-6 animate-spin text-blue-500" />
-                </div>
+                <LogsSkeleton />
             ) : (
                 <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl overflow-hidden">
                     {/* Desktop View */}
@@ -204,7 +242,7 @@ export default function SystemLogsPage() {
                                                 <td className="px-6 py-4 text-sm">
                                                     <div className="flex flex-col">
                                                         <span className="text-[var(--color-fg)] truncate max-w-[150px]">{log.user || '-'}</span>
-                                                        <span className="text-xs text-[var(--color-muted-fg)] font-mono">{log.ip || 'System'}</span>
+                                                        <span className="text-xs text-[var(--color-muted-fg)] font-mono">{formatIp(log.ip)}</span>
                                                     </div>
                                                 </td>
                                             </tr>

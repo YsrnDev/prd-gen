@@ -80,6 +80,7 @@ export default function AIConfigPage() {
     const [orgId, setOrgId] = useState('');
     const [baseUrl, setBaseUrl] = useState('');
     const [defaultModel, setDefaultModel] = useState('gpt-4o');
+    const [fallbackModel, setFallbackModel] = useState('');
     const [temperature, setTemperature] = useState(0.5);
     const [rateLimitRpm, setRateLimitRpm] = useState(10);
     const [rateLimitTpm, setRateLimitTpm] = useState(100000);
@@ -94,6 +95,13 @@ export default function AIConfigPage() {
     const [fetchingModels, setFetchingModels] = useState(false);
     const [fetchModelError, setFetchModelError] = useState('');
 
+    const getFallbackModels = () => {
+        if (provider === 'custom' && baseUrl.toLowerCase().includes('bluesminds.com')) {
+            return ['claude-sonnet-4-6', 'claude-haiku-4-5-20251001'];
+        }
+        return [];
+    };
+
     useEffect(() => {
         const load = async () => {
             const res = await fetch('/api/admin/ai-config');
@@ -103,6 +111,7 @@ export default function AIConfigPage() {
                     setHasExistingConfig(true);
                     setProvider(data.config.provider || 'openai');
                     setDefaultModel(data.config.defaultModel || 'gpt-4o');
+                    setFallbackModel(data.config.fallbackModel || '');
                     if (data.config.baseUrl) setBaseUrl(data.config.baseUrl);
                     if (data.config.temperature !== undefined) setTemperature(data.config.temperature);
                     if (data.config.rateLimitRpm !== undefined) setRateLimitRpm(data.config.rateLimitRpm);
@@ -115,6 +124,29 @@ export default function AIConfigPage() {
     }, []);
 
     const currentProvider = PROVIDERS.find((p) => p.value === provider);
+    const fallbackModels = getFallbackModels();
+    const resolvedModels = fetchedModels.length > 0
+        ? fetchedModels
+        : provider === 'custom'
+            ? (fallbackModels.length > 0 ? fallbackModels : [])
+            : (currentProvider?.models ?? []);
+    const defaultSelectModels = defaultModel && !resolvedModels.includes(defaultModel)
+        ? [defaultModel, ...resolvedModels]
+        : resolvedModels;
+    const fallbackSelectModels = fallbackModel && !resolvedModels.includes(fallbackModel)
+        ? [fallbackModel, ...resolvedModels]
+        : resolvedModels;
+
+    useEffect(() => {
+        if (fetchedModels.length > 0) {
+            if (!fetchedModels.includes(defaultModel)) {
+                setDefaultModel(fetchedModels[0]);
+            }
+            if (fallbackModel && !fetchedModels.includes(fallbackModel)) {
+                setFallbackModel('');
+            }
+        }
+    }, [fetchedModels, defaultModel, fallbackModel]);
 
     const handleSave = async () => {
         if (!apiKey && !hasExistingConfig) return;
@@ -131,6 +163,7 @@ export default function AIConfigPage() {
         };
         if (apiKey) body.apiKey = apiKey;
         if (provider === 'custom' && baseUrl) body.baseUrl = baseUrl;
+        body.fallbackModel = fallbackModel || '';
 
         const res = await fetch('/api/admin/ai-config', {
             method: 'PUT',
@@ -181,6 +214,9 @@ export default function AIConfigPage() {
                 if (!data.models.includes(defaultModel)) {
                     setDefaultModel(data.models[0]);
                 }
+                if (fallbackModel && !data.models.includes(fallbackModel)) {
+                    setFallbackModel('');
+                }
             } else {
                 setFetchModelError('No models found. Check your API key and base URL.');
             }
@@ -227,6 +263,7 @@ export default function AIConfigPage() {
                                 onClick={() => {
                                     setProvider(p.value);
                                     if (p.models[0]) setDefaultModel(p.models[0]);
+                                    setFallbackModel('');
                                     setFetchedModels([]);
                                     setFetchModelError('');
                                 }}
@@ -370,7 +407,7 @@ export default function AIConfigPage() {
                             {fetchModelError && (
                                 <p className="text-xs text-red-400 mb-2">{fetchModelError}</p>
                             )}
-                            {fetchedModels.length > 0 ? (
+                            {defaultSelectModels.length > 0 ? (
                                 <div>
                                     <div className="relative">
                                         <select
@@ -378,17 +415,21 @@ export default function AIConfigPage() {
                                             onChange={(e) => setDefaultModel(e.target.value)}
                                             className="w-full appearance-none px-4 py-2.5 pr-10 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-fg)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-ring)]"
                                         >
-                                            {fetchedModels.map((m) => (
-                                                <option key={m} value={m}>{m}</option>
+                                            {defaultSelectModels.map((m) => (
+                                                <option key={m} value={m}>
+                                                    {provider === 'openai' && m === 'gpt-4o' ? 'gpt-4o (Recommended)' : m}
+                                                </option>
                                             ))}
                                         </select>
                                         <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-muted-fg)] pointer-events-none" />
                                     </div>
-                                    <span className="block mt-1.5 text-[10px] text-emerald-400 font-semibold">
-                                        {fetchedModels.length} models loaded from API
-                                    </span>
+                                    {fetchedModels.length > 0 && (
+                                        <span className="block mt-1.5 text-[10px] text-emerald-400 font-semibold">
+                                            {fetchedModels.length} models loaded from API
+                                        </span>
+                                    )}
                                 </div>
-                            ) : provider === 'custom' ? (
+                            ) : (
                                 <input
                                     type="text"
                                     value={defaultModel}
@@ -396,20 +437,39 @@ export default function AIConfigPage() {
                                     placeholder="e.g. deepseek-chat (or use Fetch Models)"
                                     className="input-field"
                                 />
-                            ) : (
+                            )}
+                        </div>
+                    )}
+
+                    {currentProvider && (
+                        <div>
+                            <label className="text-xs font-semibold text-[var(--color-muted-fg)] mb-1.5 block">Fallback Model</label>
+                            {fallbackSelectModels.length > 0 ? (
                                 <div className="relative">
                                     <select
-                                        value={defaultModel}
-                                        onChange={(e) => setDefaultModel(e.target.value)}
+                                        value={fallbackModel}
+                                        onChange={(e) => setFallbackModel(e.target.value)}
                                         className="w-full appearance-none px-4 py-2.5 pr-10 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-fg)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-ring)]"
                                     >
-                                        {currentProvider.models.map((m) => (
-                                            <option key={m} value={m}>{m === 'gpt-4o' ? 'gpt-4o (Recommended)' : m}</option>
+                                        <option value="">No fallback</option>
+                                        {fallbackSelectModels.map((m) => (
+                                            <option key={m} value={m}>{m}</option>
                                         ))}
                                     </select>
                                     <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-muted-fg)] pointer-events-none" />
                                 </div>
+                            ) : (
+                                <input
+                                    type="text"
+                                    value={fallbackModel}
+                                    onChange={(e) => setFallbackModel(e.target.value)}
+                                    placeholder="Optional fallback model id"
+                                    className="input-field"
+                                />
                             )}
+                            <span className="block mt-1.5 text-[10px] text-[var(--color-muted-fg)] font-semibold">
+                                Used when the primary model is overloaded.
+                            </span>
                         </div>
                     )}
 

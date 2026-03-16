@@ -55,7 +55,17 @@ export async function GET(request: NextRequest, { params }: Params) {
         }));
 
         return NextResponse.json({
-            user: { id: userData.id, name: userData.name, email: userData.email, role: userData.role, createdAt: userData.createdAt, image: userData.image },
+            user: {
+                id: userData.id,
+                name: userData.name,
+                email: userData.email,
+                role: userData.role,
+                tier: userData.tier,
+                subscriptionStatus: userData.subscriptionStatus,
+                subscriptionUntil: userData.subscriptionUntil,
+                createdAt: userData.createdAt,
+                image: userData.image
+            },
             prds: safePrds,
             sessions,
         });
@@ -73,15 +83,51 @@ export async function PATCH(request: NextRequest, { params }: Params) {
 
         const { id } = await params;
         const body = await request.json();
-        const { role } = body;
+        const { role, tier, subscriptionStatus, subscriptionUntil } = body as {
+            role?: string;
+            tier?: string;
+            subscriptionStatus?: string;
+            subscriptionUntil?: string | null;
+        };
 
-        if (!['admin', 'user'].includes(role)) {
-            return NextResponse.json({ error: 'Invalid role' }, { status: 400 });
+        const updates: Partial<typeof user.$inferInsert> = {};
+
+        if (role !== undefined) {
+            if (!['admin', 'user'].includes(role)) {
+                return NextResponse.json({ error: 'Invalid role' }, { status: 400 });
+            }
+            updates.role = role;
+        }
+
+        if (tier !== undefined) {
+            const nextTier = tier.toUpperCase();
+            if (!['FREE', 'PLUS', 'PRO'].includes(nextTier)) {
+                return NextResponse.json({ error: 'Invalid tier' }, { status: 400 });
+            }
+            updates.tier = nextTier;
+            updates.subscriptionStatus = nextTier === 'FREE' ? 'NONE' : 'ACTIVE';
+            updates.subscriptionUntil = null;
+        }
+
+        if (subscriptionStatus !== undefined) {
+            const nextStatus = subscriptionStatus.toUpperCase();
+            if (!['NONE', 'ACTIVE', 'EXPIRED'].includes(nextStatus)) {
+                return NextResponse.json({ error: 'Invalid subscription status' }, { status: 400 });
+            }
+            updates.subscriptionStatus = nextStatus;
+        }
+
+        if (subscriptionUntil !== undefined) {
+            updates.subscriptionUntil = subscriptionUntil ? new Date(subscriptionUntil) : null;
+        }
+
+        if (Object.keys(updates).length === 0) {
+            return NextResponse.json({ error: 'No valid updates provided' }, { status: 400 });
         }
 
         const [updated] = await db
             .update(user)
-            .set({ role, updatedAt: new Date() })
+            .set({ ...updates, updatedAt: new Date() })
             .where(eq(user.id, id))
             .returning();
 
