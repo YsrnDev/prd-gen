@@ -22,7 +22,13 @@ function isResponsesUnsupported(error: unknown) {
         message?: string;
         lastError?: unknown;
     };
-    const err = raw?.lastError ?? raw;
+    const err = (raw?.lastError ?? raw) as {
+        statusCode?: number;
+        url?: string;
+        responseBody?: string;
+        data?: { error?: { code?: string; message?: string } };
+        message?: string;
+    };
     const statusCode = err?.statusCode;
     const url = typeof err?.url === 'string' ? err.url : '';
     const responseBody = typeof err?.responseBody === 'string' ? err.responseBody : '';
@@ -43,7 +49,12 @@ function isModelOverloaded(error: unknown) {
         message?: string;
         lastError?: unknown;
     };
-    const err = raw?.lastError ?? raw;
+    const err = (raw?.lastError ?? raw) as {
+        statusCode?: number;
+        responseBody?: string;
+        data?: { error?: { message?: string } };
+        message?: string;
+    };
     const statusCode = err?.statusCode;
     const responseBody = typeof err?.responseBody === 'string' ? err.responseBody : '';
     const message = `${err?.message || ''} ${err?.data?.error?.message || ''} ${responseBody}`.toLowerCase();
